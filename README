@@ -1,0 +1,44 @@
+DCI C++
+dcicpp-0.5.3.1
+
+-----------------------------------------------------------
+
+version 0.5.3.1
+- Removed bad print
+- Added git
+
+version 0.5.3
+- Added support for unconstrained problems
+
+version 0.5.2.2
+- Cleaned comments everywere
+
+version 0.5.2.1
+- Cleaned Tests/ comments
+
+version 0.5.2
+- Fixed bugs. Now more tests are working (BT1-BT13, LCH, and various HS)
+
+version 0.5.1
+- Minor changes
+
+version 0.5.0
+- Changed to
+  min f(x)
+  s.t c_E(x) = 0
+  s.t CL <= c_I(x) <= CU
+      BL <= x <= BU
+- cuter interface now functional, but the method is not complete yet
+
+version 0.4.0
+- Inequalities Included, but only in the following form:
+  min f(x)
+  s.t c_E(x) = 0
+      c_I(x) <= 0
+- Still works for the equalities (make eqtests)
+- Works all tests but test5
+- test5 reach maximum iteratior, probably because A becomes close to singular
+
+version 0.3.0 - Equality only.
+- Works with tests and CUTEr
+- No long int and int at the same time. Changes should be made at Include/definitions.h (long int should be mantained)
