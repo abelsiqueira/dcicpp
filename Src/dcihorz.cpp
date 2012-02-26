@@ -51,10 +51,10 @@ namespace DCI {
       scale_xc (d);
       for (Int i = 0; i < nvar; i++)
         xx[i] += dx[i];
-      for (Int i = 0; i < nconI; i++) {
+      for (Int i = 0; i < nconI; i++)
         sx[i] += dx[nvar + i];
-        assert (sx[i] < cux[ineqIdx[i]]);
-      }
+
+      checkInfactibility ();
 
       call_fn ();
       if (ncon > 0)

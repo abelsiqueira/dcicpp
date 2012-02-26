@@ -36,10 +36,26 @@ namespace DCI {
     theta = theta0;
     gtd = 0;
     nSteih = 0;
+//    std::vector<Real> tmpDiag (nvar + nconI, 1);
+//    Vector Diag(*env, tmpDiag);
+//    pReal Diagx = Diag.get_doublex();
+//    scale_xc (Diag);
     for (Int i = 0; i < nvar; i++) {
       Real xi = xcx[i], bli = blx[i], bui = bux[i];
+//      lower[i] = (bli - xi) * (1 - epsmu) / Diagx[i];
+//      upper[i] = (bui - xi) * (1 - epsmu) / Diagx[i];
       lower[i] = (bli - xi) * (1 - epsmu);
       upper[i] = (bui - xi) * (1 - epsmu);
+      if ( (PartialPenal) && (bli > -dciInf) && (bui < dciInf) ) {
+        if ( (xi - bli) < (bui - xi) ) {
+          lower[i] = lower[i]/(xi - bli);
+          upper[i] = upper[i]/(xi - bli);
+        } else {
+          lower[i] = lower[i]/(bui - xi);
+          upper[i] = upper[i]/(bui - xi);
+        }
+        continue;
+      }
       if (bli > -dciInf) {
         lower[i] = lower[i]/(xi - bli);
         upper[i] = upper[i]/(xi - bli);
@@ -52,8 +68,20 @@ namespace DCI {
     for (Int i = 0; i < nconI; i++) {
       Real si = scx[i], cli = clx[ineqIdx[i]], cui = cux[ineqIdx[i]];
       Int j = nvar + i;
+//      lower[j] = (cli - si) * (1 - epsmu) / Diagx[j];
+//      upper[j] = (cui - si) * (1 - epsmu) / Diagx[j];
       lower[j] = (cli - si) * (1 - epsmu);
       upper[j] = (cui - si) * (1 - epsmu);
+      if ( (PartialPenal) && (cli > -dciInf) && (cui < dciInf) ) {
+        if ( (si - cli) < (cui - si) ) {
+          lower[j] = lower[j]/(si - cli);
+          upper[j] = upper[j]/(si - cli);
+        } else {
+          lower[j] = lower[j]/(cui - si);
+          upper[j] = upper[j]/(cui - si);
+        }
+        continue;
+      }
       if (cli > -dciInf) {
         lower[j] = lower[j]/(si - cli);
         upper[j] = upper[j]/(si - cli);

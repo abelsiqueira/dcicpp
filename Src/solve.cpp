@@ -162,6 +162,7 @@ namespace DCI {
       if ( ( (cnormi > csic) || ( (normgp > csig) && (ngp > csig*1e-2) ) ) && (VertFlag == 0) && (rhomax >= rhomin) && (!Unbounded) && (CurrentTime < MaxTime) ) {
 
         horzstep (norms); 
+        checkInfactibility ();
 
         normck = normc;
 
@@ -256,7 +257,9 @@ namespace DCI {
       
     } //End
 
-    if (VertFlag > 0)
+    if (VertFlag == 2)
+      ExitFlag = 8;
+    else if (VertFlag > 0)
       ExitFlag = 4;
     else if (rhomax < rhomin)
       ExitFlag = 1;

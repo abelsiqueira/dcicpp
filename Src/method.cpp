@@ -3,6 +3,33 @@
 #include <cmath>
 
 namespace DCI {
+  Bool Interface::calc_feasibilityOpt () {
+    if (ccifg == 0)
+      return 0;
+    if (feasOpt == 0)
+      feasOpt = new Vector (*env, nvar);
+    pReal fox = feasOpt->get_doublex ();
+    Real ci = 0, cli = 0, cui = 0;
+    Vector gradc (*env, nvar);
+    pReal gcx = gradc.get_doublex ();
+    Bool tmpTrue = dciTrue;
+    
+    for (Int i = 1; i <= ncon; i++) {
+      (*ccifg) (&nvar, &i, xx, &ci, gcx, &tmpTrue);
+      cli = clx[i-1];
+      cui = cux[i-1];
+
+      // If it's an inequality and inside limits, do nothing
+      if ( (equatn[i-1] == dciFalse) && (ci >= cli) && (ci <= cui) )
+        continue;
+
+      for (Int j = 0; j < nvar; j++)
+        fox[j] += ci * gcx[j];
+    }
+
+    return (feasOpt->norm () < 1e-6);
+  }
+
   void Interface::update_lambda () {
     if (ncon == 0) {
       gp->scale (*g, 1);
@@ -108,10 +135,11 @@ namespace DCI {
   }
 
   void Interface::update_mu () {
+    Real mufactor = 1.0;
 //    Real minmuthisiter = Max (0.1*mu, 1e-24);
     Real minother = 100*Min (rho, rho*rho); 
     minother = Min (minother, gap + lagrgap + infacgap);
-    minother = Min (minother, mu);
+    minother = Min (minother, mufactor * mu);
     minother = Min (minother, 100*normck);
 
 //    mu = Max (minother, minmuthisiter);
@@ -238,6 +266,13 @@ namespace DCI {
 
     for (Int i = 0; i < nvar; i++) {
       Real zi = xx[i], Li = blx[i], Ui = bux[i];
+      if ( (PartialPenal) && (Li > -dciInf) && (Ui < dciInf) ) {
+        if ( (zi - Li) < (Ui - zi) )
+          Vx[i] *= (zi - Li);
+        else
+          Vx[i] *= (Ui - zi);
+        continue;
+      }
       if (Li > -dciInf)
         Vx[i] *= (zi - Li);
       if (Ui < dciInf)
@@ -246,6 +281,13 @@ namespace DCI {
     for (Int i = 0; i < nconI; i++) {
       Real zi = sx[i], Li = clx[ineqIdx[i]], Ui = cux[ineqIdx[i]];
       Int j = nvar + i;
+      if ( (PartialPenal) && (Li > -dciInf) && (Ui < dciInf) ) {
+        if ( (zi - Li) < (Ui - zi) )
+          Vx[j] *= (zi - Li);
+        else
+          Vx[j] *= (Ui - zi);
+        continue;
+      }
       if (Li > -dciInf)
         Vx[j] *= (zi - Li);
       if (Ui < dciInf)
@@ -258,6 +300,13 @@ namespace DCI {
 
     for (Int i = 0; i < nvar; i++) {
       Real zi = xcx[i], Li = blx[i], Ui = bux[i];
+      if ( (PartialPenal) && (Li > -dciInf) && (Ui < dciInf) ) {
+        if ( (zi - Li) < (Ui - zi) )
+          Vx[i] *= (zi - Li);
+        else
+          Vx[i] *= (Ui - zi);
+        continue;
+      }
       if (Li > -dciInf)
         Vx[i] *= (zi - Li);
       if (Ui < dciInf)
@@ -266,6 +315,13 @@ namespace DCI {
     for (Int i = 0; i < nconI; i++) {
       Real zi = scx[i], Li = clx[ineqIdx[i]], Ui = cux[ineqIdx[i]];
       Int j = nvar + i;
+      if ( (PartialPenal) && (Li > -dciInf) && (Ui < dciInf) ) {
+        if ( (zi - Li) < (Ui - zi) )
+          Vx[j] *= (zi - Li);
+        else
+          Vx[j] *= (Ui - zi);
+        continue;
+      }
       if (Li > -dciInf)
         Vx[j] *= (zi - Li);
       if (Ui < dciInf)
@@ -277,6 +333,13 @@ namespace DCI {
     for (Int i = 0; i < nvar; i++) {
       Real bli = blx[i], bui = bux[i], xi = xx[i];
       yineqx[i] = 0;
+      if ( (PartialPenal) && (bli > -dciInf) && (bui < dciInf) ) {
+        if ( (xi - bli) < (bui - xi) )
+          yineqx[i] -= mu/(xi - bli);
+        else
+          yineqx[i] -= mu/(xi - bui);
+        continue;
+      }
       if (bli > -dciInf)
         yineqx[i] -= mu/(xi - bli);
       if (bui < dciInf)
@@ -286,6 +349,13 @@ namespace DCI {
       Real cli = clx[ineqIdx[i]], cui = cux[ineqIdx[i]], si = sx[i];
       Int j = nvar + i;
       yineqx[j] = 0;
+      if ( (PartialPenal) && (cli > -dciInf) && (cui < dciInf) ) {
+        if ( (si - cli) < (cui - si) )
+          yineqx[j] -= mu/(si - cli);
+        else
+          yineqx[j] -= mu/(si - cui);
+        continue;
+      }
       if (cli > -dciInf)
         yineqx[j] -= mu/(si - cli);
       if (cui < dciInf)
@@ -297,6 +367,13 @@ namespace DCI {
     for (Int i = 0; i < nvar; i++) {
       Real bli = blx[i], bui = bux[i], xi = xcx[i];
       yineqx[i] = 0;
+      if ( (PartialPenal) && (bli > -dciInf) && (bui < dciInf) ) {
+        if ( (xi - bli) < (bui - xi) )
+          yineqx[i] -= mu/(xi - bli);
+        else
+          yineqx[i] -= mu/(xi - bui);
+        continue;
+      }
       if (bli > -dciInf)
         yineqx[i] -= mu/(xi - bli);
       if (bui < dciInf)
@@ -306,6 +383,13 @@ namespace DCI {
       Real cli = clx[ineqIdx[i]], cui = cux[ineqIdx[i]], si = scx[i];
       Int j = nvar + i;
       yineqx[j] = 0;
+      if ( (PartialPenal) && (cli > -dciInf) && (cui < dciInf) ) {
+        if ( (si - cli) < (cui - si) )
+          yineqx[j] -= mu/(si - cli);
+        else
+          yineqx[j] -= mu/(si - cui);
+        continue;
+      }
       if (cli > -dciInf)
         yineqx[j] -= mu/(si - cli);
       if (cui < dciInf)
@@ -347,12 +431,26 @@ namespace DCI {
   Real Interface::calc_pen () {
     Real val = 0.0;
     for (Int i = 0; i < nvar; i++) {
+      if ( (PartialPenal) && (blx[i] > -dciInf) && (bux[i] < dciInf) ) {
+        if ( (xx[i] - blx[i]) < (bux[i] - xx[i]) )
+          val += log (xx[i] - blx[i]);
+        else
+          val += log (bux[i] - xx[i]);
+        continue;
+      }
       if (blx[i] > -dciInf)
         val += log (xx[i] - blx[i]);
       if (bux[i] < dciInf)
         val += log (bux[i] - xx[i]);
     }
     for (Int i = 0; i < nconI; i++) {
+      if ( (PartialPenal) && (clx[ineqIdx[i]] > -dciInf) && (cux[ineqIdx[i]] < dciInf) ) {
+        if ( (PartialPenal) && (sx[i] - clx[ineqIdx[i]]) < (cux[ineqIdx[i]] - sx[i]) )
+          val += log (sx[i] - clx[ineqIdx[i]]);
+        else
+          val += log (cux[ineqIdx[i]] - sx[i]);
+        continue;
+      }
       if (clx[ineqIdx[i]] > -dciInf)
         val += log (sx[i] - clx[ineqIdx[i]]);
       if (cux[ineqIdx[i]] < dciInf)
@@ -364,12 +462,26 @@ namespace DCI {
   Real Interface::calc_pen_xc () {
     Real val = 0.0;
     for (Int i = 0; i < nvar; i++) {
+      if ( (PartialPenal) && (blx[i] > -dciInf) && (bux[i] < dciInf) ) {
+        if ( (xcx[i] - blx[i]) < (bux[i] - xcx[i]) )
+          val += log (xcx[i] - blx[i]);
+        else
+          val += log (bux[i] - xcx[i]);
+        continue;
+      }
       if (blx[i] > -dciInf)
         val += log (xcx[i] - blx[i]);
       if (bux[i] < dciInf)
         val += log (bux[i] - xcx[i]);
     }
     for (Int i = 0; i < nconI; i++) {
+      if ( (PartialPenal) && (clx[ineqIdx[i]] > -dciInf) && (cux[ineqIdx[i]] < dciInf) ) {
+        if ( (scx[i] - clx[ineqIdx[i]]) < (cux[ineqIdx[i]] - scx[i]) )
+          val += log (scx[i] - clx[ineqIdx[i]]);
+        else
+          val += log (cux[ineqIdx[i]] - scx[i]);
+        continue;
+      }
       if (clx[ineqIdx[i]] > -dciInf)
         val += log (scx[i] - clx[ineqIdx[i]]);
       if (cux[ineqIdx[i]] < dciInf)

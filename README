@@ -1,7 +1,10 @@
 DCI C++
-dcicpp-0.5.3.1
+dcicpp-0.5.3.2
 
 -----------------------------------------------------------
+
+version 0.5.3.2
+- Testing Partial Penalization
 
 version 0.5.3.1
 - Removed bad print

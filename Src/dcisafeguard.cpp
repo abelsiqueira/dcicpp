@@ -19,12 +19,13 @@ namespace DCI {
 
     NAstep (*c, dn);
 
-    dnnorm = dn.norm ();
+//    dnnorm = dn.norm ();
     iout = dcibfgs (dn, ibfgs);
     nbfgs += ibfgs;
     checkInfactibility ();
-
-    if ( (iout == 1) || (iout > 2) )
+    if ( (iout == 3) && calc_feasibilityOpt () )
+      return 2;
+    else if ( (iout == 1) || (iout > 2) )
       return 1;
     else
       return 0;

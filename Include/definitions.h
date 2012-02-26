@@ -27,6 +27,7 @@ namespace DCI {
   typedef void (*pcfn)    (pInt, pInt, pReal, pReal, pInt, pReal);
   typedef void (*pcofg)   (pInt, pReal, pReal, pReal, pBool);
   typedef void (*pccfsg)  (pInt, pInt, pReal, pInt, pReal, pInt, pInt, pReal, pInt, pInt, pBool);
+  typedef void (*pccifg)  (pInt, pInt, pReal, pReal, pReal, pBool);
   typedef void (*pcprod)  (pInt, pInt, pBool, pReal, pInt, pReal, pReal, pReal);
   typedef void (*pcnames) (pInt, pInt, char*, char*, char*);
 

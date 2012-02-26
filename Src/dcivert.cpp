@@ -26,7 +26,7 @@ namespace DCI {
    */
 
   Int Interface::vertstep () {
-    Vector dn (*env);
+//    Vector dn (*env);
     Int fail = 0;
     Int oldAcnt = 1;
     Real oldnormc, dnnorm;
@@ -97,13 +97,6 @@ namespace DCI {
 
     CurrentTime = getTime() - StartTime;
     while ( (normc > rho) && (nRest <= maxrest) && (VertFlag == 0) && (CurrentTime < MaxTime) ) {
-
-//      if (!lincon) {
-//        call_ccfsg_xc (dciTrue, scaleJ);
-//        this->cholesky_J ();
-//      }
-
-      full(*J).print_more ();
 
       while ( (normc > rho) && (nRest <= maxrest) && (VertFlag == 0) && (CurrentTime < MaxTime) ) {
         

@@ -163,9 +163,50 @@ namespace DCI {
           normd = DeltaV;
           iout = 3;
         } else {
-          // NEED IMPROVMENT
           d.scale (dcp, 1);
           normd = ndcp;
+          /*dn.scale (dnAlphamu);
+          ndn *= dnAlphamu;
+          Real dntdcp = dcp.dot(dn);
+          Real nwsqr = ndcp*ndcp,
+               wtv = dntdcp - nwsqr,
+               nvsqr = ndn*ndn - 2*dntdcp + nwsqr;
+          alpha = (-wtv + sqrt(wtv*wtv - nvsqr*(nwsqr - DeltaV*DeltaV)))/nvsqr;
+          d.scale (dn, alpha);
+          dx = d.get_doublex();
+          alpha = 1 - alpha;
+          for (Int i = 0; i < nvar + nconI; i++)
+            dx[i] += alpha * dcpx[i];
+
+          Real dAlphamu = 1;
+          for (Int i = 0; i < nvar; i++) {
+            Real xi = xcx[i], di = dx[i], bli = blx[i], bui = bux[i];
+            if (di == 0)
+              continue;
+            if (di < 0) {
+              Real val = (bli - xi)*(1 - epsmu)/di;
+                dAlphamu = Min (dAlphamu, val);
+            } else {
+              Real val = (bui - xi)*(1 - epsmu)/di;
+                dAlphamu = Min (dAlphamu, val);
+            }
+          }
+          for (Int i = 0; i < nconI; i++) {
+            Real si = scx[i], di = dx[nvar + i], cli = clx[ineqIdx[i]], cui = cux[ineqIdx[i]];
+            if (di == 0)
+              continue;
+            if (di < 0) {
+              Real val = (cli - si)*(1 - epsmu)/di;
+                dAlphamu = Min (dAlphamu, val);
+            } else {
+              Real val = (cui - si)*(1 - epsmu)/di;
+                dAlphamu = Min (dAlphamu, val);
+            }
+          }
+
+          d.scale (dAlphamu);
+          normd = dAlphamu*DeltaV;
+          */
           iout = 11;
         }
       } else if ( (ndcp >= DeltaV) && (dcpAlphamu == 1) ) {

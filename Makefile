@@ -38,6 +38,9 @@ eqtests: library
 unctests: library
 	(cd Tests; make unctests)
 
+infeastests: library
+	(cd Tests; make infeastests)
+
 clean:
 	(cd Lib; make clean )
 	(cd Tests; make clean )

@@ -43,6 +43,7 @@ int MAINENTRY () {
     dci.set_cprod (CPROD);
     dci.set_cfn (CFN);
     dci.set_ccfsg (CCFSG);
+    dci.set_ccifg (CCIFG);
     dci.set_cnames (CNAMES);
 
     dci.set_lambda (ncon, y);

@@ -1,0 +1,5 @@
+- Restoration failing
+- Improve horizontal step with bfgs
+- Partial Penalization 
+  - off: fails problem test12
+  - on:  fails problem test10

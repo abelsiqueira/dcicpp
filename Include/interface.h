@@ -54,6 +54,7 @@ namespace DCI {
       void set_cofg (pcofg p) { cofg = p; };
       void set_ccfsg (pccfsg p) { ccfsg = p; };
       void set_cprod (pcprod p) { cprod = p; };
+      void set_ccifg (pccifg p) { ccifg = p; };
       void set_cnames (pcnames p) { cnames = p; };
 
     protected:
@@ -68,6 +69,7 @@ namespace DCI {
       pcofg    cofg;    // f and g
       pcfn     cfn;     // f and c
       pccfsg   ccfsg;   // c and J
+      pccifg   ccifg;   // c(i) and J(i,*)'
       pcprod   cprod;   // H(L)*p
       pcnames  cnames;  // CNAMES
 
@@ -116,6 +118,7 @@ namespace DCI {
       Real calc_pen ();
       Real calc_pen_xc ();
       Real penvthv (const Vector &) const;
+      Bool calc_feasibilityOpt ();
       void LstSqrCG (Bool, const Vector &, Vector &, Vector &);
       void LinSysCG (Bool, const Vector &, Vector &);
       void assert (Bool);
@@ -140,6 +143,7 @@ namespace DCI {
       Vector * sols;
       Bool * equatn, * linear;
       Vector * xc, *sc;
+      Vector * feasOpt;
 
       pReal xx, blx, bux;
       pReal yx, clx, cux;
@@ -201,6 +205,7 @@ namespace DCI {
       Bool Aavail, gavail, lincon, LimLbd, FreshA;
       Real minBk;
       Bool UseCG;
+      Bool PartialPenal;
       Real cholCorrection;
 
   };
