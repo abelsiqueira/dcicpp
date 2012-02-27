@@ -64,3 +64,41 @@ $ make all
 If needed, edit make.inc and do
 
 $ make all
+
+- CUTEr (for testing and comparing)
+
+Download CUTEr using svn
+
+$ svn co https://magi-trac-svn.mathappl.polymtl.ca/SVN/cuter/sifdef/branches/SifDec2 ./sifdec2
+$ svn co https://magi-trac-svn.mathappl.polymtl.ca/SVN/cuter/cuter/branches/CUTEr2 ./cuter2
+
+Download SIF problems
+
+$ wget ftp://ftp.numerical.rl.ac.uk/pub/cuter/mastsif_small.tar.gz
+$ wget ftp://ftp.numerical.rl.ac.uk/pub/cuter/mastsif_large.tar.gz
+
+Uncompress the file
+
+$ tar -zxf mastsif_small.tar.gz
+$ tar -zxf mastsif_large.tar.gz
+
+We need to add some lines to $HOME/.bashrc
+We will use the following options with CUTEr, if you need to change them, then the lines could change too. 
+  - PC
+  - Linux
+  - gfortran
+  - gnu g++
+  - double
+  - large
+ 
+In file $HOME/.bashrc, add
+
+ROOTCUTER="$HOME/Libraries/CUTEr"
+
+export CUTER="$ROOTCUTER/cuter2"
+export MYCUTER="$CUTER/CUTEr.large.pc.lnx.gfo"
+export SIFDEC="$ROOTCUTER/sifdec2"
+export MYSIFDEC="$SIFDEC/SifDec.large.pc.lnx.gfo"
+export MASTSIF="$ROOTCUTER/mastsif"
+export MANPATH="$CUTER/common/man:$SIFDEC/common/man:$MANPATH"
+export PATH="MYCUTER/bin:$MYSIFDEC/bin:$PATH"
