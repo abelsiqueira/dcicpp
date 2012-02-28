@@ -1,0 +1,16 @@
+in your $ROOTCUTER directory, create a folder test
+
+$ cd $ROOTCUTER
+$ mkdir test
+$ cd test
+
+With dcicpp compiled for CUTEr, you must use the command
+
+$ runcppcuter -p dcicpp -D <problem_name>
+
+where <problem_name> must be substituded for one problem in the $MASTSIF directory, without the .SIF
+For example, to run dcicpp with the HS35.SIF problem, enter
+
+$ runcppcuter -p dcicpp -D HS35
+
+Obs.: runcppcuter is a modification of the runcuter routine to work with C++

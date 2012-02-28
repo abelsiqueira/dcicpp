@@ -21,4 +21,4 @@ purge: clean
 	$(RM) $(DCILIBNAME)
 
 %.o: ../Src/%.cpp 
-	$(CXX) -c -o $@ $< $(DCII) $(CXXFLAGS)
+	$(CXX) -c -o $@ $< $(CXXFLAGS)
