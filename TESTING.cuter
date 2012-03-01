@@ -1,8 +1,4 @@
-in your $ROOTCUTER directory, create a folder test
-
-$ cd $ROOTCUTER
-$ mkdir test
-$ cd test
+inside dcicpp, there is a directory called CuterTest. Run the tests inside that directory
 
 With dcicpp compiled for CUTEr, you must use the command
 

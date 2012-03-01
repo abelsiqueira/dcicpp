@@ -11,11 +11,10 @@ all: dcicppmain.o
 	$(MV) dcicppmain.o $(MYCUTER)/double/bin/dcicppma.o
 	$(CP) runcppcuter $(MYCUTER)/bin/
 	$(CP) rungdbcuter $(MYCUTER)/bin/
-	$(CP) $(METIS) $(MYCUTER)/double/lib/
-	$(CP) $(GOTODIR)/libgoto2.a $(MYCUTER)/double/lib/
-	$(CP) $(GOTODIR)/libgoto2.so $(MYCUTER)/double/lib/
-	$(CP) -t $(MYCUTER)/double/lib/ $(CHOLMODLIB)
-	$(CP) $(BMLIB) $(MYCUTER)/double/lib/
+	#$(CP) $(GOTOBLASDIR)/libgoto2.a $(MYCUTER)/double/lib/
+	#$(CP) $(GOTOBLASDIR)/libgoto2.so $(MYCUTER)/double/lib/
+	#$(CP) -t $(MYCUTER)/double/lib/ $(CHOLMODLIB)
+	#$(CP) $(BMLIB)/libbasematrices.a $(MYCUTER)/double/lib/
 
 %.o: %.cpp
 	$(CXX) -c -o $@ $< $(DCII) $(CXXFLAGS) -I$(CUTER)/common/include

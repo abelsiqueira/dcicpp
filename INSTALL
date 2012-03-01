@@ -2,7 +2,10 @@ To install dcicpp:
 
 Download everything here in the same place. We used the folder Libraries in the home folder. You can add a variable in your bashrc to this place or add the library path manually.
 
+-------------------------------------------------
+-------------------------------------------------
 - base_matrices
+git clone git@github.com:abelsiqueira/base_matrices.git
 
 - CHOLMOD (e outras do Tim Davis) AMD
 http://www.cise.ufl.edu/research/sparse/cholmod/current/CHOLMOD.tar.gz
@@ -14,20 +17,15 @@ http://www.cise.ufl.edu/research/sparse/UFconfig/current/UFconfig.tar.gz
 
 - Metis
 http://glaros.dtc.umn.edu/gkhome/fetch/sw/metis/metis-5.0.2.tar.gz
-If compiling for 32 bits (for the dcicpp testing with CUTEr), you will need to add -m32 to the compiler. Edit the file 
-
-GKlib/GKlibSystem.cmake
-
-and add -m32 to the line 31. It should become
-
-set(GKlib_COPTIONS "{GKlib_COPTIONS} -m32 -std=c99 -fno-strict-aliasing")
 
 - Goto BLAS
 Go to the site
 http://www.tacc.utexas.edu/tacc-projects/gotoblas2
 and download
 
+-------------------------------------------------
 Uncompres everything. Install everything in 32 bits.
+-------------------------------------------------
 INSTALL Goto BLAS First:
 
 $ make BINARY=32
@@ -36,41 +34,54 @@ if needed use TARGET option too. We needed to set to CORE2, because our processo
 
 $ make BINARY=32 TARGET=CORE2
 
+-------------------------------------------------
 INSTALL Metis:
+
+If compiling for 32 bits (for the dcicpp testing with CUTEr), you will need to add -m32 to the compiler. Edit the file 
+
+GKlib/GKlibSystem.cmake
+
+and add -m32 to the line 31. It should become
+
+set(GKlib_COPTIONS "{GKlib_COPTIONS} -m32 -std=c99 -fno-strict-aliasing")
 
 $ make config
 $ make
 # make install
 
+-------------------------------------------------
 INSTALL CHOLMOD and dependencies
 
 Edit UFconfig/UFconfig.mk
-- Add -m32 to CFLAGS and F77FLAGS
+- Add -m32 to CF and F77FLAGS
 
 - Comment lines
     BLAS = -lblas -lgfortran
     LAPACK = -llapack
 
 - Add line
-    BLAS = $(HOME)/Libraries/GotoBLAS2/libgoto2.a $(HOME)/Libraries/GotoBLAS2/libgoto2.so -lgfortran -lgfortranbegin
+    BLAS = -L$(HOME)/Libraries/GotoBLAS2/ -lgoto2 -lgfortran -lgfortranbegin
 
 - Edit the variables METIS_PATH and METIS to reflect your configurations. In our case
-    METIS_PATH = $(HOME)/Libraries/metis
-    METIS = $(METIS_PATH)/libmetis.a
+    METIS_PATH = $(HOME)/Libraries/metis-5.0.2
+    METIS = /usr/local/lib/libmetis.a
 
-Go to each folder AMD, CAMD, COLAMD, CCOLAMD and CHOLMOD (this must be last) and do
+Go to CHOLMOD directory and type
 
 $ make all
 
+-------------------------------------------------
 - base_matrices
 
 add the following lines, editing to reflect your configuration, to the file $HOME/.bashrc
+These lines are in the file addtobash.rc
 
+-------------------------------------------------
 export GOTOBLASDIR="$HOME/Libraries/GotoBLAS2"
 export GOTOBLASLIBS="$GOTOBLASDIR/libgoto2.a $GOTOBLASDIR/libgoto2.so -lgfortran -lgfortranbegin"
 
 LIBSDIR="$HOME/Libraries"
-METISDIR="${LIBSDIR}/metis"
+METISDIR="${LIBSDIR}/metis-5.0.2"
 TIMDAVISDIR="${LIBSDIR}"
 CHOLMODDIR="$TIMDAVISDIR/CHOLMOD"
 AMDDIR="$TIMDAVISDIR/AMD"
@@ -93,12 +104,15 @@ BMI="$BMDIR/Include"
 CUTERI="$CUTER/common/include"
 DCICPPI="$DCICPPDIR/Include"
 
-export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$TIMDAVISLIB:$METISLIB:$BMLIB:$CUTERLIB:$GOTOBLASDIR:$DCICPPLIB"
-export LIBRARY_PATH="$LD_LIBRARY_PATH:$TIMDAVISLIB:$METISLIB:$BMLIB:$CUTERLIB:$GOTOBLASDIR:$DCICPPLIB"
-export LIBPATH="$LD_LIBRARY_PATH:$TIMDAVISLIB:$METISLIB:$BMLIB:$CUTERLIB:$GOTOBLASDIR:$DCICPPLIB"
+export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/usr/local/lib:$TIMDAVISLIB:$METISLIB:$BMLIB:$CUTERLIB:$GOTOBLASDIR:$DCICPPLIB"
+export LIBRARY_PATH="$LIBRARY_PATH:/usr/local/lib:$TIMDAVISLIB:$METISLIB:$BMLIB:$CUTERLIB:$GOTOBLASDIR:$DCICPPLIB"
+export LIBPATH="$LIBPATH:/usr/local/lib:$TIMDAVISLIB:$METISLIB:$BMLIB:$CUTERLIB:$GOTOBLASDIR:$DCICPPLIB"
 export CPLUS_INCLUDE_PATH="$CPLUS_INCLUDE_PATH:$TIMDAVISI:$METISI:$BMI:$CUTERI:$DCICPPI"
-export C_INCLUDE_PATH="$CPLUS_INCLUDE_PATH:$TIMDAVISI:$METISI:$BMI:$CUTERI:$DCICPPI"
-export INCLUDE_PATH="$CPLUS_INCLUDE_PATH:$TIMDAVISI:$METISI:$BMI:$CUTERI:$DCICPPI"
+export C_INCLUDE_PATH="$C_INCLUDE_PATH:$TIMDAVISI:$METISI:$BMI:$CUTERI:$DCICPPI"
+export INCLUDE_PATH="$INCLUDE_PATH:$TIMDAVISI:$METISI:$BMI:$CUTERI:$DCICPPI"
+-------------------------------------------------
+Remove the CUTER parts, if you do not intend to use CUTEr.
+
 Open a new terminal or use the command
 $ source $HOME/.bashrc
 
@@ -106,12 +120,14 @@ If needed, edit make.inc and do
 
 $ make all
 
+-------------------------------------------------
 - dcicpp
 
 If needed, edit make.inc and do
 
 $ make all
 
+-------------------------------------------------
 - CUTEr (for testing and comparing)
 
 Download CUTEr using svn
@@ -124,7 +140,7 @@ Download SIF problems
 $ wget ftp://ftp.numerical.rl.ac.uk/pub/cuter/mastsif_small.tar.gz
 $ wget ftp://ftp.numerical.rl.ac.uk/pub/cuter/mastsif_large.tar.gz
 
-Uncompress the file
+Uncompress the files
 
 $ tar -zxf mastsif_small.tar.gz
 $ tar -zxf mastsif_large.tar.gz
@@ -138,9 +154,10 @@ We will use the following options with CUTEr, if you need to change them, then t
   - double
   - large
  
-In file $HOME/.bashrc, add
+In file $HOME/.bashrc, add BEFORE the last part
 
-ROOTCUTER="$HOME/Libraries/CUTEr"
+-------------------------------------------------
+ROOTCUTER="$HOME/Libraries"
 
 export CUTER="$ROOTCUTER/cuter2"
 export MYCUTER="$CUTER/CUTEr.large.pc.lnx.gfo"
@@ -148,13 +165,56 @@ export SIFDEC="$ROOTCUTER/sifdec2"
 export MYSIFDEC="$SIFDEC/SifDec.large.pc.lnx.gfo"
 export MASTSIF="$ROOTCUTER/mastsif"
 export MANPATH="$CUTER/common/man:$SIFDEC/common/man:$MANPATH"
-export PATH="MYCUTER/bin:$MYSIFDEC/bin:$PATH"
-
-
+export PATH="$MYCUTER/bin:$MYSIFDEC/bin:$PATH"
+-------------------------------------------------
 Open a new terminal or use the command
 $ source $HOME/.bashrc
+
+Now, go to sifdec2 directory and edit the file config/linux.cf
+Search for Isxxx, where xxx reflects your choice of fortran compiler. In your case, we searched for Isgfo. Then, add -m32 to FortranFlags.
+Also, edit the file config/all.cf
+Search for Isgpp and add -m32 to CFlags
+-------------------------------------------------
+*** In the latest version, you must edit the file config/Umake.tmpl, line 46, and fix FFLAGS (missing S).***
+-------------------------------------------------
+
+Back in the sifdec2 directory, enter
+
+$ ./install_sifdec
+
+When asked if you want to run install_mysifdec, press enter (if you modified .bashrc, otherwise, do it now, as proposed by the installer).
+When asked if you want to 'make all', press enter (unless same as above)
+
+-------------------------------------------------
+Go to cuter2 directory and edit the file config/linux.cf
+Repeat the procedure above to add -m32 to the fortran compiler.
+Now edit the file in cuter2/config/all.cf
+Repeat the procedure above to add -m32 to the c compiler. 
+Now open the file config/Umake.tmpl, find the line 43 with
+
+CFLAGS     = CFlags
+
+and add below it the line
+
+CXXFLAGS   = CFlags
+
+Now go to the file $CUTER/common/include/cuter.h
+There, change the definition os integer and logical to long int, i.e.
+typedef long int integer
+typedef long int logical
+
+Finally, go to the cuter2 directory and enter
+
+$ ./install_cuter
+
+and follow the same instruction as above.
+-------------------------------------------------
+Create a directory and test cuter with the command
+$ runcuter -p gen -D ROSENBR
 
 Now, compile dcicpp for cuter. In the dcicpp folder, enter
 $ make cuter
 
-See TESTING.cuter to proceed with testing
+-------------------------------------------------
+See TESTING.cuter to proceed with testing dcicpp with CUTEr
+

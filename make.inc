@@ -3,14 +3,13 @@
 
 CXX = g++
 
-#DCILONG = -DDLONG
-#DCILONG =
+DCILONG = -DDLONG
 #DCIVERBOSE = -DVERBOSE
 DCIVERBOSE =
 #ASSERT = -DNDEBUG
 ASSERT =
 
-CXXFLAGS = -Werror -Wextra -ggdb $(DCIVERBOSE) $(ASSERT) -m32 
+CXXFLAGS = -Werror -Wextra -ggdb $(DCIVERBOSE) $(ASSERT) -m32 $(DCILONG)
 
 RM = rm -f
 CP = cp -f

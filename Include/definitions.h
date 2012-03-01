@@ -5,8 +5,13 @@
 
 namespace DCI {
 
+#ifdef LONG
   typedef long int   Int;
   typedef long int   Bool;
+#else
+  typedef long int   Int;
+  typedef long int   Bool;
+#endif
 
   typedef double     Real;
   typedef Int *      pInt;
