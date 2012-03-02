@@ -9,7 +9,7 @@ DCIVERBOSE =
 #ASSERT = -DNDEBUG
 ASSERT =
 
-CXXFLAGS = -Werror -Wextra -ggdb $(DCIVERBOSE) $(ASSERT) -m32 $(DCILONG)
+CXXFLAGS = -Werror -Wextra -ggdb $(DCIVERBOSE) $(ASSERT) $(DCILONG) -m32
 
 RM = rm -f
 CP = cp -f

@@ -133,7 +133,7 @@ $ make all
 Download CUTEr using svn
 
 $ svn co https://magi-trac-svn.mathappl.polymtl.ca/SVN/cuter/sifdef/branches/SifDec2 ./sifdec2
-$ svn co https://magi-trac-svn.mathappl.polymtl.ca/SVN/cuter/cuter/branches/CUTEr2 ./cuter2
+$ svn co https://magi-trac-svn.mathappl.polymtl.ca/SVN/cuter/cuter/branches/CUTEr64 ./cuter2
 
 Download SIF problems
 
@@ -174,8 +174,6 @@ Now, go to sifdec2 directory and edit the file config/linux.cf
 Search for Isxxx, where xxx reflects your choice of fortran compiler. In your case, we searched for Isgfo. Then, add -m32 to FortranFlags.
 Also, edit the file config/all.cf
 Search for Isgpp and add -m32 to CFlags
--------------------------------------------------
-*** In the latest version, you must edit the file config/Umake.tmpl, line 46, and fix FFLAGS (missing S).***
 -------------------------------------------------
 
 Back in the sifdec2 directory, enter
