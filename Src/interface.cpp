@@ -851,15 +851,7 @@ namespace DCI {
   void Interface::cholesky_J () {
     if (LJ == 0)
       std::cerr << "analyze should be called first" << std::endl;
-    LJ->factorize (*J, cholCorrection);
-    while (!env->IsPosDef ()) {
-      if (cholCorrection == 0)
-        cholCorrection = 1;
-      else
-        cholCorrection *= 10;
-      LJ->factorize (*J, cholCorrection);
-    }
-    cholCorrection /= 2;
+    LJ->factorize (*J);
   }
 
   Real Interface::getTime () {
