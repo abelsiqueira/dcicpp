@@ -85,8 +85,8 @@ namespace DCI {
     Solved = dciFalse;
     Unbounded = dciFalse;
     UseCG = dciFalse;
-//    PartialPenal = dciFalse;
-    PartialPenal = dciTrue;
+    PartialPenal = dciFalse;
+//    PartialPenal = dciTrue;
     cholCorrection = 0;
     DisplayLevel = 1;
     env = new Environment;
@@ -360,7 +360,8 @@ namespace DCI {
          << ncon << " & "
          << iter << " & "
          << CurrentTime << " & "
-         << ((ncon > 0) ? "con" : "unc") << "\\\\ \\hline\n";
+         << ((ncon > 0) ? "con" : "unc") << " & "
+         << ((tbfgs > 0) ? "bfgs" : "") << "\\\\ \\hline\n";
 
     file.close ();
   }

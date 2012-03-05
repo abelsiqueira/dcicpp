@@ -50,7 +50,7 @@ localtest: $(LOCALTEST)
 library:
 	( cd ..;  make library )
 
-gdb: test9.tst
+gdb: test12.tst
 	$(GDB) ./$<
 
 %.tst: %.o

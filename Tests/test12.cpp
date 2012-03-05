@@ -32,7 +32,7 @@ void COFG (Int * n, Real * x, Real * f, Real * g, Bool * grad) {
   Real x1 = x[0];
   *f = -x1;
   if (*grad == dciTrue) {
-    g[0] = -x1;
+    g[0] = -1;
     g[1] = 0;
     g[2] = 0;
   }
@@ -42,7 +42,7 @@ void CPROD (Int * n, Int * m, Bool * getder, Real * x, Int * mmax, Real * y, Rea
   if ( (*n != 3) || (*m != 2) || (*mmax < *m) )
     return;
   Real x1 = x[0], x2 = x[1];
-  Real y1 = y[0], y2 = y[2];
+  Real y1 = y[0], y2 = y[1];
   q[0] = - y1 * exp(x1) * p[0];
   q[1] = - y2 * exp(x2) * p[1];
   q[2] = 0;
@@ -91,6 +91,7 @@ int main () {
   x[0] = 0;
   x[1] = 1.05;
   x[2] = 2.9;
+
   y[0] = 0;
   y[1] = 0;
 
