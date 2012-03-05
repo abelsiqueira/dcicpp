@@ -1,0 +1,11 @@
+   4 latex_assert_con
+   0 latex_assert_unc
+  87 latex_convergence_con
+  10 latex_convergence_unc
+   9 latex_maxiter_con
+   0 latex_maxiter_unc
+   6 latex_maxrest_con
+   0 latex_maxrest_unc
+  11 latex_rhomax_con
+   0 latex_rhomax_unc
+ 127 total
