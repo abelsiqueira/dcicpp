@@ -49,6 +49,7 @@ namespace DCI {
     scale_xc (dcp);
     ndcp = dcp.norm();
 
+
     dnavail = dciFalse;
     ndn = 0;
     Ared = 0;
@@ -72,10 +73,14 @@ namespace DCI {
         continue;
       if (dcpi < 0) {
         Real val = (bli - xi)*(1 - epsmu)/dcpi;
-          dcpAlphamu = Min (dcpAlphamu, val);
+        if (val < 1)
+          dcpx[i] *= val;
+//        dcpAlphamu = Min (dcpAlphamu, val);
       } else {
         Real val = (bui - xi)*(1 - epsmu)/dcpi;
-          dcpAlphamu = Min (dcpAlphamu, val);
+        if (val < 1)
+          dcpx[i] *= val;
+//        dcpAlphamu = Min (dcpAlphamu, val);
       }
     }
     for (Int i = 0; i < nconI; i++) {
@@ -85,10 +90,14 @@ namespace DCI {
         continue;
       if (dcpi < 0) {
         Real val = (cli - si)*(1 - epsmu)/dcpi;
-          dcpAlphamu = Min (dcpAlphamu, val);
+        if (val < 1)
+          dcpx[j] *= val;
+//          dcpAlphamu = Min (dcpAlphamu, val);
       } else {
         Real val = (cui - si)*(1 - epsmu)/dcpi;
-          dcpAlphamu = Min (dcpAlphamu, val);
+        if (val < 1)
+          dcpx[j] *= val;
+//          dcpAlphamu = Min (dcpAlphamu, val);
       }
     }
 

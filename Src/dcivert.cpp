@@ -128,7 +128,6 @@ namespace DCI {
 
         if (normc > phi2*oldnormc) {
           fail = fail + 1;
-//          fail = 0;
         } else
           fail = 0;
 
