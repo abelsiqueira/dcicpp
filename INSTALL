@@ -133,7 +133,7 @@ $ make all
 Download CUTEr using svn
 
 $ svn co https://magi-trac-svn.mathappl.polymtl.ca/SVN/cuter/sifdef/branches/SifDec2 ./sifdec2
-$ svn co https://magi-trac-svn.mathappl.polymtl.ca/SVN/cuter/cuter/branches/CUTEr64 ./cuter2
+$ svn co https://magi-trac-svn.mathappl.polymtl.ca/SVN/cuter/cuter/branches/cuter64 ./cuter2
 
 Download SIF problems
 

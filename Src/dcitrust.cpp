@@ -39,6 +39,7 @@ namespace DCI {
     if (normgtmp < dciTiny) {
       normc = oldnormc;
       iout = 6;
+//      std::cout << "iout = 6" << std::endl;
       return iout;
     }
     d.sdmult (*J, 0, one, zero, gtmp);
@@ -125,10 +126,10 @@ namespace DCI {
               continue;
             if (dni < 0) {
               Real val = (bli - xi)*(1 - epsmu)/dni;
-                dnAlphamu = Min (dnAlphamu, val);
+              dnAlphamu = Min (dnAlphamu, val);
             } else {
               Real val = (bui - xi)*(1 - epsmu)/dni;
-                dnAlphamu = Min (dnAlphamu, val);
+              dnAlphamu = Min (dnAlphamu, val);
             }
           }
           for (Int i = 0; i < nconI; i++) {
@@ -137,10 +138,10 @@ namespace DCI {
               continue;
             if (dni < 0) {
               Real val = (cli - si)*(1 - epsmu)/dni;
-                dnAlphamu = Min (dnAlphamu, val);
+              dnAlphamu = Min (dnAlphamu, val);
             } else {
               Real val = (cui - si)*(1 - epsmu)/dni;
-                dnAlphamu = Min (dnAlphamu, val);
+              dnAlphamu = Min (dnAlphamu, val);
             }
           }
         }
@@ -214,8 +215,8 @@ namespace DCI {
           }
 
           d.scale (dAlphamu);
-          normd = dAlphamu*DeltaV;
-          */
+          normd = dAlphamu*DeltaV;*/
+          
           iout = 11;
         }
       } else if ( (ndcp >= DeltaV) && (dcpAlphamu == 1) ) {
@@ -225,6 +226,7 @@ namespace DCI {
       } else if ( (ndcp < DeltaV) && (dcpAlphamu < 1) ) {
         d.scale (dcp, dcpAlphamu);
         normd = ndcp*dcpAlphamu;
+        iout = 14;
       } else {
         d.scale (dcp, Min(dcpAlphamu, DeltaV/ndcp) );
         normd = Min (DeltaV, ndcp*dcpAlphamu);
@@ -269,6 +271,7 @@ namespace DCI {
     } else if (Ared >= kappa3*Pred)
       DeltaV = Max (kappa4*normd, DeltaV);
 
+//    std::cout << "iout = " << iout << std::endl;
     return iout;
 
   }
