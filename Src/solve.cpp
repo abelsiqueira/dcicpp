@@ -64,6 +64,7 @@ namespace DCI {
 
     while ( ( (cnormi > csic) || ( (normgp > csig) && (ngp > csig*1e-2) ) || (mu > epsmu) || (gap > epsgap) || (ydif > 1e-6) ) && (iter <= maxit) && (tRest <= maxrest) && (itssmll <= maxssmll) && (VertFlag == 0) && (rhomax >= rhomin) && (!Unbounded) && (CurrentTime < MaxTime) ) {
 
+      calc_ydif ();
       iter++;
 
       //Check for infactibility

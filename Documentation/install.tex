@@ -1,0 +1,244 @@
+\documentclass[letterpaper,11pt]{article}
+\usepackage[brazil]{babel}
+\usepackage[T1]{fontenc}
+\usepackage{ae}
+\usepackage[utf8]{inputenc}
+\usepackage[dvipsnames]{color}
+\usepackage{graphicx}
+\usepackage{epsfig}
+\usepackage{dci}
+\usepackage{amssymb, amsmath, amsfonts}
+\bibliographystyle{plain}
+\topmargin		0 cm
+\hoffset		0 cm
+\voffset		0 cm
+\evensidemargin		0 cm
+\oddsidemargin		0 cm
+\setlength{\textwidth}{18 cm}
+\setlength{\textheight}{21 cm}
+
+\numberwithin{equation}{section}
+
+\title{Install Instructions for {\tt dcicpp}, the algorithm for the Dynamic Control of Infeasibility method}
+\author{Abel Soares Siqueira \\ Advisor: Francisco A. M. Gomes}
+
+% \newcommand{\visiblelbl}[1]{\label{#1}{\color{red}{#1}}}
+\newcommand{\visiblelbl}[1]{\label{#1}}
+
+\newcommand{\makesec}[1]{\section[#1]{#1}}
+\newcommand{\makesubsec}[1]{\subsection[#1]{#1}}
+\newcommand{\sepline}{\line(1,0){200}}
+
+\begin{document}
+ \maketitle
+
+{\it Obs. 1: This is a provisory document.}
+
+{\it Obs. 2: This guide is for linux.}
+
+{\it Obs. 3: The file {\tt downall.sh} inside dcicpp will download all dependencies, except base\_matrices, Goto BLAS and CUTEr}
+
+{\it Obs. 4: The file {\tt downcuter.sh} inside dcicpp will download CUTEr}
+
+All the libraries were downloaded to the same folder in the home folder. For simplicity, we will assume the user do the same. Hence, the first thing to do will be create such folder.
+
+\begin{verbatim}
+$ mkdir $HOME/Libraries
+$ cd $HOME/Libraries
+\end{verbatim}
+
+\makesec{Obtaining}
+
+You will need many things to install dcicpp.
+\begin{enumerate}
+ \item The source for dcicpp itself
+\begin{verbatim}
+$ git clone git://github.com/abelsiqueira/dcicpp.git
+\end{verbatim}
+ \item base\_matrices
+\begin{verbatim}
+git clone git://github.com/abelsiqueira/base_matrices.git
+\end{verbatim}
+ \item CHOLMOD (e outras bibliotecas do Tim Davis)
+\begin{verbatim}
+http://www.cise.ufl.edu/research/sparse/cholmod/current/CHOLMOD.tar.gz
+http://www.cise.ufl.edu/research/sparse/amd/current/AMD.tar.gz
+http://www.cise.ufl.edu/research/sparse/camd/current/CAMD.tar.gz
+http://www.cise.ufl.edu/research/sparse/colamd/current/COLAMD.tar.gz
+http://www.cise.ufl.edu/research/sparse/ccolamd/current/CCOLAMD.tar.gz
+http://www.cise.ufl.edu/research/sparse/UFconfig/current/UFconfig.tar.gz
+\end{verbatim}
+ \item Metis
+\begin{verbatim}
+http://glaros.dtc.umn.edu/gkhome/fetch/sw/metis/metis-5.0.2.tar.gz
+\end{verbatim}
+ \item Goto BLAS. Download from the site
+\begin{verbatim}
+http://www.tacc.utexas.edu/tacc-projects/gotoblas2
+\end{verbatim}
+\end{enumerate}
+
+Uncompress everything. And get ready to start installing. {\bf Note: we will install everything in 32 bits}.
+
+\makesec{Installing}
+
+\begin{enumerate}
+ \item {\bf Goto BLAS} The following command will install Goto BLAS with 32 bits.
+\begin{verbatim}
+$ make BINARY=32
+\end{verbatim}
+If needed, use TARGET option too. We needed to set to CORE2, because our processor was not supported.
+\begin{verbatim}
+$ make BINARY=32 TARGET=CORE2
+\end{verbatim}
+ \item {\bf Metis} You will need to add \verb+-m32+ to the compiler. Edit the file \verb+GKlib/GKlibSystem.cmake+ and add \verb+-m32+ to the line 31. It shoul become
+\begin{verbatim}
+set(GKlib_COPTIONS "{GKlib_COPTIONS} -m32 -std=c99 -fno-strict-aliasing")
+\end{verbatim}
+Then, enter the commands (\verb+#+ means root access)
+\begin{verbatim}
+$ make config
+$ make
+# make install
+\end{verbatim}
+ \item {\bf CHOLMOD} Edit \verb+UFconfig/UFconfig.mk+:
+  \begin{itemize}
+   \item Add \verb+-m32+ to \verb+CF+ and \verb+F77FLAGS+
+   \item Comment out lines
+\begin{verbatim}
+BLAS = -lblas -lgfortran
+LAPACK = -llapack
+\end{verbatim}
+   \item Add line
+\begin{verbatim}
+BLAS = -L$(HOME)/Libraries/GotoBLAS2/ -lgoto2 -lgfortran -lgfortranbegin 
+\end{verbatim}
+  \item Edit the variable \verb+METIS_PATH+ and \verb+METIS+ to reflect your configurations. In our case
+    \begin{verbatim} 
+METIS_PATH = $(HOME)/Libraries/metis-5.0.2
+METIS = /usr/local/lib/libmetis.a
+    \end{verbatim}
+  \end{itemize}
+  Now, go to the folder CHOLMOD and enter
+\begin{verbatim}
+$ make all
+\end{verbatim}
+ \item {\bf base\_matrices} add the lines from the file in the \verb+addtobash.rc+ to your configuration file 
+
+\verb+$HOME/.bashrc+
+
+{\bf Remove the CUTER parts, if you do not intend to use CUTEr. }
+
+Open a new terminal or use the command
+\begin{verbatim}
+$ source $HOME/.bashrc
+\end{verbatim}
+If needed, edit \verb+make.inc+ and enter
+\begin{verbatim}
+$ make all
+\end{verbatim}
+   \item {\bf dcicpp} If needed, edit \verb+make.inc+ and enter
+\begin{verbatim}
+$ make all
+\end{verbatim}
+\end{enumerate}
+
+Your installation is now complete. You can test and compare this algorithm with CUTEr. To do so, proceed to the next section.
+
+\makesec{CUTEr}
+First, download CUTEr using svn
+\small
+\begin{verbatim}
+$ svn co https://magi-trac-svn.mathappl.polymtl.ca/SVN/cuter/sifdef/branches/SifDec2 ./sifdec2
+$ svn co https://magi-trac-svn.mathappl.polymtl.ca/SVN/cuter/cuter/branches/CUTEr2 ./cuter2
+\end{verbatim}
+\normalsize
+Now download the SIF problems
+\begin{verbatim}
+$ wget ftp://ftp.numerical.rl.ac.uk/pub/cuter/mastsif_small.tar.gz
+$ wget ftp://ftp.numerical.rl.ac.uk/pub/cuter/mastsif_large.tar.gz
+\end{verbatim}
+Uncompress all files
+\begin{verbatim}
+$ tar -zxf mastsif_small.tar.gz
+$ tar -zxf mastsif_large.tar.gz
+\end{verbatim}
+We need to add some lines to \verb+$HOME/.bashrc+ that depend on your configuration.
+We will use the following options with CUTEr, if you need to change them, then the lines could change too. 
+\begin{itemize}
+\item PC
+\item Linux
+\item gfortran
+\item gnu g++
+\item double
+\item large
+\end{itemize}
+
+In file \verb+$HOME/.bashrc+, add before the \verb+addtobash.rc+ file.
+\begin{verbatim}
+ROOTCUTER="$HOME/Libraries"
+
+export CUTER="$ROOTCUTER/cuter2"
+export MYCUTER="$CUTER/CUTEr.large.pc.lnx.gfo"
+export SIFDEC="$ROOTCUTER/sifdec2"
+export MYSIFDEC="$SIFDEC/SifDec.large.pc.lnx.gfo"
+export MASTSIF="$ROOTCUTER/mastsif"
+export MANPATH="$CUTER/common/man:$SIFDEC/common/man:$MANPATH"
+export PATH="$MYCUTER/bin:$MYSIFDEC/bin:$PATH"
+\end{verbatim}
+Open a new terminal or use the command
+\begin{verbatim}
+$ source $HOME/.bashrc
+\end{verbatim}
+Now, go to the sifdec2 folder and edit the file \verb+config/linux.cf+.
+
+Search for Isxxx, where xxx reflects your choice of fortran compiler. In your case, we used \verb+gfortran+, so we search for Isgfo. Then, add -m32 to \verb+FortranFlags+.
+Also, edit the file \verb+config/all.cf+
+Search for Isgpp and add -m32 to CFlags
+
+{\bf Note: In the latest version, you must edit the file config/Umake.tmpl, line 46, and fix FFLAGS (missing S). }
+
+Back in the sifdec2 directory, enter
+\begin{verbatim}
+$ ./install_sifdec
+\end{verbatim}
+
+When asked if you want to run \verb+install_mysifdec+, press enter (only if you already modified .bashrc, otherwise modify it now, as proposed by the installer).
+When asked if you want to \verb+make all+, press enter.
+
+Go to cuter2 directory and edit the file \verb+config/linux.cf+.
+Repeat the procedure above to add -m32 to the fortran compiler.
+Now edit the file in \verb+cuter2/config/all.cf+
+Repeat the procedure above to add -m32 to the \verb-C++- compiler.
+Now open the file \verb+config/Umake.tmpl+, find the line 43 with
+\begin{verbatim}
+CFLAGS     = CFlags
+\end{verbatim}
+and add below it the line
+\begin{verbatim}
+CXXFLAGS   = CFlags
+\end{verbatim}
+
+Now go to the file \verb+$CUTER/common/include/cuter.h+
+There, change the definition os integer and logical to long int, i.e.
+\begin{verbatim}
+typedef long int integer
+typedef long int logical
+\end{verbatim}
+Finally, go to the cuter2 directory and enter
+\begin{verbatim}
+$ ./install_cuter
+\end{verbatim}
+and follow the same instruction as above.
+
+Create a directory and test cuter with the command
+\begin{verbatim}
+$ runcuter -p gen -D ROSENBR
+\end{verbatim}
+Now, compile dcicpp for cuter. In the dcicpp folder, enter
+\begin{verbatim}
+$ make cuter
+\end{verbatim}
+See \verb+TESTING.cuter+ inside dcicpp to proceed with testing dcicpp with CUTEr
+
+\end{document}

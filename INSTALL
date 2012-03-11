@@ -5,7 +5,7 @@ Download everything here in the same place. We used the folder Libraries in the 
 -------------------------------------------------
 -------------------------------------------------
 - base_matrices
-git clone git@github.com:abelsiqueira/base_matrices.git
+git clone git://github.com/abelsiqueira/base_matrices.git
 
 - CHOLMOD (e outras do Tim Davis) AMD
 http://www.cise.ufl.edu/research/sparse/cholmod/current/CHOLMOD.tar.gz
@@ -133,7 +133,7 @@ $ make all
 Download CUTEr using svn
 
 $ svn co https://magi-trac-svn.mathappl.polymtl.ca/SVN/cuter/sifdef/branches/SifDec2 ./sifdec2
-$ svn co https://magi-trac-svn.mathappl.polymtl.ca/SVN/cuter/cuter/branches/CUTEr64 ./cuter2
+$ svn co https://magi-trac-svn.mathappl.polymtl.ca/SVN/cuter/cuter/branches/cuter64 ./cuter2
 
 Download SIF problems
 
