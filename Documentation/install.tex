@@ -111,7 +111,7 @@ LAPACK = -llapack
 \end{verbatim}
    \item Add line
 \begin{verbatim}
-BLAS = -L$(HOME)/Libraries/GotoBLAS2/ -lgoto2 -lgfortran -lgfortranbegin 
+BLAS = -L$(HOME)/Libraries/GotoBLAS2/ -lgoto2 -lgfortran -lgfortranbegin -lpthread
 \end{verbatim}
   \item Edit the variable \verb+METIS_PATH+ and \verb+METIS+ to reflect your configurations. In our case
     \begin{verbatim} 
@@ -149,8 +149,8 @@ Your installation is now complete. You can test and compare this algorithm with 
 First, download CUTEr using svn
 \small
 \begin{verbatim}
-$ svn co https://magi-trac-svn.mathappl.polymtl.ca/SVN/cuter/sifdef/branches/SifDec2 ./sifdec2
-$ svn co https://magi-trac-svn.mathappl.polymtl.ca/SVN/cuter/cuter/branches/CUTEr2 ./cuter2
+$ svn co https://magi-trac-svn.mathappl.polymtl.ca/SVN/cuter/sifdec/branches/SifDec2 ./sifdec2
+$ svn co https://magi-trac-svn.mathappl.polymtl.ca/SVN/cuter/cuter/branches/cuter64 ./cuter2
 \end{verbatim}
 \normalsize
 Now download the SIF problems
@@ -174,7 +174,7 @@ We will use the following options with CUTEr, if you need to change them, then t
 \item large
 \end{itemize}
 
-In file \verb+$HOME/.bashrc+, add before the \verb+addtobash.rc+ file.
+The following lines should be in your \verb+$HOME/.bashrc+. If you did not remove, they are in the \verb+addtobash.rc+ file.
 \begin{verbatim}
 ROOTCUTER="$HOME/Libraries"
 
@@ -196,8 +196,6 @@ Search for Isxxx, where xxx reflects your choice of fortran compiler. In your ca
 Also, edit the file \verb+config/all.cf+
 Search for Isgpp and add -m32 to CFlags
 
-{\bf Note: In the latest version, you must edit the file config/Umake.tmpl, line 46, and fix FFLAGS (missing S). }
-
 Back in the sifdec2 directory, enter
 \begin{verbatim}
 $ ./install_sifdec
@@ -210,14 +208,6 @@ Go to cuter2 directory and edit the file \verb+config/linux.cf+.
 Repeat the procedure above to add -m32 to the fortran compiler.
 Now edit the file in \verb+cuter2/config/all.cf+
 Repeat the procedure above to add -m32 to the \verb-C++- compiler.
-Now open the file \verb+config/Umake.tmpl+, find the line 43 with
-\begin{verbatim}
-CFLAGS     = CFlags
-\end{verbatim}
-and add below it the line
-\begin{verbatim}
-CXXFLAGS   = CFlags
-\end{verbatim}
 
 Now go to the file \verb+$CUTER/common/include/cuter.h+
 There, change the definition os integer and logical to long int, i.e.
