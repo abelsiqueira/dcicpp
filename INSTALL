@@ -5,7 +5,7 @@ Download everything here in the same place. We used the folder Libraries in the 
 -------------------------------------------------
 -------------------------------------------------
 - base_matrices
-git clone git@github.com:abelsiqueira/base_matrices.git
+git clone git://github.com/abelsiqueira/base_matrices.git
 
 - CHOLMOD (e outras do Tim Davis) AMD
 http://www.cise.ufl.edu/research/sparse/cholmod/current/CHOLMOD.tar.gz
@@ -60,7 +60,7 @@ Edit UFconfig/UFconfig.mk
     LAPACK = -llapack
 
 - Add line
-    BLAS = -L$(HOME)/Libraries/GotoBLAS2/ -lgoto2 -lgfortran -lgfortranbegin
+    BLAS = -L$(HOME)/Libraries/GotoBLAS2/ -lgoto2 -lgfortran -lgfortranbegin -lpthread
 
 - Edit the variables METIS_PATH and METIS to reflect your configurations. In our case
     METIS_PATH = $(HOME)/Libraries/metis-5.0.2
@@ -78,7 +78,7 @@ These lines are in the file addtobash.rc
 
 -------------------------------------------------
 export GOTOBLASDIR="$HOME/Libraries/GotoBLAS2"
-export GOTOBLASLIBS="$GOTOBLASDIR/libgoto2.a $GOTOBLASDIR/libgoto2.so -lgfortran -lgfortranbegin"
+export GOTOBLASLIBS="$GOTOBLASDIR/libgoto2.a $GOTOBLASDIR/libgoto2.so -lgfortran -lgfortranbegin -lpthread"
 
 LIBSDIR="$HOME/Libraries"
 METISDIR="${LIBSDIR}/metis-5.0.2"

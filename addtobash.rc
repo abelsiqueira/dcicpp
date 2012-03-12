@@ -1,5 +1,15 @@
+ROOTCUTER="$HOME/Libraries"
+
+export CUTER="$ROOTCUTER/cuter2"
+export MYCUTER="$CUTER/CUTEr.large.pc.lnx.gfo"
+export SIFDEC="$ROOTCUTER/sifdec2"
+export MYSIFDEC="$SIFDEC/SifDec.large.pc.lnx.gfo"
+export MASTSIF="$ROOTCUTER/mastsif"
+export MANPATH="$CUTER/common/man:$SIFDEC/common/man:$MANPATH"
+export PATH="$MYCUTER/bin:$MYSIFDEC/bin:$PATH"
+
 export GOTOBLASDIR="$HOME/Libraries/GotoBLAS2"
-export GOTOBLASLIBS="$GOTOBLASDIR/libgoto2.a $GOTOBLASDIR/libgoto2.so -lgfortran -lgfortranbegin"
+export GOTOBLASLIBS="$GOTOBLASDIR/libgoto2.a $GOTOBLASDIR/libgoto2.so -lgfortran -lgfortranbegin -lpthread"
 
 LIBSDIR="$HOME/Libraries"
 METISDIR="${LIBSDIR}/metis-5.0.2"
