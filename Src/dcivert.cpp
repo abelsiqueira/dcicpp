@@ -156,7 +156,7 @@ namespace DCI {
           }
 
         } else {
-          oldAcnt = oldAcnt + 1;
+          oldAcnt++;
           Aavail = dciFalse;
         }
 

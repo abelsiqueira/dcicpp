@@ -214,10 +214,14 @@ namespace DCI {
         continue;
       if (di < 0) {
         Real val = (bli - xi)*(1 - epsmu)/di;
-          maxStepS = Min (maxStepS, val);
+        if (val < 1)
+          dx[i] *= val/Diagx[i];
+//        maxStepS = Min (maxStepS, val);
       } else {
         Real val = (bui - xi)*(1 - epsmu)/di;
-          maxStepS = Min (maxStepS, val);
+        if (val < 1)
+          dx[i] *= val/Diagx[i];
+//        maxStepS = Min (maxStepS, val);
       }
     }
 
@@ -227,10 +231,14 @@ namespace DCI {
         continue;
       if (di < 0) {
         Real val = (cli - si)*(1 - epsmu)/di;
-          maxStepS = Min (maxStepS, val);
+        if (val < 1)
+          dx[nvar + i] *= val/Diagx[nvar + i];
+//          maxStepS = Min (maxStepS, val);
       } else {
         Real val = (cui - si)*(1 - epsmu)/di;
-          maxStepS = Min (maxStepS, val);
+        if (val < 1)
+          dx[nvar + i] *= val/Diagx[nvar + i];
+//          maxStepS = Min (maxStepS, val);
       }
     }
 
