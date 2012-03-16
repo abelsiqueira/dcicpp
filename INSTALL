@@ -188,13 +188,6 @@ Go to cuter2 directory and edit the file config/linux.cf
 Repeat the procedure above to add -m32 to the fortran compiler.
 Now edit the file in cuter2/config/all.cf
 Repeat the procedure above to add -m32 to the c compiler. 
-Now open the file config/Umake.tmpl, find the line 43 with
-
-CFLAGS     = CFlags
-
-and add below it the line
-
-CXXFLAGS   = CFlags
 
 Now go to the file $CUTER/common/include/cuter.h
 There, change the definition os integer and logical to long int, i.e.
