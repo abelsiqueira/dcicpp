@@ -1,6 +1,7 @@
 *.[oa]
 *~
 *.tst
+*.swp
 CuterTest/*.d
 CuterTest/*.f
 CuterTest/dcicppmin
