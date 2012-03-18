@@ -140,6 +140,15 @@ namespace DCI {
       Ineq = dciFalse;
     }
 
+    if (linear == 0) {
+      linear = new Bool[ncon];
+      for (Int i = 0; i < ncon; i++)
+        linear[i] = dciFalse;
+      nconNL = ncon;
+      nconL = 0;
+      Linear = dciFalse;
+    }
+
     if (nmax == 0)
       nmax = nvar;
     if (mmax == 0)
@@ -431,6 +440,22 @@ namespace DCI {
         }
       }
     }
+  }
+
+  void Interface::set_linear (size_t n, Bool * V) {
+    linear = new Bool[n];
+    set_ncon(n);
+    nconL = nconNL = 0;
+    for (size_t i = 0; i < n; i++) {
+      Bool tmp = V[i];
+      linear[i] = tmp;
+      if (tmp == dciFalse)
+        nconNL++;
+      else
+        nconL++;
+    }
+    if (nconNL == 0)
+      Linear = dciTrue;
   }
 
   void Interface::call_fn () {

@@ -93,12 +93,12 @@ namespace DCI {
         Real val = (cli - si)*(1 - epsmu)/dcpi;
         if (val < 1)
           dcpx[j] *= val;
-//          dcpAlphamu = Min (dcpAlphamu, val);
+//        dcpAlphamu = Min (dcpAlphamu, val);
       } else {
         Real val = (cui - si)*(1 - epsmu)/dcpi;
         if (val < 1)
           dcpx[j] *= val;
-//          dcpAlphamu = Min (dcpAlphamu, val);
+//        dcpAlphamu = Min (dcpAlphamu, val);
       }
     }
 

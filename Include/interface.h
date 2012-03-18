@@ -35,6 +35,7 @@ namespace DCI {
       void set_cu (size_t n, Real * V);
       void set_cu (Vector &);
       void set_equatn (size_t n, Bool *V);
+      void set_linear (size_t n, Bool *V);
 
       // Internal set nvar, ncon, nmax, mmax
       void set_nvar (Int n) { nvar = n; };
@@ -169,13 +170,13 @@ namespace DCI {
       // The environment variables
       Environment * env;
       Int nmax, mmax, amax;
-      Int nvar, ncon, nconE, nconI;
+      Int nvar, ncon, nconE, nconI, nconL, nconNL;
       std::string problemName;
       Bool StartAtOne;
       Bool Initialized;
       Bool Running;
       Bool Solved;
-      Bool Ineq;
+      Bool Ineq, Linear;
       Bool Unbounded;
       Int DisplayLevel;
       Int ExitFlag;
@@ -202,7 +203,7 @@ namespace DCI {
       Int iter, maxit, maxitSteih, minitSteih, relitSteih;
       Int minstep, itssmll, maxrest, maxssmll;
       Int bfgsupd;
-      Bool Aavail, gavail, lincon, LimLbd, FreshA;
+      Bool Aavail, gavail, LimLbd, FreshA;
       Real minBk;
       Bool UseCG;
       Bool PartialPenal;

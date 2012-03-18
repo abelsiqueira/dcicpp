@@ -42,7 +42,6 @@ namespace DCI {
     epsmu = 1e-6;
     epsgap = 1e-4;
     bfgsupd = 5;
-    lincon = 0;
     c1 = 0.5;
     c2 = 5e-1;
     MaxTime = 5 * 60; // 5 minutes
@@ -120,10 +119,15 @@ namespace DCI {
       this->analyze_J ();
       this->cholesky_J ();
 
+      if (y == 0) {
+        y = new Vector (*env, ncon);
+        yx = y->get_doublex();
+        for (Int i = 0; i < ncon; i++)
+          yx[i] = 0;
+      }
       update_lambda ();
-
-      gp->scale (*g, 1);
-      gp->sdmult (*J, 1, one, one, *y);
+//      gp->scale (*g, 1);
+//      gp->sdmult (*J, 1, one, one, *y);
       Ln = *f + y->dot (*c);
     } else {
       call_ofg ();
