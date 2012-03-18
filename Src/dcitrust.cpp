@@ -156,8 +156,33 @@ namespace DCI {
           normd = ndn;
           iout = 2;
         } else if ( (ndn <= DeltaV) && (dnAlphamu < 1) ) {
-          d.scale (dn, dnAlphamu);
-          normd = ndn*dnAlphamu;
+          Real convAux = 1.0;
+          for (Int i = 0; i < nvar; i++) { 
+            Real difx = dnx[i] - dcpx[i], zi = xcx[i],
+                 lx = (blx[i] - zi)*(1 - epsmu) - dcpx[i], 
+                 ux = (bux[i] - zi)*(1 - epsmu) - dcpx[i];
+            if (difx > 0)
+              convAux = Min (convAux, ux/difx);
+            else if (difx < 0)
+              convAux = Min (convAux, lx/difx);
+          }
+          for (Int i = 0; i < nconI; i++) { 
+            Real difx = dnx[nvar + i] - dcpx[nvar + i], zi = scx[i],
+                 lx = (clx[i] - zi)*(1 - epsmu) - dcpx[nvar + i], 
+                 ux = (cux[i] - zi)*(1 - epsmu) - dcpx[nvar + i];
+            if (difx > 0)
+              convAux = Min (convAux, ux/difx);
+            else if (difx < 0)
+              convAux = Min (convAux, lx/difx);
+          }
+          d.scale (dn, convAux);
+          dx = d.get_doublex();
+          convAux = 1 - convAux;
+          for (Int i = 0; i < nvar + nconI; i++)
+            dx[i] += convAux * dcpx[i];
+          normd = d.norm();
+//          d.scale (dn, dnAlphamu);
+//          normd = ndn*dnAlphamu;
           iout = 10;
         } else if ( (ndn > DeltaV) && (dnAlphamu == 1) ) {
           Real dntdcp = dcp.dot(dn);
