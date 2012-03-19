@@ -60,6 +60,7 @@ namespace DCI {
     tRej = 0;
     tSoc = 0;
     tbfgs = 0;
+    cholFacs = 0;
     nSoc = 0;
     nbfgs = 0;
     nRej = 0;

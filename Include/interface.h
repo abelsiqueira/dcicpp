@@ -203,10 +203,11 @@ namespace DCI {
       Int iter, maxit, maxitSteih, minitSteih, relitSteih;
       Int minstep, itssmll, maxrest, maxssmll;
       Int bfgsupd;
+      Int cholFacs;
       Bool Aavail, gavail, LimLbd, FreshA;
       Real minBk;
       Bool UseCG;
-      Bool PartialPenal;
+      Bool PartialPenal, project_dcp, project_dn, project_bfgs;
       Real cholCorrection;
 
   };

@@ -74,14 +74,20 @@ namespace DCI {
         continue;
       if (dcpi < 0) {
         Real val = (bli - xi)*(1 - epsmu)/dcpi;
-        if (val < 1)
-          dcpx[i] *= val;
-//        dcpAlphamu = Min (dcpAlphamu, val);
+        if (project_dcp) {
+          if (val < 1)
+            dcpx[i] *= val;
+        } else {
+          dcpAlphamu = Min (dcpAlphamu, val);
+        }
       } else {
         Real val = (bui - xi)*(1 - epsmu)/dcpi;
-        if (val < 1)
-          dcpx[i] *= val;
-//        dcpAlphamu = Min (dcpAlphamu, val);
+        if (project_dcp) {
+          if (val < 1)
+            dcpx[i] *= val;
+        } else {
+          dcpAlphamu = Min (dcpAlphamu, val);
+        }
       }
     }
     for (Int i = 0; i < nconI; i++) {
@@ -91,16 +97,23 @@ namespace DCI {
         continue;
       if (dcpi < 0) {
         Real val = (cli - si)*(1 - epsmu)/dcpi;
-        if (val < 1)
-          dcpx[j] *= val;
-//        dcpAlphamu = Min (dcpAlphamu, val);
+        if (project_dcp) {
+          if (val < 1)
+            dcpx[j] *= val;
+        } else {
+          dcpAlphamu = Min (dcpAlphamu, val);
+        }
       } else {
         Real val = (cui - si)*(1 - epsmu)/dcpi;
-        if (val < 1)
-          dcpx[j] *= val;
-//        dcpAlphamu = Min (dcpAlphamu, val);
+        if (project_dcp) {
+          if (val < 1)
+            dcpx[j] *= val;
+        } else {
+          dcpAlphamu = Min (dcpAlphamu, val);
+        }
       }
     }
+    ndcp = dcp.norm();
 
     while ( (Ared < kappa1*Pred) && (Aavail || (TrustIter < 2) ) && (CurrentTime < MaxTime) ) {
       TrustIter++;
@@ -126,10 +139,20 @@ namespace DCI {
               continue;
             if (dni < 0) {
               Real val = (bli - xi)*(1 - epsmu)/dni;
-              dnAlphamu = Min (dnAlphamu, val);
+              if (project_dn) {
+                if (val < 1)
+                  dnx[i] *= val;
+              } else {
+                dnAlphamu = Min (dnAlphamu, val);
+              }
             } else {
               Real val = (bui - xi)*(1 - epsmu)/dni;
-              dnAlphamu = Min (dnAlphamu, val);
+              if (project_dn) {
+                if (val < 1)
+                  dnx[i] *= val;
+              } else {
+                dnAlphamu = Min (dnAlphamu, val);
+              }
             }
           }
           for (Int i = 0; i < nconI; i++) {
@@ -138,14 +161,25 @@ namespace DCI {
               continue;
             if (dni < 0) {
               Real val = (cli - si)*(1 - epsmu)/dni;
-              dnAlphamu = Min (dnAlphamu, val);
+              if (project_dn) {
+                if (val < 1)
+                  dnx[nvar + i] *= val;
+              } else {
+                dnAlphamu = Min (dnAlphamu, val);
+              }
             } else {
               Real val = (cui - si)*(1 - epsmu)/dni;
-              dnAlphamu = Min (dnAlphamu, val);
+              if (project_dn) {
+                if (val < 1)
+                  dnx[nvar + i] *= val;
+              } else {
+                dnAlphamu = Min (dnAlphamu, val);
+              }
             }
           }
         }
 
+        ndn = dn.norm();
         if (ndn <= ndcp) {
           // dn is too small. Use dcp.
           d.scale (dcp, 1);
@@ -156,7 +190,7 @@ namespace DCI {
           normd = ndn;
           iout = 2;
         } else if ( (ndn <= DeltaV) && (dnAlphamu < 1) ) {
-          Real convAux = 1.0;
+          /*Real convAux = 1.0;
           for (Int i = 0; i < nvar; i++) { 
             Real difx = dnx[i] - dcpx[i], zi = xcx[i],
                  lx = (blx[i] - zi)*(1 - epsmu) - dcpx[i], 
@@ -180,9 +214,9 @@ namespace DCI {
           convAux = 1 - convAux;
           for (Int i = 0; i < nvar + nconI; i++)
             dx[i] += convAux * dcpx[i];
-          normd = d.norm();
-//          d.scale (dn, dnAlphamu);
-//          normd = ndn*dnAlphamu;
+          normd = d.norm();*/
+          d.scale (dn, dnAlphamu);
+          normd = ndn*dnAlphamu;
           iout = 10;
         } else if ( (ndn > DeltaV) && (dnAlphamu == 1) ) {
           Real dntdcp = dcp.dot(dn);

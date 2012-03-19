@@ -50,6 +50,7 @@ int MAINENTRY () {
     dci.set_cl (ncon, cl);
     dci.set_cu (ncon, cu);
     dci.set_equatn (ncon, equatn);
+    dci.set_linear (ncon, linear);
     dci.set_amax (amax);
   }
 

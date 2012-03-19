@@ -85,8 +85,19 @@ namespace DCI {
     Solved = dciFalse;
     Unbounded = dciFalse;
     UseCG = dciFalse;
+
 //    PartialPenal = dciFalse;
     PartialPenal = dciTrue;
+
+    project_dcp = dciTrue;
+//    project_dcp = dciFalse;
+
+    project_dn = dciTrue;
+//    project_dn = dciFalse;
+
+    project_bfgs = dciTrue;
+//    project_bfgs = dciFalse;
+
     cholCorrection = 0;
     DisplayLevel = 1;
     env = new Environment;
@@ -876,7 +887,15 @@ namespace DCI {
   void Interface::cholesky_J () {
     if (LJ == 0)
       std::cerr << "analyze should be called first" << std::endl;
+//    if (cholCorrection > 0)
+//      cholCorrection = normc;
     LJ->factorize (*J, cholCorrection);
+    cholFacs++;
+    if (!env->IsPosDef()) {
+      cholCorrection = 1;
+      LJ->factorize (*J, cholCorrection);
+      cholFacs++;
+    }
   }
 
   Real Interface::getTime () {
