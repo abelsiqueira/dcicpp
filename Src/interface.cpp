@@ -85,8 +85,8 @@ namespace DCI {
     Solved = dciFalse;
     Unbounded = dciFalse;
     UseCG = dciFalse;
-    PartialPenal = dciFalse;
-//    PartialPenal = dciTrue;
+//    PartialPenal = dciFalse;
+    PartialPenal = dciTrue;
     cholCorrection = 0;
     DisplayLevel = 1;
     env = new Environment;
