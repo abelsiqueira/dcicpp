@@ -134,7 +134,7 @@ namespace DCI {
       call_ofg ();
       normc = 0;
       Ln = *f;
-      gp->scale (*g, 1);
+      *gp = *g;
     }
 
     normgp = gp->norm ();

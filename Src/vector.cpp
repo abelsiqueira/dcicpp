@@ -30,19 +30,6 @@ namespace DCI {
   Vector::~Vector () {
   }
 
-  void Vector::operator= (const Vector & v) {
-    if (v.dense == 0) {
-      error (0, "ERROR: cannot assign to uninitialized base_dense");
-      return;
-    }
-    if (v.dense == dense)
-      return;
-    if (dense != 0)
-      cholmod_free_dense (&dense, get_cholmod_common());
-    common = v.common;
-    dense = cholmod_copy_dense (v.dense, get_cholmod_common());
-  }
-
   //Access
   double Vector::get (size_t pos) {
     if ( (pos == 0) || (pos > dense->nrow) )

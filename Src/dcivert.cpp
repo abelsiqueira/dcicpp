@@ -47,9 +47,9 @@ namespace DCI {
     nRest = 0;
     nbfgs = 0;
     oldnormc = normc;
-    xc->scale (*x, 1);
+    *xc = *x;
     if (Ineq)
-      sc->scale (*s, 1);
+      *sc = *s;
     VertFlag = 0;
     if (iter == 1) {
       Aavail = dciTrue;
@@ -79,7 +79,7 @@ namespace DCI {
         updyineq ();
       } else {
         call_ofg_xc ();
-        gp->scale (*g, 1);
+        *gp = *g;
       }
 
       normgp = gp->norm ();

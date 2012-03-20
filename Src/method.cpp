@@ -32,13 +32,13 @@ namespace DCI {
 
   void Interface::update_lambda () {
     if (ncon == 0) {
-      gp->scale (*g, 1);
+      *gp = *g;
       return;
     }
     double one[2] = {1,0}, zero[2] = {0, 0};
     Vector ytmp (*env);
     NAproj (*g, *gp, ytmp);
-    y->scale (ytmp, 1);
+    *y = ytmp;
 
     bool ForceSign = dciTrue;
     //Force sign
@@ -113,7 +113,7 @@ namespace DCI {
 
     Vector r(*env), p(*env), Jtp(*env), JJtp (*env);
     r.scale (rhs, -1);
-    p.scale (rhs, 1);
+    p = rhs;
     Jtp.sdmult (*J, !transp, one, zero, p);
     JJtp.sdmult (*J, transp, one, zero, Jtp);
     double rr, rrp, alpha, beta;
@@ -160,7 +160,7 @@ namespace DCI {
         else if (tmpi < -LbdMax) tmpx[i] = -LbdMax;
       }
     }
-    Pr.scale (r, 1); //Pr = r
+    Pr = r;
     Pr.sdmult (*J, 1, one, one, tmp); //Pr = Pr + J'*tmp => Pr = r - A'*inv(A*A')*A*r
 
   }
@@ -244,7 +244,7 @@ namespace DCI {
         assert (s.norm () <= DeltaH + 1e-6);
         return 1;
       }
-      s.scale (splus, 1);
+      s = splus;
       r.saxpy (Bd, alpha);
       NAproj (r, w, tmp);
       Real rtwplus = r.dot(w);

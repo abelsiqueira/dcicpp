@@ -20,7 +20,7 @@ namespace DCI {
     Int iout;
 
     if (Ineq) {
-      sold.scale (*s,1);
+      sold = *s;
       soldx = sold.get_doublex();
     }
 
@@ -47,17 +47,16 @@ namespace DCI {
     else
       angle = p.dot (dn) / (dnorm * pnorm);
     if ( (angle >= 0) && (angle < 1e-4) )
-      d.scale (p, 1);
+      d = p;
     else
-      d.scale (dn, 1);
+      d = dn;
 
     gtd = d.dot (gtmp);
-    xold.scale (*xc, 1); 
+    xold = *xc;
     if (Ineq)
-      sold.scale (*sc, 1); 
+      sold = *sc;
 
-
-    gold.scale (gtmp, 1);
+    gold = gtmp;
 
     iout = linesearch (xold, sold, d, objfun, gtd, gtmp);
 
@@ -97,8 +96,8 @@ namespace DCI {
       if (alpha[ibfgs] < 1e-12)
         alpha[ibfgs] = 1e-12;
 
-      pold.scale (p, 1);
-      p.scale (gtmp, 1);
+      pold = p;
+      p = gtmp;
 
       for (Int i = 0; i < ibfgs; i++)
         Hiprod (i, alpha[i], csi[i], Dx, Ux, Yx, gtmpx, px);
@@ -117,10 +116,10 @@ namespace DCI {
 
       gtd = gtmp.dot(p);
 
-      xold.scale (*xc, 1);
+      xold = *xc;
       if (Ineq)
-        sold.scale (*sc, 1);
-      gold.scale (gtmp, 1);
+        sold = *sc;
+      gold = gtmp;
 
       iout = linesearch (xold, sold, p, objfun, gtd, gtmp);
       
@@ -200,9 +199,9 @@ namespace DCI {
     Real smlStepS = 1e-3;
     Bool bfgsfirst = dciTrue;
 
-    xc->scale (x0, 1);
+    *xc = x0;
     if (Ineq)
-      sc->scale (s0, 1);
+      *sc = s0;
     std::vector < Real > tmp (nvar + nconI, 1);
     Vector Diag(*env, tmp);
     pReal Diagx = Diag.get_doublex();
@@ -259,9 +258,9 @@ namespace DCI {
       lambda = lbdmax/2;
 
     while (dciTrue) {
-      xc->scale (x0, 1);
+      *xc = x0;
       if (Ineq)
-        sc->scale (s0, 1);
+        *sc = s0;
 
       for (Int i = 0; i < nvar; i++)
         xcx[i] += lambda*Diagx[i]*dx[i];

@@ -30,7 +30,7 @@ namespace DCI {
     Real normgtmp = 0;
 
     if (Ineq)
-      stmp.scale(*sc, 1);
+      stmp = *sc;
 
 
     gtmp.sdmult (*J, 1, one, zero, ctmp); // g = J'*c
@@ -182,11 +182,11 @@ namespace DCI {
         ndn = dn.norm();
         if (ndn <= ndcp) {
           // dn is too small. Use dcp.
-          d.scale (dcp, 1);
+          d = dcp;
           normd = ndcp;
           iout = 1;
         } else if ( (ndn <= DeltaV) && (dnAlphamu == 1) ) {
-          d.scale (dn, 1);
+          d = dn;
           normd = ndn;
           iout = 2;
         } else if ( (ndn <= DeltaV) && (dnAlphamu < 1) ) {
@@ -232,7 +232,7 @@ namespace DCI {
           normd = DeltaV;
           iout = 3;
         } else {
-          d.scale (dcp, 1);
+          d = dcp;
           normd = ndcp;
           /*dn.scale (dnAlphamu);
           ndn *= dnAlphamu;
@@ -292,9 +292,9 @@ namespace DCI {
         iout = 13;
       }
 
-      xc->scale (xtmp, 1);
+      *xc = xtmp;
       if (Ineq)
-        sc->scale (stmp, 1);
+        *sc = stmp;
       dx = d.get_doublex();
       for (Int i = 0; i < nvar; i++)
         xcx[i] += dx[i];
@@ -320,10 +320,10 @@ namespace DCI {
     if ( (Ared < kappa1*Pred) && (!Aavail) ) {
 //      The algorithm has failed. A must be recomputed.
 
-      xc->scale (xtmp,1);
+      *xc = xtmp;
       if (Ineq)
-        sc->scale (stmp,1);
-      c->scale (ctmp,1);
+        *sc = stmp;
+      *c = ctmp;
       normc = oldnormc;
       DeltaV = oldDelta;
       iout = 5;

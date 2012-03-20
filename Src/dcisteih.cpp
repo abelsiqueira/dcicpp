@@ -32,7 +32,7 @@ namespace DCI {
     dtd = 0;
     r.scale (*gp, -1);
     theta0 = r.dot (r);
-    p.scale (r, 1);
+    p = r;
     theta = theta0;
     gtd = 0;
     nSteih = 0;
@@ -129,14 +129,14 @@ namespace DCI {
         root1 *= root1max;
         root2 *= root2max;
 
-        dnew.scale (d, 1);
+        dnew = d;
         dnew.saxpy (p, root2);
         qdnew = qd + root2*dtq + 0.5 * root2*root2*gamma + root2*gtp;
         d.saxpy (p, root1);
         qd = qd + root1*dtq + 0.5 * root1*root1*gamma + root1*gtp;
 
         if (qdnew < qd) {
-          d.scale (dnew, 1);
+          d = dnew;
           qd = qdnew;
           gtd = gtd + root2*gtp;
         } else
@@ -147,7 +147,7 @@ namespace DCI {
       }
 
       alpha = theta/gamma;
-      dnew.scale (d, 1);
+      dnew = d;
       dnew.saxpy (p, alpha);
       dtdnew = dnew.dot (dnew);
 
@@ -205,21 +205,21 @@ namespace DCI {
       }
 
       r.saxpy (q, -alpha);
-      v.scale (r, 1);
+      v = r;
 
       LimLbd = dciFalse;
       LbdMax = 1e20;
       if (ncon > 0)
         NAproj (v, r, tmp);
       else
-        r.scale (v, 1);
+        r = v;
 
       thetanew = r.dot (r);
       beta = thetanew/theta;
       qd = qd + alpha * dtq + 0.5*alpha*alpha*gamma + alpha*gtp;
       p.scale (beta);
       p.saxpy (r, 1);
-      d.scale (dnew, 1);
+      d = dnew;
       gtd = gtd + alpha*gtp;
       dtd = dtdnew;
       theta = thetanew;

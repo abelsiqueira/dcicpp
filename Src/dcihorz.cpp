@@ -44,9 +44,9 @@ namespace DCI {
 
       SteihFlag = dcisteih (d, qd, gtd);
 
-      x->scale (*xc, 1);
+      *x = *xc;
       if (Ineq)
-        s->scale (*sc, 1);
+        *s = *sc;
       pReal dx = d.get_doublex();
       scale_xc (d);
       for (Int i = 0; i < nvar; i++)
@@ -105,9 +105,9 @@ namespace DCI {
         asoc = ssoc.norm (0);
         if (asoc > DeltaH)
           ssoc.scale (DeltaH/asoc);
-        x->scale (*xc,1);
+        *x = *xc;
         if (Ineq)
-          s->scale (*sc,1);
+          *s = *sc;
         for (Int i = 0; i < nvar; i++)
           xx[i] += ssocx[i];
         for (Int i = 0; i < nconI; i++) {

@@ -186,9 +186,9 @@ namespace DCI {
           itssmll = 0;
 
       } else {
-        x->scale (*xc, 1);
+        *x = *xc;
         if (Ineq)
-          s->scale (*sc, 1);
+          *s = *sc;
         updyineq ();
         gap = calc_gap ();
         *f = *fxc;
@@ -199,7 +199,7 @@ namespace DCI {
       call_ofg(dciTrue);
       update_lambda ();
       ngpzk = gp->norm();
-      y->scale(ytmp, 1);
+      *y = ytmp;
       if (solx != 0) {
         ek = ekp;
         ekp = ekpp;

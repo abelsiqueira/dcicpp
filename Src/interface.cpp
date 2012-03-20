@@ -204,7 +204,7 @@ namespace DCI {
 #ifdef LOCALTEST
     if (solx != 0) {
       Vector tmp (*xc);
-      xc->scale (*solx,1);
+      *xc = *solx;
       call_fn_xc ();
       sols = new Vector (*env, nconI);
       pReal ps = sols->get_doublex ();
