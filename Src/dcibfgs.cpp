@@ -202,8 +202,9 @@ namespace DCI {
     *xc = x0;
     if (Ineq)
       *sc = s0;
-    std::vector < Real > tmp (nvar + nconI, 1);
-    Vector Diag(*env, tmp);
+
+    Vector Diag(*env);
+    Diag.reset (nvar + nconI, 1);
     pReal Diagx = Diag.get_doublex();
     scale_xc (Diag);
 
@@ -322,8 +323,8 @@ namespace DCI {
       s0x = s0.get_doublex();
 
 
-    std::vector < Real > tmp (nvar + nconI, 1);
-    Vector Diag(*env, tmp);
+    Vector Diag(*env);
+    Diag.reset (nvar + nconI, 1);
     pReal Diagx = Diag.get_doublex();
     scale_xc (Diag);
 

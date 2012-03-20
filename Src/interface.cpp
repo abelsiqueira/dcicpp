@@ -643,8 +643,8 @@ namespace DCI {
       }
 
       if (Running) {
-        std::vector<Real> tmp (nvar + nconI, 1);
-        Vector Diag(*env, tmp);
+        Vector Diag(*env);
+        Diag.reset (nvar + nconI, 1);
         pReal Diagx = Diag.get_doublex();
         if (scale) { 
           scale_x (Diag);
@@ -702,8 +702,8 @@ namespace DCI {
       }
 
       if (Running) {
-        std::vector<Real> tmp (nvar + nconI, 1);
-        Vector Diag(*env, tmp);
+        Vector Diag(*env);
+        Diag.reset (nvar + nconI, 1);
         pReal Diagx = Diag.get_doublex();
         if (scale) {
           scale_xc (Diag);

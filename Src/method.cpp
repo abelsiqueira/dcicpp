@@ -107,7 +107,7 @@ namespace DCI {
      * A'*A * sol = rhs
      * if transp == 1.
      */
-    sol.scale (rhs, 0);
+    sol.reset (rhs.size(), 0);
     int dimen = sol.size ();
     double one[2] = {1, 0}, zero[2] = {0, 0};
 

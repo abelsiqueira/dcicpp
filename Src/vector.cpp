@@ -30,6 +30,21 @@ namespace DCI {
   Vector::~Vector () {
   }
 
+  void Vector::reset (size_t n, double a) {
+    // If it is allocated but the size is not n, free
+    if ( (dense != 0) && (dense->nrow != n) ) {
+      CHOLMOD(free_dense) (&dense, get_cholmod_common());
+    }
+    // If freed before, or never allocated
+    if ( dense == 0 )
+      dense = CHOLMOD(allocate_dense) (n, 1, n, CHOLMOD_REAL, get_cholmod_common());
+    // Now, dense has size n
+    double * px = static_cast < double * > (dense->x);
+    for (size_t i = 0; i < n; i++)
+      px[i] = a;
+
+  }
+
   //Access
   double Vector::get (size_t pos) {
     if ( (pos == 0) || (pos > dense->nrow) )
