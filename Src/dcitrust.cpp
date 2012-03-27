@@ -191,7 +191,7 @@ namespace DCI {
           iout = 2;
         } else if ( (ndn <= DeltaV) && (dnAlphamu < 1) ) {
           Real convAux = 1.0;
-          for (Int i = 0; i < nvar; i++) { 
+          /*for (Int i = 0; i < nvar; i++) { 
             Real difx = dnx[i] - dcpx[i], zi = xcx[i],
                  lx = (blx[i] - zi)*(1 - epsmu) - dcpx[i], 
                  ux = (bux[i] - zi)*(1 - epsmu) - dcpx[i];
@@ -214,9 +214,9 @@ namespace DCI {
           convAux = 1 - convAux;
           for (Int i = 0; i < nvar + nconI; i++)
             dx[i] += convAux * dcpx[i];
-          normd = d.norm();
-//          d.scale (dn, dnAlphamu);
-//          normd = ndn*dnAlphamu;
+          normd = d.norm();*/
+          d.scale (dn, dnAlphamu);
+          normd = ndn*dnAlphamu;
           iout = 10;
         } else if ( (ndn > DeltaV) && (dnAlphamu == 1) ) {
           Real dntdcp = dcp.dot(dn);

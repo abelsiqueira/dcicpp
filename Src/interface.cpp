@@ -86,17 +86,17 @@ namespace DCI {
     Unbounded = dciFalse;
     UseCG = dciFalse;
 
-//    PartialPenal = dciFalse;
-    PartialPenal = dciTrue;
+    PartialPenal = dciFalse;
+//    PartialPenal = dciTrue;
 
-    project_dcp = dciTrue;
-//    project_dcp = dciFalse;
+//    project_dcp = dciTrue;
+    project_dcp = dciFalse;
 
-    project_dn = dciTrue;
-//    project_dn = dciFalse;
+//    project_dn = dciTrue;
+    project_dn = dciFalse;
 
-    project_bfgs = dciTrue;
-//    project_bfgs = dciFalse;
+//    project_bfgs = dciTrue;
+    project_bfgs = dciFalse;
 
     cholCorrection = 0;
     DisplayLevel = 1;
