@@ -74,6 +74,7 @@ namespace DCI {
     mu = 1;
     murho = 1;
     mugap = 1;
+    Linear = dciFalse;
 
     maxitSteih = Max (minitSteih, Min(maxitSteih, Int(nvar*relitSteih+5) ) );
     minstep *= Min (csig, csic);
