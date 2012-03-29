@@ -5,8 +5,10 @@ namespace DCI {
 
   void Interface::InitialParameters () {
     DeltaMax = 1e6;
-    maxrest = 20000;
-    maxit = 200000;
+    maxrest = 200;
+//    maxrest = 20000;
+    maxit = 200;
+//    maxit = 200000;
     maxssmll = 5;
     maxitSteih = 100000;
     minitSteih = 100;

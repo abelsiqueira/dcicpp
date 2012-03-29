@@ -1,0 +1,10 @@
+HS102      & 7 & 5 & 2 & 3.33392e-18 & con & bfgs\\ \hline
+HS103      & 7 & 5 & 14 & 0.11 & con & bfgs\\ \hline
+HS106      & 8 & 6 & 3 & 0.02 & con & bfgs\\ \hline
+HS111      & 10 & 3 & 2 & -5.54976e-18 & con & bfgs\\ \hline
+HS116      & 13 & 14 & 26 & 0.01 & con & bfgs\\ \hline
+HS119      & 16 & 8 & 4 & 0.01 & con & bfgs\\ \hline
+HS15       & 2 & 2 & 6 & 3.33392e-18 & con & bfgs\\ \hline
+HS83       & 5 & 3 & 14 & 0.01 & con & bfgs\\ \hline
+HS88       & 2 & 1 & 26 & 0.05 & con & bfgs\\ \hline
+HS89       & 3 & 1 & 55 & 0.21 & con & bfgs\\ \hline

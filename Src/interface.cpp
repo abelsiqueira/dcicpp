@@ -86,17 +86,23 @@ namespace DCI {
     Unbounded = dciFalse;
     UseCG = dciFalse;
 
-    PartialPenal = dciFalse;
-//    PartialPenal = dciTrue;
+//    PartialPenal = dciFalse;
+    PartialPenal = dciTrue;
 
-//    project_dcp = dciTrue;
-    project_dcp = dciFalse;
+    project_dcp = dciTrue;
+//    project_dcp = dciFalse;
 
-//    project_dn = dciTrue;
-    project_dn = dciFalse;
+    project_dn = dciTrue;
+//    project_dn = dciFalse;
 
-//    project_bfgs = dciTrue;
-    project_bfgs = dciFalse;
+    project_bfgs = dciTrue;
+//    project_bfgs = dciFalse;
+
+//    trustWorstdn = dciFalse;
+    trustWorstdn = dciTrue;
+
+//    trustConvexBox = dciTrue;
+    trustConvexBox = dciFalse;;
 
     cholCorrection = 0;
     DisplayLevel = 1;
@@ -284,7 +290,7 @@ namespace DCI {
           << "y offset = " << yoff << std::endl
           << "BFGS? " << ((tbfgs > 0) ? "yes" : "no") << std::endl
           << "Number of Iterations = " << iter << std::endl
-          << "Elapsed Time = " << CurrentTime << " s" << std::endl;
+          << "Elapsed Time = " << (CurrentTime > 0 ? CurrentTime : 0) << " s" << std::endl;
 
       if (DisplayLevel > 2) {
         std::cout << std::endl
@@ -379,7 +385,7 @@ namespace DCI {
          << nvar << " & "
          << ncon << " & "
          << iter << " & "
-         << CurrentTime << " & "
+         << (CurrentTime > 0 ? CurrentTime : 0) << " & "
          << ((ncon > 0) ? "con" : "unc") << " & "
          << ((tbfgs > 0) ? "bfgs" : "") << "\\\\ \\hline\n";
 

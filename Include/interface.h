@@ -208,6 +208,7 @@ namespace DCI {
       Real minBk;
       Bool UseCG;
       Bool PartialPenal, project_dcp, project_dn, project_bfgs;
+      Bool trustWorstdn, trustConvexBox;
       Real cholCorrection;
 
   };
