@@ -92,8 +92,8 @@ namespace DCI {
     project_dcp = dciTrue;
 //    project_dcp = dciFalse;
 
-    project_dn = dciTrue;
-//    project_dn = dciFalse;
+//    project_dn = dciTrue;
+    project_dn = dciFalse;
 
     project_bfgs = dciTrue;
 //    project_bfgs = dciFalse;
@@ -103,6 +103,9 @@ namespace DCI {
 
 //    trustConvexBox = dciTrue;
     trustConvexBox = dciFalse;;
+
+    penal_trust = dciFalse;
+//    penal_trust = dciTrue;
 
     cholCorrection = 0;
     DisplayLevel = 1;

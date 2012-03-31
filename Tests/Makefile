@@ -5,8 +5,6 @@ default: all
 
 #VALGRIND = valgrind
 #VALGRINDFLAGS = --leak-check=yes
-VALGRIND = 
-VALGRINDFLAGS =
 GDB = gdb
 
 LOCALTEST = localtest.tst
