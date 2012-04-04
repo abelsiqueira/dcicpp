@@ -102,7 +102,7 @@ namespace DCI {
     trustWorstdn = dciTrue;
 
 //    trustConvexBox = dciTrue;
-    trustConvexBox = dciFalse;;
+    trustConvexBox = dciFalse;
 
     penal_trust = dciFalse;
 //    penal_trust = dciTrue;

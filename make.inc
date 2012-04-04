@@ -5,11 +5,10 @@ CXX = g++
 
 DCILONG = -DDLONG
 #DCIVERBOSE = -DVERBOSE
-DCIVERBOSE =
 #ASSERT = -DNDEBUG
-ASSERT =
+#PROFILE = -pg
 
-CXXFLAGS = -Werror -Wextra -ggdb $(DCIVERBOSE) $(ASSERT) $(DCILONG) -m32
+CXXFLAGS = -Werror -Wextra -ggdb $(DCIVERBOSE) $(ASSERT) $(DCILONG) $(PROFILE) -m32
 
 RM = rm -f
 CP = cp -f

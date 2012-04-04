@@ -77,6 +77,7 @@ namespace DCI {
       }
     }
     normgtmp = gtmp.norm ();
+//    DeltaV = normgtmp;
 
     if (normgtmp < dciTiny) {
       normc = oldnormc;
