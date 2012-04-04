@@ -27,6 +27,45 @@ namespace DCI {
     objfun = 0.5 * normc * normc;
     gtmp.sdmult (*J, 1, one, zero, *c);
     gtmpx = gtmp.get_doublex ();
+    if (penal_bfgs) {
+      for (Int i = 0; i < nvar; i++) {
+        Real val = 0;
+        if ( (bux[i] < dciInf) && (blx[i] > -dciInf) ) {
+          if (PartialPenal) {
+            if ( (xcx[i] - blx[i]) < (bux[i] - xcx[i]) ) {
+              val = 1;
+            } else {
+              val = -1;
+            }
+          } else {
+            val = bux[i] + blx[i] - 2*xcx[i];
+          }
+        } else if (bux[i] < dciInf) {
+          val = -1;
+        } else if (blx[i] > -dciInf) {
+          val = 1;
+        }
+        gtmpx[i] -= mu*val;
+      }
+      for (Int i = 0; i < nconI; i++) {
+        Real val = 0;
+        if ( (cux[ineqIdx[i]] < dciInf) && (clx[ineqIdx[i]] > -dciInf) ) {
+          if (PartialPenal) {
+            if ( (scx[i] - clx[ineqIdx[i]]) < (cux[ineqIdx[i]] - scx[i]) ) {
+              val = 1;
+            } else {
+              val = -1;
+            }
+          } else {
+            val = cux[ineqIdx[i]] + clx[ineqIdx[i]] - 2*scx[i];
+          }
+        } else if (cux[ineqIdx[i]] < dciInf)
+          val = -1;
+        else if (clx[ineqIdx[i]] > -dciInf)
+          val = 1;
+        gtmpx[nvar + i] -= mu*val;
+      }
+    }
     gnorm = gtmp.norm ();
     ibfgs = 0;
     iout = 0;

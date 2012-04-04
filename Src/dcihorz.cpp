@@ -128,8 +128,8 @@ namespace DCI {
       if ( (newnormc > zeta1*rho) || (DLH > eta1*qd) ) {
         if (DLH > 0) {
           alphaT = (1 - eta3) * gtd / ( (1 - eta3) * (Lc + gtd) - Ln + eta2*qd);
-          DeltaH = Min (alphaR*normd, Max (alphaT, alphaS) * DeltaH);
-//          DeltaH = Min( Min (alphaR*normd, Max (alphaT, alphaS) * DeltaH), 0.9*DeltaH);
+//          DeltaH = Min (alphaR*normd, Max (alphaT, alphaS) * DeltaH);
+          DeltaH = Min( Min (alphaR*normd, Max (alphaT, alphaS) * DeltaH), 0.9*DeltaH);
         } else {
           if (DeltaH == normd * alphaR)
             fail = dciTrue;

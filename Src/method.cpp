@@ -135,7 +135,7 @@ namespace DCI {
   }
 
   void Interface::update_mu () {
-    Real mufactor = 1.0;
+    Real mufactor = 0.9;
 //    Real minmuthisiter = Max (0.1*mu, 1e-24);
     Real minother = 100*Min (rho, rho*rho); 
     minother = Min (minother, gap + lagrgap + infacgap);
