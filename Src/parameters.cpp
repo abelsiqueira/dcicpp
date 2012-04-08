@@ -3,12 +3,10 @@
 
 namespace DCI {
 
-  void Interface::InitialParameters () {
+  void Interface::DefineParameters () {
     DeltaMax = 1e6;
     maxrest = 200;
-//    maxrest = 20000;
     maxit = 200;
-//    maxit = 200000;
     maxssmll = 5;
     maxitSteih = 100000;
     minitSteih = 100;
@@ -50,9 +48,63 @@ namespace DCI {
     minBk = 1e-12;
   }
 
-  void Interface::InitialValues () {
-    Real one[2] = {1,0};
-
+  void Interface::Initialization () {
+    ufn = 0;
+    cfn = 0;
+    uofg = 0;
+    cofg = 0;
+    uprod = 0;
+    cprod = 0;
+    ccfsg = 0;
+    ccifg = 0;
+    unames = 0;
+    cnames = 0;
+    f = 0;
+    fxc = 0;
+    g = 0;
+    H = 0;
+    Htrip = 0;
+    c = 0;
+    J = 0;
+    Jtrip = 0;
+    LJ = 0;
+    gp = 0;
+    normgp = 0;
+    normg = 0;
+    normc = 0;
+    x = 0;
+    solx = 0;
+    bl = 0;
+    bu = 0;
+    y = 0;
+    yineq = 0;
+    cl = 0;
+    cu = 0;
+    s = 0;
+    sols = 0;
+    xc = 0;
+    sc = 0;
+    feasOpt = 0;
+    equatn = 0;
+    linear = 0;
+    nmax = 0;
+    mmax = 0;
+    amax = 0;
+    nvar = 0;
+    ncon = 0;
+    nconE = 0;
+    nconI = 0;
+    ineqIdx = 0;
+    CurrentTime = 0;
+    MaxTime = dciInf;
+    DLH = dciInf;
+    DLV = 0;
+    Lref = dciInf;
+    StartAtOne = dciFalse;
+    Initialized = dciFalse;
+    Running = dciFalse;
+    Solved = dciFalse;
+    Unlimited = dciFalse;
     Solved = 0;
     VertFlag = 0;
     iter = 0;
@@ -76,11 +128,20 @@ namespace DCI {
     mu = 1;
     murho = 1;
     mugap = 1;
-    Linear = dciFalse;
+
+    //Program properties
+    Ineq = dciFalse; //Has some inequalities
+    Linear = dciFalse; //Only linear constraints
+    Bounded = dciFalse; //Has bounds
+  }
+
+  void Interface::InitialValues () {
+    Real one[2] = {1,0};
 
     maxitSteih = Max (minitSteih, Min(maxitSteih, Int(nvar*relitSteih+5) ) );
     minstep *= Min (csig, csic);
     
+    // Calculating the function value and c without the barrier.
     call_fn ();
     for (Int i = 0; i < nvar; i++) {
       Real bli = blx[i], bui = bux[i];
@@ -95,9 +156,9 @@ namespace DCI {
         bli = blx[i];
         bui = bux[i];
       }
-      Real smldelta = Min ( 1.0, (bui - bli)/100);
+      Real smldelta = Min ( 1.0, (bui - bli)/100.0);
       xx[i] = Max ( Min ( xx[i], bui - smldelta ), bli + smldelta );
-      xcx[i] = Max ( Min ( xx[i], bui - smldelta ), bli + smldelta );
+      xcx[i] = xx[i];
       assert (xx[i] > bli);
       assert (xx[i] < bui);
     }
@@ -112,10 +173,11 @@ namespace DCI {
         Real smldelta = Min ( 1.0, (cui - cli)/100);
         assert (smldelta > 0);
         sx[i] = Max ( Min ( cxi, cui - smldelta ), cli + smldelta );
-        scx[i] = Max ( Min ( cxi, cui - smldelta ), cli + smldelta );
+        scx[i] = sx[i];
       }
 
       Running = dciTrue;
+      // Now, adding s.
       call_ccfsg ();
       normc = c->norm ();
       call_ofg ();
@@ -133,7 +195,8 @@ namespace DCI {
 //      gp->scale (*g, 1);
 //      gp->sdmult (*J, 1, one, one, *y);
       Ln = *f + y->dot (*c);
-    } else {
+    } else { //No constraints, may have bounds on the variables
+      Running = dciTrue; //If there are bounds, this will get them.
       call_ofg ();
       normc = 0;
       Ln = *f;

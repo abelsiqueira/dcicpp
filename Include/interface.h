@@ -104,8 +104,9 @@ namespace DCI {
       Int linesearch (const Vector &, const Vector &, const Vector &, Real &, Real &, Vector &);
       Int zoom (const Vector &, const Vector &, const Vector &, Vector &, Real, Real, Real, Real &, Real &, Real, Real, Real, Real);
       Real interpolate (Real, Real, Real, Real, Real, Real, Bool);
-      void InitialParameters ();
+      void DefineParameters ();
       void InitialValues ();
+      void Initialization ();
       Real getTime ();
       void checkInfactibility ();
       void scale_x (Vector &);
@@ -176,8 +177,8 @@ namespace DCI {
       Bool Initialized;
       Bool Running;
       Bool Solved;
-      Bool Ineq, Linear;
-      Bool Unbounded;
+      Bool Ineq, Linear, Bounded;
+      Bool Unlimited;
       Int DisplayLevel;
       Int ExitFlag;
       Real MaxTime, CurrentTime, StartTime;

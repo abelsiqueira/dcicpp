@@ -62,7 +62,7 @@ namespace DCI {
     gap = 1;
     Real ydif = 0;
 
-    while ( ( (cnormi > csic) || ( (normgp > csig) && (ngp > csig*1e-2) ) || (mu > epsmu) || (gap > epsgap) || (ydif > 1e-6) ) && (iter <= maxit) && (tRest <= maxrest) && (itssmll <= maxssmll) && (VertFlag == 0) && (rhomax >= rhomin) && (!Unbounded) && (CurrentTime < MaxTime) ) {
+    while ( ( (cnormi > csic) || ( (normgp > csig) && (ngp > csig*1e-2) ) || (mu > epsmu) || (gap > epsgap) || (ydif > 1e-6) ) && (iter <= maxit) && (tRest <= maxrest) && (itssmll <= maxssmll) && (VertFlag == 0) && (rhomax >= rhomin) && (!Unlimited) && (CurrentTime < MaxTime) ) {
 
       calc_ydif ();
       iter++;
@@ -160,7 +160,7 @@ namespace DCI {
 
       CurrentTime = getTime() - StartTime;
 
-      if ( ( (cnormi > csic) || ( (normgp > csig) && (ngp > csig*1e-2) ) ) && (VertFlag == 0) && (rhomax >= rhomin) && (!Unbounded) && (CurrentTime < MaxTime) ) {
+      if ( ( (cnormi > csic) || ( (normgp > csig) && (ngp > csig*1e-2) ) ) && (VertFlag == 0) && (rhomax >= rhomin) && (!Unlimited) && (CurrentTime < MaxTime) ) {
 
         horzstep (norms); 
         checkInfactibility ();
@@ -270,7 +270,7 @@ namespace DCI {
       ExitFlag = 3;
     else if (itssmll > maxssmll)
       ExitFlag = 5;
-    else if (Unbounded)
+    else if (Unlimited)
       ExitFlag = 6;
     else if (CurrentTime >= MaxTime)
       ExitFlag = 7;
