@@ -105,6 +105,7 @@ namespace DCI {
       Int zoom (const Vector &, const Vector &, const Vector &, Vector &, Real, Real, Real, Real &, Real &, Real, Real, Real, Real);
       Real interpolate (Real, Real, Real, Real, Real, Real, Bool);
       void DefineParameters ();
+      void ReadParameters ();
       void InitialValues ();
       void Initialization ();
       Real getTime ();
@@ -187,7 +188,7 @@ namespace DCI {
       Real c1, c2;
       Real rho, rhomax, rhomin;
       Real DeltaH, DeltaV;
-      Real DeltaMax, DeltaMin, Delta0, DeltaInf;
+      Real DeltaMax, DeltaMin, Delta0, DeltaTiny;
       Real alphaR, alphaI, alphaS;
       Real eps1, eps2, eps3;
       Real epsmu, epsgap;

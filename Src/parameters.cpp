@@ -1,4 +1,8 @@
 #include "interface.h"
+#include <sstream>
+#include <fstream>
+#include <map>
+#include <string>
 //#include <cassert>
 
 namespace DCI {
@@ -31,7 +35,7 @@ namespace DCI {
     eta2 = 0.7;
     eta3 = 0.1;
     DeltaMin = 1e-4;
-    DeltaInf = 1e-10;
+    DeltaTiny = 1e-10;
     minstep = 1e-3;
     Delta0 = 1e5;
     thetaR = 0.9;
@@ -46,6 +50,117 @@ namespace DCI {
     c2 = 5e-1;
     MaxTime = 5 * 60; // 5 minutes
     minBk = 1e-12;
+
+    ReadParameters();
+  }
+
+  void Interface::ReadParameters () {
+    std::ifstream paramFile("dcicpp.spc");
+    if (paramFile.fail())
+      return;
+
+    enum parameters {en_DeltaMax, en_maxrest, en_maxit, en_maxssmll, en_maxitSteih, 
+      en_minitSteih, en_relitSteih, en_nfailv, en_csic, en_csig, en_rhomin, en_phi1,
+      en_phi2, en_kappa1, en_kappa2, en_kappa3, en_kappa4, en_zeta1, en_zeta2, 
+      en_zeta3, en_alphaR, en_alphaI, en_alphaS, en_eta1, en_eta2, en_eta3,
+      en_DeltaMin, en_DeltaTiny, en_minstep, en_Delta0, en_thetaR, en_LbdMax,
+      en_eps1, en_eps2, en_eps3, en_epsmu, en_epsgap, en_bfgsupd, en_c1, en_c2,
+      en_MaxTime, en_minBk};
+    std::map<std::string, int> paramMap;
+
+    paramMap["DeltaMax"] = en_DeltaMax;
+    paramMap["maxrest"] = en_maxrest;
+    paramMap["maxit"] = en_maxit;
+    paramMap["maxssmll"] = en_maxssmll;
+    paramMap["maxitSteih"] = en_maxitSteih;
+    paramMap["minitSteih"] = en_minitSteih;
+    paramMap["relitSteih"] = en_relitSteih;
+    paramMap["nfailv"] = en_nfailv;
+    paramMap["csic"] = en_csic;
+    paramMap["csig"] = en_csig;
+    paramMap["rhomin"] = en_rhomin;
+    paramMap["phi1"] = en_phi1;
+    paramMap["phi2"] = en_phi2;
+    paramMap["kappa1"] = en_kappa1;
+    paramMap["kappa2"] = en_kappa2;
+    paramMap["kappa3"] = en_kappa3;
+    paramMap["kappa4"] = en_kappa4;
+    paramMap["zeta1"] = en_zeta1;
+    paramMap["zeta2"] = en_zeta2;
+    paramMap["zeta3"] = en_zeta3;
+    paramMap["alphaR"] = en_alphaR;
+    paramMap["alphaI"] = en_alphaI;
+    paramMap["alphaS"] = en_alphaS;
+    paramMap["eta1"] = en_eta1;
+    paramMap["eta2"] = en_eta2;
+    paramMap["eta3"] = en_eta3;
+    paramMap["DeltaMin"] = en_DeltaMin;
+    paramMap["DeltaTiny"] = en_DeltaTiny;
+    paramMap["minstep"] = en_minstep;
+    paramMap["Delta0"] = en_Delta0;
+    paramMap["thetaR"] = en_thetaR;
+    paramMap["LbdMax"] = en_LbdMax;
+    paramMap["eps1"] = en_eps1;
+    paramMap["eps2"] = en_eps2;
+    paramMap["eps3"] = en_eps3;
+    paramMap["epsmu"] = en_epsmu;
+    paramMap["epsgap"] = en_epsgap;
+    paramMap["bfgsupd"] = en_bfgsupd;
+    paramMap["c1"] = en_c1;
+    paramMap["c2"] = en_c2;
+    paramMap["MaxTime"] = en_MaxTime;
+    paramMap["minBk"] = en_minBk;
+
+    std::string param, value;
+    while (getline(paramFile, param, ' ')) {
+      getline(paramFile, value, '\n');
+      std::stringstream aux;
+      aux << value;
+      switch (paramMap[param]) {
+        case en_DeltaMax: aux >> DeltaMax; break;
+        case en_maxrest: aux >> maxrest; break;
+        case en_maxit: aux >> maxit; break;
+        case en_maxssmll: aux >> maxssmll; break;
+        case en_maxitSteih: aux >> maxitSteih; break;
+        case en_minitSteih: aux >> minitSteih; break;
+        case en_relitSteih: aux >> relitSteih; break;
+        case en_nfailv: aux >> nfailv; break;
+        case en_csic: aux >> csic; break;
+        case en_csig: aux >> csig; break;
+        case en_rhomin: aux >> rhomin; break;
+        case en_phi1: aux >> phi1; break;
+        case en_phi2: aux >> phi2; break;
+        case en_kappa1: aux >> kappa1; break;
+        case en_kappa2: aux >> kappa2; break;
+        case en_kappa3: aux >> kappa3; break;
+        case en_kappa4: aux >> kappa4; break;
+        case en_zeta1: aux >> zeta1; break;
+        case en_zeta2: aux >> zeta2; break;
+        case en_zeta3: aux >> zeta3; break;
+        case en_alphaR: aux >> alphaR; break;
+        case en_alphaI: aux >> alphaI; break;
+        case en_alphaS: aux >> alphaS; break;
+        case en_eta1: aux >> eta1; break;
+        case en_eta2: aux >> eta2; break;
+        case en_eta3: aux >> eta3; break;
+        case en_DeltaMin: aux >> DeltaMin; break;
+        case en_DeltaTiny: aux >> DeltaTiny; break;
+        case en_minstep: aux >> minstep; break;
+        case en_Delta0: aux >> Delta0; break;
+        case en_thetaR: aux >> thetaR; break;
+        case en_LbdMax: aux >> LbdMax; break;
+        case en_eps1: aux >> eps1; break;
+        case en_eps2: aux >> eps2; break;
+        case en_eps3: aux >> eps3; break;
+        case en_epsmu: aux >> epsmu; break;
+        case en_epsgap: aux >> epsgap; break;
+        case en_bfgsupd: aux >> bfgsupd; break;
+        case en_c1: aux >> c1; break;
+        case en_c2: aux >> c2; break;
+        case en_MaxTime: aux >> MaxTime; break;
+        case en_minBk: aux >> minBk; break;
+      }
+    }
   }
 
   void Interface::Initialization () {
