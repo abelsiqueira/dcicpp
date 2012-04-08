@@ -28,31 +28,6 @@ namespace DCI {
     //Parameters
     Initialization ();
 
-    UseCG = dciFalse;
-
-//    PartialPenal = dciFalse;
-    PartialPenal = dciTrue;
-
-    project_dcp = dciTrue;
-//    project_dcp = dciFalse;
-
-    project_dn = dciTrue;
-//    project_dn = dciFalse;
-
-    project_bfgs = dciTrue;
-//    project_bfgs = dciFalse;
-
-//    trustWorstdn = dciFalse;
-    trustWorstdn = dciTrue;
-
-//    trustConvexBox = dciTrue;
-    trustConvexBox = dciFalse;
-
-    penal_trust = dciFalse;
-//    penal_trust = dciTrue;
-    
-//    penal_bfgs = dciFalse;
-    penal_bfgs = dciTrue;
 
     cholCorrection = 0;
     DisplayLevel = 1;

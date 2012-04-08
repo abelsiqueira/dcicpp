@@ -65,9 +65,19 @@ namespace DCI {
       en_zeta3, en_alphaR, en_alphaI, en_alphaS, en_eta1, en_eta2, en_eta3,
       en_DeltaMin, en_DeltaTiny, en_minstep, en_Delta0, en_thetaR, en_LbdMax,
       en_eps1, en_eps2, en_eps3, en_epsmu, en_epsgap, en_bfgsupd, en_c1, en_c2,
-      en_MaxTime, en_minBk};
+      en_MaxTime, en_minBk, en_UseCG, en_PartialPenal, en_project_dcp,
+      en_project_bfgs, en_trustWorstdn, en_trustConvexBox, en_penal_trust,
+      en_penal_bfgs};
     std::map<std::string, int> paramMap;
 
+    paramMap["UseCG"] = en_UseCG;
+    paramMap["PartialPenal"] = en_PartialPenal;
+    paramMap["project_dcp"] = en_project_dcp;
+    paramMap["project_bfgs"] = en_project_bfgs;
+    paramMap["trustWorstdn"] = en_trustWorstdn;
+    paramMap["trustConvexBox"] = en_trustConvexBox;
+    paramMap["penal_trust"] = en_penal_trust;
+    paramMap["penal_bfgs"] = en_penal_bfgs;
     paramMap["DeltaMax"] = en_DeltaMax;
     paramMap["maxrest"] = en_maxrest;
     paramMap["maxit"] = en_maxit;
@@ -159,6 +169,14 @@ namespace DCI {
         case en_c2: aux >> c2; break;
         case en_MaxTime: aux >> MaxTime; break;
         case en_minBk: aux >> minBk; break;
+        case en_UseCG: aux >> UseCG; break;
+        case en_PartialPenal: aux >> PartialPenal; break;
+        case en_project_dcp: aux >> project_dcp; break;
+        case en_project_bfgs: aux >> project_bfgs; break;
+        case en_trustWorstdn: aux >> trustWorstdn; break;
+        case en_trustConvexBox: aux >> trustConvexBox; break;
+        case en_penal_trust: aux >> penal_trust; break;
+        case en_penal_bfgs: aux >> penal_bfgs; break;
       }
     }
   }
@@ -243,6 +261,25 @@ namespace DCI {
     mu = 1;
     murho = 1;
     mugap = 1;
+
+    //Strategy choices
+    UseCG = dciFalse;
+//    PartialPenal = dciFalse;
+    PartialPenal = dciTrue;
+    project_dcp = dciTrue;
+//    project_dcp = dciFalse;
+    project_dn = dciTrue;
+//    project_dn = dciFalse;
+    project_bfgs = dciTrue;
+//    project_bfgs = dciFalse;
+//    trustWorstdn = dciFalse;
+    trustWorstdn = dciTrue;
+//    trustConvexBox = dciTrue;
+    trustConvexBox = dciFalse;
+    penal_trust = dciFalse;
+//    penal_trust = dciTrue;
+//    penal_bfgs = dciFalse;
+    penal_bfgs = dciTrue;
 
     //Program properties
     Ineq = dciFalse; //Has some inequalities
