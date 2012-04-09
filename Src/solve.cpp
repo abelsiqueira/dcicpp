@@ -7,6 +7,9 @@ namespace DCI {
     if (!Initialized)
       return -1;
 
+    //Linear problem. Enforce non-linear because the matrix is scaled.
+    //Hence, we need to refactorize.
+    Linear = dciFalse;
     Running = dciTrue;
 
 #ifdef LOCALTEST
