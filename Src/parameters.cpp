@@ -281,6 +281,9 @@ namespace DCI {
 //    penal_bfgs = dciFalse;
     penal_bfgs = dciTrue;
 
+    UseMUMPS = dciTrue;
+//    UseMUMPS = dciFalse;
+
     //Program properties
     Ineq = dciFalse; //Has some inequalities
     Linear = dciFalse; //Only linear constraints

@@ -53,10 +53,10 @@ gdb: test14.tst
 	$(GDB) ./$<
 
 %.tst: %.o
-	$(CXX) -o $@ $< $(DCILIB) $(CXXFLAGS)
+	$(CXX) -o $@ $< $(DCILIB) $(CXXFLAGS) $(I)
 
 %.o: %.cpp
-	$(CXX) -c -o $@ $< $(CXXFLAGS)
+	$(CXX) -c -o $@ $< $(CXXFLAGS) $(I)
 
 clean:
 	$(RM) $(ALLTESTS) *.o

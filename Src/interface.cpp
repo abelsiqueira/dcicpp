@@ -27,7 +27,15 @@ namespace DCI {
   Interface::Interface () {
     //Parameters
     Initialization ();
-
+    //Mumps
+    if (UseMUMPS) {
+      MPI_Comm_rank(MPI_COMM_WORLD, &myid);
+      id.job=JOB_INIT;
+      id.par=1;
+      id.sym=2;
+      id.comm_fortran=USE_COMM_WORLD;
+      dmumps_c(&id);
+    }
 
     cholCorrection = 0;
     DisplayLevel = 1;
@@ -70,6 +78,9 @@ namespace DCI {
     if ( (x == 0) || (bl == 0) || (bu == 0) )
       return -1;
 
+    //Mumps
+    id.n = 2*nvar + nconI;
+
     call_names ();
     StartTime = getTime();
 
@@ -102,6 +113,8 @@ namespace DCI {
     }
 
     amax = amax + nconI;
+    if (UseMUMPS)
+      amax += nvar + nconI;
 
     f = new Real;
     fxc = new Real;
@@ -619,6 +632,19 @@ namespace DCI {
       delpointer (J);
       J = new Sparse (*env);
       J->triplet_to_sparse (*Jtrip, amax);
+      //Mumps
+      if (UseMUMPS) {
+        for (Int i = 0; i < *nnzj; i++) {
+          Ji[i] += nvar + nconI;
+          Ji[*nnzj + i] = i;
+          Jj[*nnzj + i] = i;
+          Jx[*nnzj + i] = 1;
+        }
+        id.irn = reinterpret_cast<int*>(Ji);
+        id.jcn = reinterpret_cast<int*>(Jj);
+        id.a = reinterpret_cast<double*>(Jx);
+        id.nz = (int)(*nnzj) + nvar + nconI;
+      }
     } else {
       if (Running) {
         Int numI = 0;
@@ -679,6 +705,19 @@ namespace DCI {
       delpointer (J);
       J = new Sparse (*env);
       J->triplet_to_sparse (*Jtrip, amax);
+      //Mumps
+      if (UseMUMPS) {
+        for (Int i = 0; i < *nnzj; i++) {
+          Ji[i] += nvar + nconI;
+          Ji[*nnzj + i] = i;
+          Jj[*nnzj + i] = i;
+          Jx[*nnzj + i] = 1;
+        }
+        id.irn = reinterpret_cast<int*>(Ji);
+        id.jcn = reinterpret_cast<int*>(Jj);
+        id.a = reinterpret_cast<double*>(Jx);
+        id.nz = (int)(*nnzj) + nvar + nconI;
+      }
     } else {
       if (Running) {
         Int numI = 0;
@@ -823,16 +862,18 @@ namespace DCI {
   }
 
   void Interface::analyze_J () {
+    if (UseMUMPS)
+      return;
     if (LJ == 0) 
       LJ = new Factor (*env);
     LJ->analyze (*J);
   }
 
   void Interface::cholesky_J () {
+    if (UseMUMPS)
+      return;
     if (LJ == 0)
       std::cerr << "analyze should be called first" << std::endl;
-//    if (cholCorrection > 0)
-//      cholCorrection = normc;
     LJ->factorize (*J, cholCorrection);
     cholFacs++;
     if (!env->IsPosDef()) {

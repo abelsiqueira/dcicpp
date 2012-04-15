@@ -151,7 +151,35 @@ namespace DCI {
     Real one[2] = {1,0};
 
     Pr.sdmult (*J, 0, mone, zero, r); // Pr = -A*r
-    tmp.solve (CHOLMOD_A, *LJ, Pr); // A * A' * tmp = Pr
+    if (UseMUMPS) {
+      Real rhs[nvar + nconI + Pr.size()];
+      //rhs(1:nvar+nconI)     = 0
+      //rhs(nvar+nconI+1:end) = -A*r
+      for (Int i = 0; i < nvar + nconI; i++)
+        rhs[i] = 0;
+      for (Int i = 0; i < (Int) Pr.size(); i++)
+        rhs[nvar + nconI + i] = Pr.get_doublex()[i];
+      id.rhs = rhs;
+      id.icntl[0] = -1; 
+      id.icntl[1] = -1; 
+      id.icntl[2] = -1; 
+      id.icntl[3] = 0;
+      id.job = 6;
+      dmumps_c(&id);
+      //rhs(1:nvar+nconI)     = -A'*inv(A*A')*A*r
+      //rhs(nvar+nconI+1:end) = inv(A*A')*A*r
+      tmp.reset(Pr.size());
+//      Pr.reset(nvar + nconI);
+//      for (Int i = 0; i < nvar + nconI; i++)
+//        Pr.get_doublex()[i] = rhs[i];
+      for (Int i = 0; i < (Int) tmp.size(); i++)
+        tmp.get_doublex()[i] = rhs[nvar + nconI + i];
+//      Pr.sdmult(*J, 1, one, one, tmp); 
+//      assert( Pr.norm() < 1e-3);
+      tmp.scale(-1);
+    } else {
+      tmp.solve (CHOLMOD_A, *LJ, Pr); // A * A' * tmp = Pr
+    }
     if (LimLbd) {
       pReal tmpx = tmp.get_doublex();
       for (Int i = 0; i < ncon; i++) {
@@ -167,12 +195,33 @@ namespace DCI {
 
   Int Interface::NAstep (Vector & r, Vector & dr) { //dr = -A'*inv(AA')*r
     Real mone[2] = {-1,0}, zero[2] = {0,0};
-    if (!UseCG) {
-      dr.solve (CHOLMOD_A, *LJ, r); // dr = inv(AA')r;
-    } else {
+    if (UseCG) {
       LinSysCG (0, r, dr);
+      dr.sdmult (*J, 1, mone, zero, dr);
+    } else if (UseMUMPS) {
+      Real rhs[nvar + nconI + r.size()];
+      for (Int i = 0; i < nvar + nconI; i++)
+        rhs[i] = 0;
+      for (Int i = 0; i < (Int) r.size(); i++)
+        rhs[nvar + nconI + i] = -r.get_doublex()[i];
+      //rhs(1:N)     = 0
+      //rhs(N+1:end) = -r
+      id.rhs = rhs;
+      id.icntl[0] = -1; 
+      id.icntl[1] = -1; 
+      id.icntl[2] = -1; 
+      id.icntl[3] = 0;
+      id.job = 6;
+      dmumps_c(&id);
+      dr.reset(nvar + nconI);
+      //rhs(1:nvar+nconI)     = -A'*inv(A*A')*r
+      //rhs(nvar+nconI+1:end) = inv(A*A')*r
+      for (Int i = 0; i < nvar + nconI; i++)
+        dr.get_doublex()[i] = -rhs[i];
+    } else {
+      dr.solve (CHOLMOD_A, *LJ, r); // dr = inv(AA')r;
+      dr.sdmult (*J, 1, mone, zero, dr);
     }
-    dr.sdmult (*J, 1, mone, zero, dr);
 
     return 0;
   }

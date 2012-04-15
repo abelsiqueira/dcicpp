@@ -122,7 +122,7 @@ void CCFSG (Int * n, Int * m, Real * x, Int * mmax, Real * c, Int * nnzJ, Int * 
   indfun[13] = 5;
   J[13] = 1;
   indvar[14] = 5;
-  indfun[15] = 5;
+  indfun[14] = 5;
   J[14] = 1;
 
   *nnzJ = 15;

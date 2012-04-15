@@ -17,4 +17,8 @@ MV = mv -f
 
 DCILIBNAME = libdcicpp.a
 
-DCILIB = $(DCIDIR)/Lib/$(DCILIBNAME) -lbasematrices -lcholmod -lamd -lcolamd -lccolamd -lcamd -lmetis -lgoto2 -lgfortran -lgfortranbegin -lpthread
+MUMPSDIR="/home/abel/Libraries/MUMPS_4.10.0"
+I=-I$(MUMPSDIR)/libseq -I$(MUMPSDIR)/PORT/include -I$(MUMPSDIR)/include
+MUMPSLIB=$(MUMPSDIR)/lib/libdmumps.a $(MUMPSDIR)/lib/libmumps_common.a \
+        -L$(MUMPSDIR)/PORD/lib -lpord -L$(MUMPSDIR)/libseq -lmpiseq
+DCILIB = $(DCIDIR)/Lib/$(DCILIBNAME) -lbasematrices -lcholmod -lamd -lcolamd -lccolamd -lcamd -lmetis $(MUMPSLIB) -lgoto2 -lgfortran -lgfortranbegin -lpthread
