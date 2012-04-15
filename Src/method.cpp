@@ -231,7 +231,7 @@ namespace DCI {
       //rhs(1:nvar+nconI)     = -A'*inv(A*A')*r
       //rhs(nvar+nconI+1:end) = inv(A*A')*r
       for (Int i = 0; i < nvar + nconI; i++)
-        dr.get_doublex()[i] = -rhs[i];
+        dr.get_doublex()[i] = rhs[i];
     } else {
       dr.solve (CHOLMOD_A, *LJ, r); // dr = inv(AA')r;
       dr.sdmult (*J, 1, mone, zero, dr);
