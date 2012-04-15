@@ -79,7 +79,7 @@ namespace DCI {
       return -1;
 
     //Mumps
-    id.n = 2*nvar + nconI;
+    id.n = ncon + nvar + nconI;
 
     call_names ();
     StartTime = getTime();
@@ -635,9 +635,10 @@ namespace DCI {
       //Mumps
       if (UseMUMPS) {
         for (Int i = 0; i < *nnzj; i++) {
-          Ji[i] += nvar + nconI;
-          Ji[*nnzj + i] = i;
-          Jj[*nnzj + i] = i;
+          Ji[i] += nvar + nconI + 1;
+          Jj[i]++;
+          Ji[*nnzj + i] = i + 1;
+          Jj[*nnzj + i] = i + 1;
           Jx[*nnzj + i] = 1;
         }
         id.irn = reinterpret_cast<int*>(Ji);
@@ -708,9 +709,10 @@ namespace DCI {
       //Mumps
       if (UseMUMPS) {
         for (Int i = 0; i < *nnzj; i++) {
-          Ji[i] += nvar + nconI;
-          Ji[*nnzj + i] = i;
-          Jj[*nnzj + i] = i;
+          Ji[i] += nvar + nconI + 1;
+          Jj[i]++;
+          Ji[*nnzj + i] = i + 1;
+          Jj[*nnzj + i] = i + 1;
           Jx[*nnzj + i] = 1;
         }
         id.irn = reinterpret_cast<int*>(Ji);

@@ -159,6 +159,13 @@ namespace DCI {
         rhs[i] = 0;
       for (Int i = 0; i < (Int) Pr.size(); i++)
         rhs[nvar + nconI + i] = Pr.get_doublex()[i];
+//      std::cout << "rhs = " << std::endl;
+//      for (size_t i = 0; i < nvar + nconI + Pr.size(); i++)
+//        std::cout << rhs[i] << ' ';
+//      std::cout << std::endl;
+//      for (int i = 0; i < id.nz; i++) {
+//        std::cout << id.irn[i] << ',' << id.jcn[i] << " = " << id.a[i] << std::endl;
+//      }
       id.rhs = rhs;
       id.icntl[0] = -1; 
       id.icntl[1] = -1; 
@@ -166,6 +173,10 @@ namespace DCI {
       id.icntl[3] = 0;
       id.job = 6;
       dmumps_c(&id);
+//      std::cout << "sol = " << std::endl;
+//      for (size_t i = 0; i < nvar + nconI + Pr.size(); i++)
+//        std::cout << rhs[i] << ' ';
+//      std::cout << std::endl;
       //rhs(1:nvar+nconI)     = -A'*inv(A*A')*A*r
       //rhs(nvar+nconI+1:end) = inv(A*A')*A*r
       tmp.reset(Pr.size());
@@ -174,7 +185,10 @@ namespace DCI {
 //        Pr.get_doublex()[i] = rhs[i];
       for (Int i = 0; i < (Int) tmp.size(); i++)
         tmp.get_doublex()[i] = rhs[nvar + nconI + i];
+//      Pr.print_more();
+//      tmp.print_more();
 //      Pr.sdmult(*J, 1, one, one, tmp); 
+//      std::cout << "|rhs[1] + J'*rhs[2]| = " << Pr.norm() << std::endl;
 //      assert( Pr.norm() < 1e-3);
       tmp.scale(-1);
     } else {
