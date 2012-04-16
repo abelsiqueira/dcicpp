@@ -1,4 +1,5 @@
 UseCG 0
+UseMUMPS 1
 PartialPenal 1
 project_dcp 1
 project_bfgs 1

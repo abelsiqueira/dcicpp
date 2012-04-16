@@ -67,9 +67,10 @@ namespace DCI {
       en_eps1, en_eps2, en_eps3, en_epsmu, en_epsgap, en_bfgsupd, en_c1, en_c2,
       en_MaxTime, en_minBk, en_UseCG, en_PartialPenal, en_project_dcp,
       en_project_bfgs, en_trustWorstdn, en_trustConvexBox, en_penal_trust,
-      en_penal_bfgs};
+      en_penal_bfgs, en_UseMUMPS};
     std::map<std::string, int> paramMap;
 
+    paramMap["UseMUMPS"] = en_UseMUMPS;
     paramMap["UseCG"] = en_UseCG;
     paramMap["PartialPenal"] = en_PartialPenal;
     paramMap["project_dcp"] = en_project_dcp;
@@ -170,6 +171,7 @@ namespace DCI {
         case en_MaxTime: aux >> MaxTime; break;
         case en_minBk: aux >> minBk; break;
         case en_UseCG: aux >> UseCG; break;
+        case en_UseMUMPS: aux >> UseMUMPS; break;
         case en_PartialPenal: aux >> PartialPenal; break;
         case en_project_dcp: aux >> project_dcp; break;
         case en_project_bfgs: aux >> project_bfgs; break;
