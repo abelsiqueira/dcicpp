@@ -36,7 +36,7 @@ namespace DCI {
     call_ccfsg (dciTrue, dciTrue);
 
     gtmp.sdmult (*J, 1, one, zero, ctmp); // g = J'*c
-    scale_xc(gtmp);
+//    scale_xc(gtmp);
     pReal gtmpx = gtmp.get_doublex();
     /*if (penal_trust) {
       for (Int i = 0; i < nvar; i++) {
@@ -93,12 +93,13 @@ namespace DCI {
       lower[i] = Max((li - zi) * (1 - epsmu), -DeltaV);
       upper[i] = Min((ui - zi) * (1 - epsmu),  DeltaV);
     }
-    for (Int i = 0; i < nvar; i++) {
+    for (Int i = 0; i < nconI; i++) {
       Int j = nvar + i;
       Real zi = scx[i], li = clx[i], ui = cux[i];
       lower[i] = Max((li - zi) * (1 - epsmu), -DeltaV);
       upper[i] = Min((ui - zi) * (1 - epsmu),  DeltaV);
     }
+    d.sdmult(*J, 0, one, zero, gtmp);
     alpha = normgtmp/d.norm();
     alpha *= alpha;
     for (Int i = 0; i < nvar + nconI; i++) {
@@ -107,9 +108,10 @@ namespace DCI {
         alpha = Min (alpha, upper[i]/gtmpi);
       else if (gtmpi < 0)
         alpha = Min (alpha, lower[i]/gtmpi);
+      assert (alpha > 0);
     } 
     dcp.scale (gtmp, -alpha);
-//    scale_xc (dcp);
+    scale_xc (dcp);
     ndcp = dcp.norm(0);
 
     dnavail = dciFalse;
@@ -128,6 +130,13 @@ namespace DCI {
     pReal dx = 0;
     pReal dnx = 0;
     Real smlAlphamu = 1e-3;
+    bool dcpOutsideRegion = false;
+    for (Int i = 0; i < nvar + nconI; i++) {
+      if ( (dcpx[i] >= upper[i]) || (dcpx[i] <= lower[i]) ) {
+        dcpOutsideRegion = true;
+        break;
+      }
+    }
 
     /*for (Int i = 0; i < nvar; i++) {
       Real xi = xcx[i], dcpi = dcpx[i], bli = blx[i], bui = bux[i];
@@ -180,7 +189,7 @@ namespace DCI {
       TrustIter++;
       DeltaV = kappa2*normd;
 
-      if ( (ndcp < DeltaV) && (dcpAlphamu == 1) ) {
+      if (!dcpOutsideRegion) {
         // Cauchy step is inside trust region
         // sc + dcps >= epsmu*sc
         if (!dnavail) {
@@ -284,11 +293,21 @@ namespace DCI {
           iout = 10;
         }
       } else {
-        d = dcp;
+        Real alphadcp = 1.0;
+        for (Int i = 0; i < nvar + nconI; i++) {
+          Real di = dcpx[i];
+          if (di > 0)
+            alpha = Min (alpha, upper[i]/di);
+          else if (di < 0)
+            alpha = Min (alpha, lower[i]/di);
+          assert (alpha > 0);
+        } 
+        d.scale(dcp, alphadcp);
         normd = ndcp;
         iout = 13;
       }
 
+      std::cout << "iout = " << iout << std::endl;
       *xc = xtmp;
       if (Ineq)
         *sc = stmp;
