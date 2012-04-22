@@ -637,6 +637,8 @@ namespace DCI {
         for (Int i = 0; i < *nnzj; i++) {
           Ji[i] += nvar + nconI + 1;
           Jj[i]++;
+        }
+        for (Int i = 0; i < nvar + nconI; i++) {
           Ji[*nnzj + i] = i + 1;
           Jj[*nnzj + i] = i + 1;
           Jx[*nnzj + i] = 1;
@@ -711,6 +713,8 @@ namespace DCI {
         for (Int i = 0; i < *nnzj; i++) {
           Ji[i] += nvar + nconI + 1;
           Jj[i]++;
+        }
+        for (Int i = 0; i < nvar + nconI; i++) {
           Ji[*nnzj + i] = i + 1;
           Jj[*nnzj + i] = i + 1;
           Jx[*nnzj + i] = 1;

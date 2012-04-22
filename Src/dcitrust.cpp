@@ -33,7 +33,7 @@ namespace DCI {
       stmp = *sc;
 
     //Remove later if needed
-    call_ccfsg (dciTrue, dciTrue);
+//    call_ccfsg (dciTrue, dciTrue);
 
     gtmp.sdmult (*J, 1, one, zero, ctmp); // g = J'*c
     pReal gtmpx = gtmp.get_doublex();
