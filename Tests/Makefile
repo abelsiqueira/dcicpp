@@ -4,7 +4,7 @@ include ../make.inc
 default: all
 
 #VALGRIND = valgrind
-#VALGRINDFLAGS = --leak-check=yes
+#VALGRINDFLAGS = --leak-check=yes -v
 GDB = gdb
 
 LOCALTEST = localtest.tst

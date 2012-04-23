@@ -263,6 +263,7 @@ namespace DCI {
     mu = 1;
     murho = 1;
     mugap = 1;
+    LimLbd = dciTrue;
 
     //Strategy choices
     UseCG = dciFalse;
