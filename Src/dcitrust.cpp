@@ -34,6 +34,7 @@ namespace DCI {
 
     //Remove later if needed
 //    call_ccfsg (dciTrue, dciTrue);
+    Aavail = dciFalse;
 
     gtmp.sdmult (*J, 1, one, zero, ctmp); // g = J'*c
 //    scale_xc(gtmp);
@@ -95,9 +96,9 @@ namespace DCI {
     }
     for (Int i = 0; i < nconI; i++) {
       Int j = nvar + i;
-      Real zi = scx[i], li = clx[i], ui = cux[i];
-      lower[i] = Max((li - zi) * (1 - epsmu), -DeltaV);
-      upper[i] = Min((ui - zi) * (1 - epsmu),  DeltaV);
+      Real zi = scx[i], li = clx[ineqIdx[i]], ui = cux[ineqIdx[i]];
+      lower[j] = Max((li - zi) * (1 - epsmu), -DeltaV);
+      upper[j] = Min((ui - zi) * (1 - epsmu),  DeltaV);
     }
     d.sdmult(*J, 0, one, zero, gtmp);
     alpha = normgtmp/d.norm();
@@ -307,7 +308,7 @@ namespace DCI {
         iout = 13;
       }
 
-      std::cout << "iout = " << iout << std::endl;
+//      std::cout << "iout = " << iout << std::endl;
       *xc = xtmp;
       if (Ineq)
         *sc = stmp;
