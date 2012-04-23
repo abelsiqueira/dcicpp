@@ -103,12 +103,16 @@ namespace DCI {
     d.sdmult(*J, 0, one, zero, gtmp);
     alpha = normgtmp/d.norm();
     alpha *= alpha;
+    Vector Diag(*env);
+    Diag.reset(nvar + nconI, 1.0);
+    scale_xc(Diag);
+    pReal Diagx = Diag.get_doublex();
     for (Int i = 0; i < nvar + nconI; i++) {
       Real gtmpi = gtmpx[i];
       if (gtmpi > 0)
-        alpha = Min (alpha, upper[i]/gtmpi);
+        alpha = Min (alpha, upper[i]/(Diagx[i]*gtmpi));
       else if (gtmpi < 0)
-        alpha = Min (alpha, lower[i]/gtmpi);
+        alpha = Min (alpha, lower[i]/(Diagx[i]*gtmpi));
       assert (alpha > 0);
     } 
     dcp.scale (gtmp, -alpha);
@@ -298,10 +302,10 @@ namespace DCI {
         for (Int i = 0; i < nvar + nconI; i++) {
           Real di = dcpx[i];
           if (di > 0)
-            alpha = Min (alpha, upper[i]/di);
+            alphadcp = Min (alphadcp, upper[i]/di);
           else if (di < 0)
-            alpha = Min (alpha, lower[i]/di);
-          assert (alpha > 0);
+            alphadcp = Min (alphadcp, lower[i]/di);
+          assert (alphadcp > 0);
         } 
         d.scale(dcp, alphadcp);
         normd = ndcp;
