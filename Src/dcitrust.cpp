@@ -39,7 +39,7 @@ namespace DCI {
     gtmp.sdmult (*J, 1, one, zero, ctmp); // g = J'*c
 //    scale_xc(gtmp);
     pReal gtmpx = gtmp.get_doublex();
-    /*if (penal_trust) {
+    if (penal_trust) {
       for (Int i = 0; i < nvar; i++) {
         Real val = 0;
         if ( (bux[i] < dciInf) && (blx[i] > -dciInf) ) {
@@ -77,7 +77,7 @@ namespace DCI {
           val = 1;
         gtmpx[nvar + i] -= mu*val;
       }
-    }*/
+    }
     normgtmp = gtmp.norm ();
 //    DeltaV = normgtmp;
 
@@ -143,7 +143,7 @@ namespace DCI {
       }
     }
 
-    /*for (Int i = 0; i < nvar; i++) {
+    for (Int i = 0; i < nvar; i++) {
       Real xi = xcx[i], dcpi = dcpx[i], bli = blx[i], bui = bux[i];
       if (dcpi == 0)
         continue;
@@ -188,11 +188,12 @@ namespace DCI {
         }
       }
     }
-    ndcp = dcp.norm(0);*/
+    ndcp = dcp.norm(0);
 
     while ( (Ared < kappa1*Pred) && (Aavail || (TrustIter < 2) ) && (CurrentTime < MaxTime) ) {
       TrustIter++;
       DeltaV = kappa2*normd;
+//      DeltaV = Min(kappa2*normd, 0.9*DeltaV);
 
       if (!dcpOutsideRegion) {
         // Cauchy step is inside trust region
@@ -208,7 +209,7 @@ namespace DCI {
             ndn = dn.norm (0);
           
           dnx = dn.get_doublex();
-          /*for (Int i = 0; i < nvar; i++) {
+          for (Int i = 0; i < nvar; i++) {
             Real xi = xcx[i], dni = dnx[i], bli = blx[i], bui = bux[i];
             if (dni == 0)
               continue;
@@ -251,7 +252,7 @@ namespace DCI {
                 dnAlphamu = Min (dnAlphamu, val);
               }
             }
-          }*/
+          }
         }
 
         ndn = dn.norm(0);
