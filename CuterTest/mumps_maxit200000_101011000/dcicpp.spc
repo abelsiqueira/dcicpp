@@ -7,3 +7,4 @@ trustWorstdn 1
 trustConvexBox 0
 penal_trust 0
 penal_bfgs 0
+maxit 200000

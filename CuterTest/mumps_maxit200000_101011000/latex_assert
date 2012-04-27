@@ -1,0 +1,5 @@
+HS119      & 16 & 8 & 7 & 0.03 & con & \\ \hline
+HS35MOD    & 3 & 1 & 1 & 0.01 & con & \\ \hline
+HS55       & 6 & 6 & 10 & 0.04 & con & bfgs\\ \hline
+HS83       & 5 & 3 & 17 & 0.02 & con & \\ \hline
+HS97       & 6 & 4 & 7 & 0.01 & con & \\ \hline
