@@ -1,3 +1,4 @@
+ScaleVertical 1
 UseCG 0
 UseMUMPS 1
 PartialPenal 1

@@ -67,9 +67,10 @@ namespace DCI {
       en_eps1, en_eps2, en_eps3, en_epsmu, en_epsgap, en_bfgsupd, en_c1, en_c2,
       en_MaxTime, en_minBk, en_UseCG, en_PartialPenal, en_project_dcp,
       en_project_bfgs, en_trustWorstdn, en_trustConvexBox, en_penal_trust,
-      en_penal_bfgs, en_UseMUMPS};
+      en_penal_bfgs, en_UseMUMPS, en_ScaleVertical};
     std::map<std::string, int> paramMap;
 
+    paramMap["ScaleVertical"] = en_ScaleVertical;
     paramMap["UseMUMPS"] = en_UseMUMPS;
     paramMap["UseCG"] = en_UseCG;
     paramMap["PartialPenal"] = en_PartialPenal;
@@ -179,6 +180,7 @@ namespace DCI {
         case en_trustConvexBox: aux >> trustConvexBox; break;
         case en_penal_trust: aux >> penal_trust; break;
         case en_penal_bfgs: aux >> penal_bfgs; break;
+        case en_ScaleVertical: aux >> ScaleVertical; break;
       }
     }
   }
@@ -286,6 +288,8 @@ namespace DCI {
 
     UseMUMPS = dciTrue;
 //    UseMUMPS = dciFalse;
+
+    ScaleVertical = dciTrue;
 
     //Program properties
     Ineq = dciFalse; //Has some inequalities

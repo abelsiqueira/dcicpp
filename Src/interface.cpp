@@ -38,8 +38,6 @@ namespace DCI {
     }
 
 //    cholCorrection = 1e-2;
-//    ScaleVertical = dciTrue;
-    ScaleVertical = dciFalse;
     cholCorrection = 0;
     DisplayLevel = 1;
     env = new Environment;

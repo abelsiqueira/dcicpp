@@ -245,7 +245,8 @@ namespace DCI {
     Vector Diag(*env);
     Diag.reset (nvar + nconI, 1);
     pReal Diagx = Diag.get_doublex();
-    scale_xc (Diag);
+    if (ScaleVertical)
+      scale_xc (Diag);
 
     for (Int i = 0; i < nvar; i++) {
       Real xi = xcx[i], di = Diagx[i]*dx[i], bli = blx[i], bui = bux[i];
@@ -365,7 +366,8 @@ namespace DCI {
     Vector Diag(*env);
     Diag.reset (nvar + nconI, 1);
     pReal Diagx = Diag.get_doublex();
-    scale_xc (Diag);
+    if (ScaleVertical)
+      scale_xc (Diag);
 
     while ( (zoomiter <= itermax) && (!enough) ) {
 
@@ -393,7 +395,7 @@ namespace DCI {
         ishi = dciTrue;
         zoomiter = zoomiter + 1;
       } else {
-        call_ccfsg_xc (dciTrue, scaleJ);
+        call_ccfsg_xc (dciTrue, ScaleVertical);
         gtmp.sdmult (*J, 1, one, zero, *c);
         gtd = gtmp.dot(d);
 
@@ -416,7 +418,7 @@ namespace DCI {
     if (zoomiter > itermax) {
 
       if (ishi) {
-        call_ccfsg_xc (dciTrue, scaleJ);
+        call_ccfsg_xc (dciTrue, ScaleVertical);
         gtmp.sdmult (*J, 1, one, zero, *c);
         gtd = gtmp.dot(d);
       }
