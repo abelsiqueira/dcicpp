@@ -2,6 +2,11 @@
 #define dci_interface_h
 
 #include "triplet.h"
+#include "mpi.h"
+#include "dmumps_c.h"
+#define JOB_INIT -1
+#define JOB_END -2
+#define USE_COMM_WORLD -987654
 
 namespace DCI {
   using namespace base_matrices;
@@ -35,6 +40,7 @@ namespace DCI {
       void set_cu (size_t n, Real * V);
       void set_cu (Vector &);
       void set_equatn (size_t n, Bool *V);
+      void set_linear (size_t n, Bool *V);
 
       // Internal set nvar, ncon, nmax, mmax
       void set_nvar (Int n) { nvar = n; };
@@ -58,6 +64,10 @@ namespace DCI {
       void set_cnames (pcnames p) { cnames = p; };
 
     protected:
+      //MUMPS Section
+      DMUMPS_STRUC_C id;
+      Real *mumps_matrix, *mumps_rhs;
+      int *mumps_irn, *mumps_jcn, myid;
       void GDBSTOP ();
       // These are the pointer to the functions
       // Unconstrained
@@ -103,8 +113,10 @@ namespace DCI {
       Int linesearch (const Vector &, const Vector &, const Vector &, Real &, Real &, Vector &);
       Int zoom (const Vector &, const Vector &, const Vector &, Vector &, Real, Real, Real, Real &, Real &, Real, Real, Real, Real);
       Real interpolate (Real, Real, Real, Real, Real, Real, Bool);
-      void InitialParameters ();
+      void DefineParameters ();
+      void ReadParameters ();
       void InitialValues ();
+      void Initialization ();
       Real getTime ();
       void checkInfactibility ();
       void scale_x (Vector &);
@@ -169,14 +181,14 @@ namespace DCI {
       // The environment variables
       Environment * env;
       Int nmax, mmax, amax;
-      Int nvar, ncon, nconE, nconI;
+      Int nvar, ncon, nconE, nconI, nconL, nconNL;
       std::string problemName;
       Bool StartAtOne;
       Bool Initialized;
       Bool Running;
       Bool Solved;
-      Bool Ineq;
-      Bool Unbounded;
+      Bool Ineq, Linear, Bounded;
+      Bool Unlimited;
       Int DisplayLevel;
       Int ExitFlag;
       Real MaxTime, CurrentTime, StartTime;
@@ -185,7 +197,7 @@ namespace DCI {
       Real c1, c2;
       Real rho, rhomax, rhomin;
       Real DeltaH, DeltaV;
-      Real DeltaMax, DeltaMin, Delta0, DeltaInf;
+      Real DeltaMax, DeltaMin, Delta0, DeltaTiny;
       Real alphaR, alphaI, alphaS;
       Real eps1, eps2, eps3;
       Real epsmu, epsgap;
@@ -202,10 +214,13 @@ namespace DCI {
       Int iter, maxit, maxitSteih, minitSteih, relitSteih;
       Int minstep, itssmll, maxrest, maxssmll;
       Int bfgsupd;
-      Bool Aavail, gavail, lincon, LimLbd, FreshA;
+      Int cholFacs;
+      Bool Aavail, gavail, LimLbd, FreshA;
       Real minBk;
       Bool UseCG;
-      Bool PartialPenal;
+      Bool UseMUMPS;
+      Bool PartialPenal, project_dcp, project_dn, project_bfgs;
+      Bool trustWorstdn, trustConvexBox, penal_trust, penal_bfgs;
       Real cholCorrection;
 
   };

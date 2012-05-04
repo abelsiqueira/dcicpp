@@ -7,6 +7,9 @@ namespace DCI {
     if (!Initialized)
       return -1;
 
+    //Linear problem. Enforce non-linear because the matrix is scaled.
+    //Hence, we need to refactorize.
+    Linear = dciFalse;
     Running = dciTrue;
 
 #ifdef LOCALTEST
@@ -62,7 +65,7 @@ namespace DCI {
     gap = 1;
     Real ydif = 0;
 
-    while ( ( (cnormi > csic) || ( (normgp > csig) && (ngp > csig*1e-2) ) || (mu > epsmu) || (gap > epsgap) || (ydif > 1e-6) ) && (iter <= maxit) && (tRest <= maxrest) && (itssmll <= maxssmll) && (VertFlag == 0) && (rhomax >= rhomin) && (!Unbounded) && (CurrentTime < MaxTime) ) {
+    while ( ( (cnormi > csic) || ( (normgp > csig) && (ngp > csig*1e-2) ) || (mu > epsmu) || (gap > epsgap) || (ydif > 1e-6) ) && (iter <= maxit) && (tRest <= maxrest) && (itssmll <= maxssmll) && (VertFlag == 0) && (rhomax >= rhomin) && (!Unlimited) && (CurrentTime < MaxTime) ) {
 
       calc_ydif ();
       iter++;
@@ -160,7 +163,7 @@ namespace DCI {
 
       CurrentTime = getTime() - StartTime;
 
-      if ( ( (cnormi > csic) || ( (normgp > csig) && (ngp > csig*1e-2) ) ) && (VertFlag == 0) && (rhomax >= rhomin) && (!Unbounded) && (CurrentTime < MaxTime) ) {
+      if ( ( (cnormi > csic) || ( (normgp > csig) && (ngp > csig*1e-2) ) ) && (VertFlag == 0) && (rhomax >= rhomin) && (!Unlimited) && (CurrentTime < MaxTime) ) {
 
         horzstep (norms); 
         checkInfactibility ();
@@ -186,9 +189,9 @@ namespace DCI {
           itssmll = 0;
 
       } else {
-        x->scale (*xc, 1);
+        *x = *xc;
         if (Ineq)
-          s->scale (*sc, 1);
+          *s = *sc;
         updyineq ();
         gap = calc_gap ();
         *f = *fxc;
@@ -199,7 +202,7 @@ namespace DCI {
       call_ofg(dciTrue);
       update_lambda ();
       ngpzk = gp->norm();
-      y->scale(ytmp, 1);
+      *y = ytmp;
       if (solx != 0) {
         ek = ekp;
         ekp = ekpp;
@@ -270,7 +273,7 @@ namespace DCI {
       ExitFlag = 3;
     else if (itssmll > maxssmll)
       ExitFlag = 5;
-    else if (Unbounded)
+    else if (Unlimited)
       ExitFlag = 6;
     else if (CurrentTime >= MaxTime)
       ExitFlag = 7;
@@ -283,6 +286,13 @@ namespace DCI {
     //Calculating the real function value
     call_fn();
     CurrentTime = getTime() - StartTime;
+
+    //MUMPS
+    if (UseMUMPS) {
+      id.job=JOB_END;
+      dmumps_c(&id);
+      MPI_Finalize();
+    }
 
     return 0;
   }

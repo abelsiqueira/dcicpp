@@ -47,9 +47,9 @@ namespace DCI {
     nRest = 0;
     nbfgs = 0;
     oldnormc = normc;
-    xc->scale (*x, 1);
+    *xc = *x;
     if (Ineq)
-      sc->scale (*s, 1);
+      *sc = *s;
     VertFlag = 0;
     if (iter == 1) {
       Aavail = dciTrue;
@@ -61,7 +61,7 @@ namespace DCI {
 
     if ( (normc <= rho) && (!Aavail) ) {
       if (ncon > 0) {
-        if (!lincon)
+        if (!Linear)
           call_ccfsg_xc (); //CuterJacob
         Aavail = dciTrue;
 
@@ -69,7 +69,7 @@ namespace DCI {
 
         gavail = dciTrue;
 
-        if (!lincon) {
+        if (!Linear) {
           analyze_J ();
           cholesky_J ();
         }
@@ -79,7 +79,7 @@ namespace DCI {
         updyineq ();
       } else {
         call_ofg_xc ();
-        gp->scale (*g, 1);
+        *gp = *g;
       }
 
       normgp = gp->norm ();
@@ -146,18 +146,18 @@ namespace DCI {
         } else if ( ( (normc > thetaR*oldnormc) && (oldAcnt > 0) ) || (oldAcnt > 5) || (iout == 5) ) {
           // dcivert failed. Recompute A
 
-          if (!lincon) {
+          if (!Linear) {
             call_ccfsg_xc (dciTrue, scaleJ); //CuterJacob
           }
           Aavail = dciTrue;
           oldAcnt = 0;
 
-          if (!lincon) {
+          if (!Linear) {
             this->cholesky_J ();
           }
 
         } else {
-          oldAcnt = oldAcnt + 1;
+          oldAcnt++;
           Aavail = dciFalse;
         }
 
@@ -169,7 +169,7 @@ namespace DCI {
       } //Fim do While
 
       if (!Aavail) {
-        if (!lincon) {
+        if (!Linear) {
           call_ccfsg_xc (); //CuterJacob
           this->cholesky_J ();
         }

@@ -26,67 +26,18 @@ namespace DCI {
 
   Interface::Interface () {
     //Parameters
+    Initialization ();
+    //Mumps
+    if (UseMUMPS) {
+      MPI_Comm_rank(MPI_COMM_WORLD, &myid);
+      id.job=JOB_INIT;
+      id.par=1;
+      id.sym=2;
+      id.comm_fortran=USE_COMM_WORLD;
+      dmumps_c(&id);
+    }
 
-    ufn = 0;
-    cfn = 0;
-    uofg = 0;
-    cofg = 0;
-    uprod = 0;
-    cprod = 0;
-    ccfsg = 0;
-    ccifg = 0;
-    unames = 0;
-    cnames = 0;
-    f = 0;
-    fxc = 0;
-    g = 0;
-    H = 0;
-    Htrip = 0;
-    c = 0;
-    J = 0;
-    Jtrip = 0;
-    LJ = 0;
-    gp = 0;
-    normgp = 0;
-    normg = 0;
-    normc = 0;
-    x = 0;
-    solx = 0;
-    bl = 0;
-    bu = 0;
-    y = 0;
-    yineq = 0;
-    cl = 0;
-    cu = 0;
-    s = 0;
-    sols = 0;
-    xc = 0;
-    sc = 0;
-    feasOpt = 0;
-    equatn = 0;
-    linear = 0;
-    nmax = 0;
-    mmax = 0;
-    amax = 0;
-    nvar = 0;
-    ncon = 0;
-    nconE = 0;
-    nconI = 0;
-    ineqIdx = 0;
-    Ineq = dciFalse;
-    CurrentTime = 0;
-    MaxTime = dciInf;
-    DLH = dciInf;
-    DLV = 0;
-    Lref = dciInf;
-    StartAtOne = dciFalse;
-    Initialized = dciFalse;
-    Running = dciFalse;
-    Solved = dciFalse;
-    Unbounded = dciFalse;
-    UseCG = dciFalse;
-    PartialPenal = dciFalse;
-//    PartialPenal = dciTrue;
+//    cholCorrection = 1e-2;
     cholCorrection = 0;
     DisplayLevel = 1;
     env = new Environment;
@@ -128,6 +79,9 @@ namespace DCI {
     if ( (x == 0) || (bl == 0) || (bu == 0) )
       return -1;
 
+    //Mumps
+    id.n = ncon + nvar + nconI;
+
     call_names ();
     StartTime = getTime();
 
@@ -138,6 +92,15 @@ namespace DCI {
       nconE = ncon;
       nconI = 0;
       Ineq = dciFalse;
+    }
+
+    if (linear == 0) {
+      linear = new Bool[ncon];
+      for (Int i = 0; i < ncon; i++)
+        linear[i] = dciFalse;
+      nconNL = ncon;
+      nconL = 0;
+      Linear = dciFalse;
     }
 
     if (nmax == 0)
@@ -151,6 +114,8 @@ namespace DCI {
     }
 
     amax = amax + nconI;
+    if (UseMUMPS)
+      amax += nvar + nconI + ncon;
 
     f = new Real;
     fxc = new Real;
@@ -184,7 +149,7 @@ namespace DCI {
 #ifdef LOCALTEST
     if (solx != 0) {
       Vector tmp (*xc);
-      xc->scale (*solx,1);
+      *xc = *solx;
       call_fn_xc ();
       sols = new Vector (*env, nconI);
       pReal ps = sols->get_doublex ();
@@ -194,7 +159,7 @@ namespace DCI {
     }
 #endif
 
-    InitialParameters ();
+    DefineParameters ();
     InitialValues ();
     Initialized = dciTrue;
 
@@ -252,7 +217,7 @@ namespace DCI {
       else if (ExitFlag == 5)
         out << "The step became too short" << std::endl;
       else if (ExitFlag == 6)
-        out << "The problem is unbounded" << std::endl;
+        out << "The problem is unlimited" << std::endl;
       else if (ExitFlag == 7)
         out << "The problem reached the time limit" << std::endl;
       else if (ExitFlag == 8)
@@ -264,7 +229,7 @@ namespace DCI {
           << "y offset = " << yoff << std::endl
           << "BFGS? " << ((tbfgs > 0) ? "yes" : "no") << std::endl
           << "Number of Iterations = " << iter << std::endl
-          << "Elapsed Time = " << CurrentTime << " s" << std::endl;
+          << "Elapsed Time = " << (CurrentTime > 0 ? CurrentTime : 0) << " s" << std::endl;
 
       if (DisplayLevel > 2) {
         std::cout << std::endl
@@ -347,7 +312,7 @@ namespace DCI {
           file.open ("latex_shortstep", std::ios_base::app);
           break;
         case 6:
-          file.open ("latex_unbounded", std::ios_base::app);
+          file.open ("latex_unlimited", std::ios_base::app);
           break;
         case 7:
           file.open ("latex_timelimit", std::ios_base::app);
@@ -359,7 +324,7 @@ namespace DCI {
          << nvar << " & "
          << ncon << " & "
          << iter << " & "
-         << CurrentTime << " & "
+         << (CurrentTime > 0 ? CurrentTime : 0) << " & "
          << ((ncon > 0) ? "con" : "unc") << " & "
          << ((tbfgs > 0) ? "bfgs" : "") << "\\\\ \\hline\n";
 
@@ -382,12 +347,24 @@ namespace DCI {
     bl = new Vector (*env, n, V);
     set_nvar(n);
     blx = bl->get_doublex();
+    for (size_t i = 0; i < n; i++) {
+      if (blx[i] > -dciInf) {
+        Bounded = dciTrue;
+        break;
+      }
+    }
   }
 
   void Interface::set_bu (size_t n, Real * V) {
     bu = new Vector (*env, n, V);
     set_nvar(n);
     bux = bu->get_doublex();
+    for (size_t i = 0; i < n; i++) {
+      if (bux[i] < dciInf) {
+        Bounded = dciTrue;
+        break;
+      }
+    }
   }
 
   void Interface::set_lambda (size_t n, Real * V) {
@@ -422,6 +399,7 @@ namespace DCI {
     }
     if (nconI > 0) {
       Ineq = dciTrue;
+      Bounded = dciTrue;
       ineqIdx = new Int[nconI];
       Int numI = 0;
       for (size_t i = 0; i < n; i++) {
@@ -431,6 +409,22 @@ namespace DCI {
         }
       }
     }
+  }
+
+  void Interface::set_linear (size_t n, Bool * V) {
+    linear = new Bool[n];
+    set_ncon(n);
+    nconL = nconNL = 0;
+    for (size_t i = 0; i < n; i++) {
+      Bool tmp = V[i];
+      linear[i] = tmp;
+      if (tmp == dciFalse)
+        nconNL++;
+      else
+        nconL++;
+    }
+    if (nconNL == 0)
+      Linear = dciTrue;
   }
 
   void Interface::call_fn () {
@@ -607,8 +601,8 @@ namespace DCI {
       }
 
       if (Running) {
-        std::vector<Real> tmp (nvar + nconI, 1);
-        Vector Diag(*env, tmp);
+        Vector Diag(*env);
+        Diag.reset (nvar + nconI, 1);
         pReal Diagx = Diag.get_doublex();
         if (scale) { 
           scale_x (Diag);
@@ -639,6 +633,32 @@ namespace DCI {
       delpointer (J);
       J = new Sparse (*env);
       J->triplet_to_sparse (*Jtrip, amax);
+      //Mumps
+      if (UseMUMPS) {
+        for (Int i = 0; i < *nnzj; i++) {
+          Ji[i] += nvar + nconI + 1;
+          Jj[i]++;
+        }
+        for (Int i = 0; i < nvar + nconI; i++) {
+          Ji[*nnzj + i] = i + 1;
+          Jj[*nnzj + i] = i + 1;
+          Jx[*nnzj + i] = 1;
+        }
+        if (cholCorrection > 0) {
+          for (Int i = 0; i < ncon; i++) {
+            Ji[*nnzj + nvar + nconI + i] = nvar + nconI + i + 1;
+            Jj[*nnzj + nvar + nconI + i] = nvar + nconI + i + 1;
+            Jx[*nnzj + nvar + nconI + i] = cholCorrection;
+          }
+        }
+        id.irn = reinterpret_cast<int*>(Ji);
+        id.jcn = reinterpret_cast<int*>(Jj);
+        id.a = reinterpret_cast<double*>(Jx);
+        if (cholCorrection > 0)
+          id.nz = (int)(*nnzj) + nvar + nconI + ncon;
+        else
+          id.nz = (int)(*nnzj) + nvar + nconI;
+      }
     } else {
       if (Running) {
         Int numI = 0;
@@ -666,8 +686,8 @@ namespace DCI {
       }
 
       if (Running) {
-        std::vector<Real> tmp (nvar + nconI, 1);
-        Vector Diag(*env, tmp);
+        Vector Diag(*env);
+        Diag.reset (nvar + nconI, 1);
         pReal Diagx = Diag.get_doublex();
         if (scale) {
           scale_xc (Diag);
@@ -699,6 +719,32 @@ namespace DCI {
       delpointer (J);
       J = new Sparse (*env);
       J->triplet_to_sparse (*Jtrip, amax);
+      //Mumps
+      if (UseMUMPS) {
+        for (Int i = 0; i < *nnzj; i++) {
+          Ji[i] += nvar + nconI + 1;
+          Jj[i]++;
+        }
+        for (Int i = 0; i < nvar + nconI; i++) {
+          Ji[*nnzj + i] = i + 1;
+          Jj[*nnzj + i] = i + 1;
+          Jx[*nnzj + i] = 1;
+        }
+        if (cholCorrection > 0) {
+          for (Int i = 0; i < ncon; i++) {
+            Ji[*nnzj + nvar + nconI + i] = nvar + nconI + i + 1;
+            Jj[*nnzj + nvar + nconI + i] = nvar + nconI + i + 1;
+            Jx[*nnzj + nvar + nconI + i] = cholCorrection;
+          }
+        }
+        id.irn = reinterpret_cast<int*>(Ji);
+        id.jcn = reinterpret_cast<int*>(Jj);
+        id.a = reinterpret_cast<double*>(Jx);
+        if (cholCorrection > 0)
+          id.nz = (int)(*nnzj) + nvar + nconI + ncon;
+        else
+          id.nz = (int)(*nnzj) + nvar + nconI;
+      }
     } else {
       if (Running) {
         Int numI = 0;
@@ -843,23 +889,25 @@ namespace DCI {
   }
 
   void Interface::analyze_J () {
+    if (UseMUMPS)
+      return;
     if (LJ == 0) 
       LJ = new Factor (*env);
     LJ->analyze (*J);
   }
 
   void Interface::cholesky_J () {
+    if (UseMUMPS)
+      return;
     if (LJ == 0)
       std::cerr << "analyze should be called first" << std::endl;
     LJ->factorize (*J, cholCorrection);
-    while (!env->IsPosDef ()) {
-      if (cholCorrection == 0)
-        cholCorrection = 1;
-      else
-        cholCorrection *= 10;
+    cholFacs++;
+    if (!env->IsPosDef()) {
+      cholCorrection = 1;
       LJ->factorize (*J, cholCorrection);
+      cholFacs++;
     }
-    cholCorrection /= 2;
   }
 
   Real Interface::getTime () {
@@ -871,7 +919,7 @@ namespace DCI {
   void Interface::checkInfactibility () {
     for (Int i = 0; i < nvar; i++) {
       if ( (xx[i] > 1e10) || (xx[i] < -1e10) || (xcx[i] > 1e10) || (xcx[i] < -1e10) ) {
-        Unbounded = dciTrue;
+        Unlimited = dciTrue;
         break;
       }
       if (xx[i] >= bux[i]) {
@@ -898,11 +946,11 @@ namespace DCI {
       }
       assert (xcx[i] > blx[i]);
     }
-    if (Unbounded)
+    if (Unlimited)
       return;
     for (Int i = 0; i < nconI; i++) {
       if ( (sx[ineqIdx[i]] > 1e10) || (sx[ineqIdx[i]] < -1e10) || (scx[ineqIdx[i]] > 1e10) || (scx[ineqIdx[i]] < -1e10) ) {
-        Unbounded = dciTrue;
+        Unlimited = dciTrue;
         break;
       }
       assert (sx[i] < cux[ineqIdx[i]]);

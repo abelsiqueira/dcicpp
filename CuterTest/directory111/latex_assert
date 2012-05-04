@@ -1,0 +1,13 @@
+HS104      & 8 & 5 & 26 & 0 & con & \\ \hline
+HS106      & 8 & 6 & 3 & 0.01 & con & \\ \hline
+HS109      & 9 & 10 & 5 & 0.09 & con & \\ \hline
+HS111LNP   & 10 & 3 & 1 & 3.33392e-18 & con & \\ \hline
+HS111      & 10 & 3 & 2 & 0 & con & \\ \hline
+HS116      & 13 & 14 & 4 & 0.02 & con & \\ \hline
+HS35MOD    & 3 & 1 & 1 & 0 & con & \\ \hline
+HS89       & 3 & 1 & 50 & 0.31 & con & \\ \hline
+HS90       & 4 & 1 & 28 & 3.69 & con & \\ \hline
+HS91       & 5 & 1 & 24 & 0.64 & con & \\ \hline
+HS92       & 6 & 1 & 23 & 0.52 & con & \\ \hline
+HS97       & 6 & 4 & 14 & 0.01 & con & \\ \hline
+HS99EXP    & 31 & 21 & 31 & 0.15 & con & \\ \hline

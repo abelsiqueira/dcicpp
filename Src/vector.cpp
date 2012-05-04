@@ -30,17 +30,19 @@ namespace DCI {
   Vector::~Vector () {
   }
 
-  void Vector::operator= (const Vector & v) {
-    if (v.dense == 0) {
-      error (0, "ERROR: cannot assign to uninitialized base_dense");
-      return;
+  void Vector::reset (size_t n, double a) {
+    // If it is allocated but the size is not n, free
+    if ( (dense != 0) && (dense->nrow != n) ) {
+      CHOLMOD(free_dense) (&dense, get_cholmod_common());
     }
-    if (v.dense == dense)
-      return;
-    if (dense != 0)
-      cholmod_free_dense (&dense, get_cholmod_common());
-    common = v.common;
-    dense = cholmod_copy_dense (v.dense, get_cholmod_common());
+    // If freed before, or never allocated
+    if ( dense == 0 )
+      dense = CHOLMOD(allocate_dense) (n, 1, n, CHOLMOD_REAL, get_cholmod_common());
+    // Now, dense has size n
+    double * px = static_cast < double * > (dense->x);
+    for (size_t i = 0; i < n; i++)
+      px[i] = a;
+
   }
 
   //Access

@@ -15,7 +15,8 @@ namespace DCI {
     Bool scaleJ = dciTrue;
 
     call_ccfsg_xc (dciTrue, scaleJ);
-    this->cholesky_J ();
+    if (!Linear)
+      this->cholesky_J ();
 
     NAstep (*c, dn);
 

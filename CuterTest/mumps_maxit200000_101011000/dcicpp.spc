@@ -1,0 +1,10 @@
+UseMUMPS 1
+UseCG 0
+PartialPenal 1
+project_dcp 0
+project_bfgs 1
+trustWorstdn 1
+trustConvexBox 0
+penal_trust 0
+penal_bfgs 0
+maxit 200000

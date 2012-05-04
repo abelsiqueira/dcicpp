@@ -20,13 +20,52 @@ namespace DCI {
     Int iout;
 
     if (Ineq) {
-      sold.scale (*s,1);
+      sold = *s;
       soldx = sold.get_doublex();
     }
 
     objfun = 0.5 * normc * normc;
     gtmp.sdmult (*J, 1, one, zero, *c);
     gtmpx = gtmp.get_doublex ();
+    if (penal_bfgs) {
+      for (Int i = 0; i < nvar; i++) {
+        Real val = 0;
+        if ( (bux[i] < dciInf) && (blx[i] > -dciInf) ) {
+          if (PartialPenal) {
+            if ( (xcx[i] - blx[i]) < (bux[i] - xcx[i]) ) {
+              val = 1;
+            } else {
+              val = -1;
+            }
+          } else {
+            val = bux[i] + blx[i] - 2*xcx[i];
+          }
+        } else if (bux[i] < dciInf) {
+          val = -1;
+        } else if (blx[i] > -dciInf) {
+          val = 1;
+        }
+        gtmpx[i] -= mu*val;
+      }
+      for (Int i = 0; i < nconI; i++) {
+        Real val = 0;
+        if ( (cux[ineqIdx[i]] < dciInf) && (clx[ineqIdx[i]] > -dciInf) ) {
+          if (PartialPenal) {
+            if ( (scx[i] - clx[ineqIdx[i]]) < (cux[ineqIdx[i]] - scx[i]) ) {
+              val = 1;
+            } else {
+              val = -1;
+            }
+          } else {
+            val = cux[ineqIdx[i]] + clx[ineqIdx[i]] - 2*scx[i];
+          }
+        } else if (cux[ineqIdx[i]] < dciInf)
+          val = -1;
+        else if (clx[ineqIdx[i]] > -dciInf)
+          val = 1;
+        gtmpx[nvar + i] -= mu*val;
+      }
+    }
     gnorm = gtmp.norm ();
     ibfgs = 0;
     iout = 0;
@@ -47,17 +86,16 @@ namespace DCI {
     else
       angle = p.dot (dn) / (dnorm * pnorm);
     if ( (angle >= 0) && (angle < 1e-4) )
-      d.scale (p, 1);
+      d = p;
     else
-      d.scale (dn, 1);
+      d = dn;
 
     gtd = d.dot (gtmp);
-    xold.scale (*xc, 1); 
+    xold = *xc;
     if (Ineq)
-      sold.scale (*sc, 1); 
+      sold = *sc;
 
-
-    gold.scale (gtmp, 1);
+    gold = gtmp;
 
     iout = linesearch (xold, sold, d, objfun, gtd, gtmp);
 
@@ -97,8 +135,8 @@ namespace DCI {
       if (alpha[ibfgs] < 1e-12)
         alpha[ibfgs] = 1e-12;
 
-      pold.scale (p, 1);
-      p.scale (gtmp, 1);
+      pold = p;
+      p = gtmp;
 
       for (Int i = 0; i < ibfgs; i++)
         Hiprod (i, alpha[i], csi[i], Dx, Ux, Yx, gtmpx, px);
@@ -117,10 +155,10 @@ namespace DCI {
 
       gtd = gtmp.dot(p);
 
-      xold.scale (*xc, 1);
+      xold = *xc;
       if (Ineq)
-        sold.scale (*sc, 1);
-      gold.scale (gtmp, 1);
+        sold = *sc;
+      gold = gtmp;
 
       iout = linesearch (xold, sold, p, objfun, gtd, gtmp);
       
@@ -200,11 +238,12 @@ namespace DCI {
     Real smlStepS = 1e-3;
     Bool bfgsfirst = dciTrue;
 
-    xc->scale (x0, 1);
+    *xc = x0;
     if (Ineq)
-      sc->scale (s0, 1);
-    std::vector < Real > tmp (nvar + nconI, 1);
-    Vector Diag(*env, tmp);
+      *sc = s0;
+
+    Vector Diag(*env);
+    Diag.reset (nvar + nconI, 1);
     pReal Diagx = Diag.get_doublex();
     scale_xc (Diag);
 
@@ -214,10 +253,20 @@ namespace DCI {
         continue;
       if (di < 0) {
         Real val = (bli - xi)*(1 - epsmu)/di;
+        if (project_bfgs) {
+          if (val < 1)
+            dx[i] *= val/Diagx[i];
+        } else {
           maxStepS = Min (maxStepS, val);
+        }
       } else {
         Real val = (bui - xi)*(1 - epsmu)/di;
+        if (project_bfgs) {
+          if (val < 1)
+            dx[i] *= val/Diagx[i];
+        } else {
           maxStepS = Min (maxStepS, val);
+        }
       }
     }
 
@@ -227,10 +276,20 @@ namespace DCI {
         continue;
       if (di < 0) {
         Real val = (cli - si)*(1 - epsmu)/di;
+        if (project_bfgs) {
+          if (val < 1)
+            dx[nvar + i] *= val/Diagx[nvar + i];
+        } else {
           maxStepS = Min (maxStepS, val);
+        }
       } else {
         Real val = (cui - si)*(1 - epsmu)/di;
+        if (project_bfgs) {
+          if (val < 1)
+            dx[nvar + i] *= val/Diagx[nvar + i];
+        } else {
           maxStepS = Min (maxStepS, val);
+        }
       }
     }
 
@@ -239,9 +298,9 @@ namespace DCI {
       lambda = lbdmax/2;
 
     while (dciTrue) {
-      xc->scale (x0, 1);
+      *xc = x0;
       if (Ineq)
-        sc->scale (s0, 1);
+        *sc = s0;
 
       for (Int i = 0; i < nvar; i++)
         xcx[i] += lambda*Diagx[i]*dx[i];
@@ -303,8 +362,8 @@ namespace DCI {
       s0x = s0.get_doublex();
 
 
-    std::vector < Real > tmp (nvar + nconI, 1);
-    Vector Diag(*env, tmp);
+    Vector Diag(*env);
+    Diag.reset (nvar + nconI, 1);
     pReal Diagx = Diag.get_doublex();
     scale_xc (Diag);
 

@@ -16,7 +16,7 @@ namespace DCI {
       Vector (const Environment &, const std::vector < double > &);
       ~Vector ();
 
-      void operator= (const Vector &);
+      void reset (size_t, double = 0);
 
       //Access functions
       double get (size_t);

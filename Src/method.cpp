@@ -32,13 +32,13 @@ namespace DCI {
 
   void Interface::update_lambda () {
     if (ncon == 0) {
-      gp->scale (*g, 1);
+      *gp = *g;
       return;
     }
     double one[2] = {1,0}, zero[2] = {0, 0};
     Vector ytmp (*env);
     NAproj (*g, *gp, ytmp);
-    y->scale (ytmp, 1);
+    *y = ytmp;
 
     bool ForceSign = dciTrue;
     //Force sign
@@ -107,13 +107,13 @@ namespace DCI {
      * A'*A * sol = rhs
      * if transp == 1.
      */
-    sol.scale (rhs, 0);
+    sol.reset (rhs.size(), 0);
     int dimen = sol.size ();
     double one[2] = {1, 0}, zero[2] = {0, 0};
 
     Vector r(*env), p(*env), Jtp(*env), JJtp (*env);
     r.scale (rhs, -1);
-    p.scale (rhs, 1);
+    p = rhs;
     Jtp.sdmult (*J, !transp, one, zero, p);
     JJtp.sdmult (*J, transp, one, zero, Jtp);
     double rr, rrp, alpha, beta;
@@ -151,7 +151,49 @@ namespace DCI {
     Real one[2] = {1,0};
 
     Pr.sdmult (*J, 0, mone, zero, r); // Pr = -A*r
-    tmp.solve (CHOLMOD_A, *LJ, Pr); // A * A' * tmp = Pr
+    if (UseMUMPS) {
+      Real rhs[nvar + nconI + Pr.size()];
+      //rhs(1:nvar+nconI)     = 0
+      //rhs(nvar+nconI+1:end) = -A*r
+      for (Int i = 0; i < nvar + nconI; i++)
+        rhs[i] = 0;
+      for (Int i = 0; i < (Int) Pr.size(); i++)
+        rhs[nvar + nconI + i] = Pr.get_doublex()[i];
+//      std::cout << "rhs = " << std::endl;
+//      for (size_t i = 0; i < nvar + nconI + Pr.size(); i++)
+//        std::cout << rhs[i] << ' ';
+//      std::cout << std::endl;
+//      for (int i = 0; i < id.nz; i++) {
+//        std::cout << id.irn[i] << ',' << id.jcn[i] << " = " << id.a[i] << std::endl;
+//      }
+      id.rhs = rhs;
+      id.icntl[0] = -1; 
+      id.icntl[1] = -1; 
+      id.icntl[2] = -1; 
+      id.icntl[3] = 0;
+      id.job = 6;
+      dmumps_c(&id);
+//      std::cout << "sol = " << std::endl;
+//      for (size_t i = 0; i < nvar + nconI + Pr.size(); i++)
+//        std::cout << rhs[i] << ' ';
+//      std::cout << std::endl;
+      //rhs(1:nvar+nconI)     = -A'*inv(A*A')*A*r
+      //rhs(nvar+nconI+1:end) = inv(A*A')*A*r
+      tmp.reset(Pr.size());
+//      Pr.reset(nvar + nconI);
+//      for (Int i = 0; i < nvar + nconI; i++)
+//        Pr.get_doublex()[i] = rhs[i];
+      for (Int i = 0; i < (Int) tmp.size(); i++)
+        tmp.get_doublex()[i] = rhs[nvar + nconI + i];
+//      Pr.print_more();
+//      tmp.print_more();
+//      Pr.sdmult(*J, 1, one, one, tmp); 
+//      std::cout << "|rhs[1] + J'*rhs[2]| = " << Pr.norm() << std::endl;
+//      assert( Pr.norm() < 1e-3);
+      tmp.scale(-1);
+    } else {
+      tmp.solve (CHOLMOD_A, *LJ, Pr); // A * A' * tmp = Pr
+    }
     if (LimLbd) {
       pReal tmpx = tmp.get_doublex();
       for (Int i = 0; i < ncon; i++) {
@@ -160,19 +202,40 @@ namespace DCI {
         else if (tmpi < -LbdMax) tmpx[i] = -LbdMax;
       }
     }
-    Pr.scale (r, 1); //Pr = r
+    Pr = r;
     Pr.sdmult (*J, 1, one, one, tmp); //Pr = Pr + J'*tmp => Pr = r - A'*inv(A*A')*A*r
 
   }
 
   Int Interface::NAstep (Vector & r, Vector & dr) { //dr = -A'*inv(AA')*r
     Real mone[2] = {-1,0}, zero[2] = {0,0};
-    if (!UseCG) {
-      dr.solve (CHOLMOD_A, *LJ, r); // dr = inv(AA')r;
-    } else {
+    if (UseCG) {
       LinSysCG (0, r, dr);
+      dr.sdmult (*J, 1, mone, zero, dr);
+    } else if (UseMUMPS) {
+      Real rhs[nvar + nconI + r.size()];
+      for (Int i = 0; i < nvar + nconI; i++)
+        rhs[i] = 0;
+      for (Int i = 0; i < (Int) r.size(); i++)
+        rhs[nvar + nconI + i] = -r.get_doublex()[i];
+      //rhs(1:N)     = 0
+      //rhs(N+1:end) = -r
+      id.rhs = rhs;
+      id.icntl[0] = -1; 
+      id.icntl[1] = -1; 
+      id.icntl[2] = -1; 
+      id.icntl[3] = 0;
+      id.job = 6;
+      dmumps_c(&id);
+      dr.reset(nvar + nconI);
+      //rhs(1:nvar+nconI)     = -A'*inv(A*A')*r
+      //rhs(nvar+nconI+1:end) = inv(A*A')*r
+      for (Int i = 0; i < nvar + nconI; i++)
+        dr.get_doublex()[i] = rhs[i];
+    } else {
+      dr.solve (CHOLMOD_A, *LJ, r); // dr = inv(AA')r;
+      dr.sdmult (*J, 1, mone, zero, dr);
     }
-    dr.sdmult (*J, 1, mone, zero, dr);
 
     return 0;
   }
@@ -244,7 +307,7 @@ namespace DCI {
         assert (s.norm () <= DeltaH + 1e-6);
         return 1;
       }
-      s.scale (splus, 1);
+      s = splus;
       r.saxpy (Bd, alpha);
       NAproj (r, w, tmp);
       Real rtwplus = r.dot(w);

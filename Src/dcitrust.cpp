@@ -30,24 +30,94 @@ namespace DCI {
     Real normgtmp = 0;
 
     if (Ineq)
-      stmp.scale(*sc, 1);
+      stmp = *sc;
 
+    //Remove later if needed
+//    call_ccfsg (dciTrue, dciTrue);
+    Aavail = dciFalse;
 
     gtmp.sdmult (*J, 1, one, zero, ctmp); // g = J'*c
+//    scale_xc(gtmp);
+    pReal gtmpx = gtmp.get_doublex();
+    if (penal_trust) {
+      for (Int i = 0; i < nvar; i++) {
+        Real val = 0;
+        if ( (bux[i] < dciInf) && (blx[i] > -dciInf) ) {
+          if (PartialPenal) {
+            if ( (xcx[i] - blx[i]) < (bux[i] - xcx[i]) ) {
+              val = 1;
+            } else {
+              val = -1;
+            }
+          } else {
+            val = bux[i] + blx[i] - 2*xcx[i];
+          }
+        } else if (bux[i] < dciInf) {
+          val = -1;
+        } else if (blx[i] > -dciInf) {
+          val = 1;
+        }
+        gtmpx[i] -= mu*val;
+      }
+      for (Int i = 0; i < nconI; i++) {
+        Real val = 0;
+        if ( (cux[ineqIdx[i]] < dciInf) && (clx[ineqIdx[i]] > -dciInf) ) {
+          if (PartialPenal) {
+            if ( (scx[i] - clx[ineqIdx[i]]) < (cux[ineqIdx[i]] - scx[i]) ) {
+              val = 1;
+            } else {
+              val = -1;
+            }
+          } else {
+            val = cux[ineqIdx[i]] + clx[ineqIdx[i]] - 2*scx[i];
+          }
+        } else if (cux[ineqIdx[i]] < dciInf)
+          val = -1;
+        else if (clx[ineqIdx[i]] > -dciInf)
+          val = 1;
+        gtmpx[nvar + i] -= mu*val;
+      }
+    }
     normgtmp = gtmp.norm ();
+//    DeltaV = normgtmp;
 
     if (normgtmp < dciTiny) {
       normc = oldnormc;
       iout = 6;
+//      std::cout << "iout = 6" << std::endl;
       return iout;
     }
-    d.sdmult (*J, 0, one, zero, gtmp);
+    //Now with the infinity norm
+    Real lower[nvar + nconI], upper[nvar + nconI];
+    for (Int i = 0; i < nvar; i++) {
+      Real zi = xcx[i], li = blx[i], ui = bux[i];
+      lower[i] = Max((li - zi) * (1 - epsmu), -DeltaV);
+      upper[i] = Min((ui - zi) * (1 - epsmu),  DeltaV);
+    }
+    for (Int i = 0; i < nconI; i++) {
+      Int j = nvar + i;
+      Real zi = scx[i], li = clx[ineqIdx[i]], ui = cux[ineqIdx[i]];
+      lower[j] = Max((li - zi) * (1 - epsmu), -DeltaV);
+      upper[j] = Min((ui - zi) * (1 - epsmu),  DeltaV);
+    }
+    d.sdmult(*J, 0, one, zero, gtmp);
     alpha = normgtmp/d.norm();
     alpha *= alpha;
-    alpha = Min (alpha, DeltaV/normgtmp);
+    Vector Diag(*env);
+    Diag.reset(nvar + nconI, 1.0);
+    scale_xc(Diag);
+    pReal Diagx = Diag.get_doublex();
+    for (Int i = 0; i < nvar + nconI; i++) {
+      Real gtmpi = gtmpx[i];
+      if (gtmpi > 0)
+        alpha = Min (alpha, upper[i]/(Diagx[i]*gtmpi));
+      else if (gtmpi < 0)
+        alpha = Min (alpha, lower[i]/(Diagx[i]*gtmpi));
+      assert (alpha > 0);
+    } 
     dcp.scale (gtmp, -alpha);
     scale_xc (dcp);
-    ndcp = dcp.norm();
+    ndcp = dcp.norm(0);
 
     dnavail = dciFalse;
     ndn = 0;
@@ -65,6 +135,13 @@ namespace DCI {
     pReal dx = 0;
     pReal dnx = 0;
     Real smlAlphamu = 1e-3;
+    bool dcpOutsideRegion = false;
+    for (Int i = 0; i < nvar + nconI; i++) {
+      if ( (dcpx[i] >= upper[i]) || (dcpx[i] <= lower[i]) ) {
+        dcpOutsideRegion = true;
+        break;
+      }
+    }
 
     for (Int i = 0; i < nvar; i++) {
       Real xi = xcx[i], dcpi = dcpx[i], bli = blx[i], bui = bux[i];
@@ -72,10 +149,20 @@ namespace DCI {
         continue;
       if (dcpi < 0) {
         Real val = (bli - xi)*(1 - epsmu)/dcpi;
+        if (project_dcp) {
+          if (val < 1)
+            dcpx[i] *= val;
+        } else {
           dcpAlphamu = Min (dcpAlphamu, val);
+        }
       } else {
         Real val = (bui - xi)*(1 - epsmu)/dcpi;
+        if (project_dcp) {
+          if (val < 1)
+            dcpx[i] *= val;
+        } else {
           dcpAlphamu = Min (dcpAlphamu, val);
+        }
       }
     }
     for (Int i = 0; i < nconI; i++) {
@@ -85,18 +172,30 @@ namespace DCI {
         continue;
       if (dcpi < 0) {
         Real val = (cli - si)*(1 - epsmu)/dcpi;
+        if (project_dcp) {
+          if (val < 1)
+            dcpx[j] *= val;
+        } else {
           dcpAlphamu = Min (dcpAlphamu, val);
+        }
       } else {
         Real val = (cui - si)*(1 - epsmu)/dcpi;
+        if (project_dcp) {
+          if (val < 1)
+            dcpx[j] *= val;
+        } else {
           dcpAlphamu = Min (dcpAlphamu, val);
+        }
       }
     }
+    ndcp = dcp.norm(0);
 
     while ( (Ared < kappa1*Pred) && (Aavail || (TrustIter < 2) ) && (CurrentTime < MaxTime) ) {
       TrustIter++;
       DeltaV = kappa2*normd;
+//      DeltaV = Min(kappa2*normd, 0.9*DeltaV);
 
-      if ( (ndcp < DeltaV) && (dcpAlphamu == 1) ) {
+      if (!dcpOutsideRegion) {
         // Cauchy step is inside trust region
         // sc + dcps >= epsmu*sc
         if (!dnavail) {
@@ -107,7 +206,7 @@ namespace DCI {
           if (naflag > 1)
             ndn = 0;
           else
-            ndn = dn.norm ();
+            ndn = dn.norm (0);
           
           dnx = dn.get_doublex();
           for (Int i = 0; i < nvar; i++) {
@@ -116,10 +215,20 @@ namespace DCI {
               continue;
             if (dni < 0) {
               Real val = (bli - xi)*(1 - epsmu)/dni;
+              if (project_dn) {
+                if (val < 1)
+                  dnx[i] *= val;
+              } else {
                 dnAlphamu = Min (dnAlphamu, val);
+              }
             } else {
               Real val = (bui - xi)*(1 - epsmu)/dni;
+              if (project_dn) {
+                if (val < 1)
+                  dnx[i] *= val;
+              } else {
                 dnAlphamu = Min (dnAlphamu, val);
+              }
             }
           }
           for (Int i = 0; i < nconI; i++) {
@@ -128,103 +237,86 @@ namespace DCI {
               continue;
             if (dni < 0) {
               Real val = (cli - si)*(1 - epsmu)/dni;
+              if (project_dn) {
+                if (val < 1)
+                  dnx[nvar + i] *= val;
+              } else {
                 dnAlphamu = Min (dnAlphamu, val);
+              }
             } else {
               Real val = (cui - si)*(1 - epsmu)/dni;
+              if (project_dn) {
+                if (val < 1)
+                  dnx[nvar + i] *= val;
+              } else {
                 dnAlphamu = Min (dnAlphamu, val);
+              }
             }
           }
         }
 
+        ndn = dn.norm(0);
+        bool dnOutsideRegion = false;
+        for (Int i = 0; i < nvar + nconI; i++) {
+          if ( (dnx[i] > upper[i]) || (dnx[i] < lower[i]) ) {
+            dnOutsideRegion = true;
+            break;
+          }
+        }
         if (ndn <= ndcp) {
           // dn is too small. Use dcp.
-          d.scale (dcp, 1);
+          d = dcp;
           normd = ndcp;
           iout = 1;
-        } else if ( (ndn <= DeltaV) && (dnAlphamu == 1) ) {
-          d.scale (dn, 1);
+        } else if (!dnOutsideRegion) {
+          d = dn;
           normd = ndn;
           iout = 2;
-        } else if ( (ndn <= DeltaV) && (dnAlphamu < 1) ) {
-          d.scale (dn, dnAlphamu);
-          normd = ndn*dnAlphamu;
-          iout = 10;
-        } else if ( (ndn > DeltaV) && (dnAlphamu == 1) ) {
-          Real dntdcp = dcp.dot(dn);
-          Real nwsqr = ndcp*ndcp,
-               wtv = dntdcp - nwsqr,
-               nvsqr = ndn*ndn - 2*dntdcp + nwsqr;
-          alpha = (-wtv + sqrt(wtv*wtv - nvsqr*(nwsqr - DeltaV*DeltaV)))/nvsqr;
-          d.scale (dn, alpha);
-          dx = d.get_doublex();
-          alpha = 1 - alpha;
-          for (Int i = 0; i < nvar + nconI; i++)
-            dx[i] += alpha * dcpx[i];
-          normd = DeltaV;
-          iout = 3;
         } else {
-          d.scale (dcp, 1);
-          normd = ndcp;
-          /*dn.scale (dnAlphamu);
-          ndn *= dnAlphamu;
-          Real dntdcp = dcp.dot(dn);
-          Real nwsqr = ndcp*ndcp,
-               wtv = dntdcp - nwsqr,
-               nvsqr = ndn*ndn - 2*dntdcp + nwsqr;
-          alpha = (-wtv + sqrt(wtv*wtv - nvsqr*(nwsqr - DeltaV*DeltaV)))/nvsqr;
-          d.scale (dn, alpha);
-          dx = d.get_doublex();
-          alpha = 1 - alpha;
-          for (Int i = 0; i < nvar + nconI; i++)
-            dx[i] += alpha * dcpx[i];
-
-          Real dAlphamu = 1;
+          // dn outside region and dcp inside
+          Real convAux = 1.0;
           for (Int i = 0; i < nvar; i++) {
-            Real xi = xcx[i], di = dx[i], bli = blx[i], bui = bux[i];
-            if (di == 0)
-              continue;
-            if (di < 0) {
-              Real val = (bli - xi)*(1 - epsmu)/di;
-                dAlphamu = Min (dAlphamu, val);
-            } else {
-              Real val = (bui - xi)*(1 - epsmu)/di;
-                dAlphamu = Min (dAlphamu, val);
-            }
+            Real difx = dnx[i] - dcpx[i], zi = xcx[i];
+            if (difx > 0)
+              convAux = Min(convAux, (upper[i] - dcpx[i])/difx);
+            else if (difx < 0)
+              convAux = Min(convAux, (lower[i] - dcpx[i])/difx);
           }
-          for (Int i = 0; i < nconI; i++) {
-            Real si = scx[i], di = dx[nvar + i], cli = clx[ineqIdx[i]], cui = cux[ineqIdx[i]];
-            if (di == 0)
-              continue;
-            if (di < 0) {
-              Real val = (cli - si)*(1 - epsmu)/di;
-                dAlphamu = Min (dAlphamu, val);
-            } else {
-              Real val = (cui - si)*(1 - epsmu)/di;
-                dAlphamu = Min (dAlphamu, val);
-            }
+          for (Int j = 0; j < nconI; j++) {
+            Int i = nvar + j;
+            Real difx = dnx[i] - dcpx[i], zi = scx[j];
+            if (difx > 0)
+              convAux = Min(convAux, (upper[i] - dcpx[i])/difx);
+            else if (difx < 0)
+              convAux = Min(convAux, (lower[i] - dcpx[i])/difx);
           }
-
-          d.scale (dAlphamu);
-          normd = dAlphamu*DeltaV;
-          */
-          iout = 11;
+          d.scale (dn, convAux);
+          dx = d.get_doublex();
+          convAux = 1 - convAux;
+          for (Int i = 0; i < nvar + nconI; i++)
+            dx[i] += convAux * dcpx[i];
+          normd = d.norm(0);
+          iout = 10;
         }
-      } else if ( (ndcp >= DeltaV) && (dcpAlphamu == 1) ) {
-        d.scale (dcp, DeltaV/ndcp);
-        normd = DeltaV;
-        iout = 4;
-      } else if ( (ndcp < DeltaV) && (dcpAlphamu < 1) ) {
-        d.scale (dcp, dcpAlphamu);
-        normd = ndcp*dcpAlphamu;
       } else {
-        d.scale (dcp, Min(dcpAlphamu, DeltaV/ndcp) );
-        normd = Min (DeltaV, ndcp*dcpAlphamu);
+        Real alphadcp = 1.0;
+        for (Int i = 0; i < nvar + nconI; i++) {
+          Real di = dcpx[i];
+          if (di > 0)
+            alphadcp = Min (alphadcp, upper[i]/di);
+          else if (di < 0)
+            alphadcp = Min (alphadcp, lower[i]/di);
+          assert (alphadcp > 0);
+        } 
+        d.scale(dcp, alphadcp);
+        normd = ndcp;
         iout = 13;
       }
 
-      xc->scale (xtmp, 1);
+//      std::cout << "iout = " << iout << std::endl;
+      *xc = xtmp;
       if (Ineq)
-        sc->scale (stmp, 1);
+        *sc = stmp;
       dx = d.get_doublex();
       for (Int i = 0; i < nvar; i++)
         xcx[i] += dx[i];
@@ -250,16 +342,17 @@ namespace DCI {
     if ( (Ared < kappa1*Pred) && (!Aavail) ) {
 //      The algorithm has failed. A must be recomputed.
 
-      xc->scale (xtmp,1);
+      *xc = xtmp;
       if (Ineq)
-        sc->scale (stmp,1);
-      c->scale (ctmp,1);
+        *sc = stmp;
+      *c = ctmp;
       normc = oldnormc;
       DeltaV = oldDelta;
       iout = 5;
     } else if (Ared >= kappa3*Pred)
       DeltaV = Max (kappa4*normd, DeltaV);
 
+//    std::cout << "iout = " << iout << std::endl;
     return iout;
 
   }

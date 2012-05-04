@@ -9,7 +9,8 @@ include ../make.inc
 
 OBJ = dcihorz.o dcivert.o dcitrust.o dcisteih.o dcisafeguard.o dcibfgs.o method.o solve.o parameters.o interface.o factor.o triplet.o vector.o environment.o 
 
-all: $(DCILIBNAME)
+all: $(OBJ) 
+	$(AR) $(DCILIBNAME) $(OBJ)
 
 $(DCILIBNAME): $(OBJ)
 	$(AR) $(DCILIBNAME) $(OBJ)
@@ -21,4 +22,4 @@ purge: clean
 	$(RM) $(DCILIBNAME)
 
 %.o: ../Src/%.cpp 
-	$(CXX) -c -o $@ $< $(CXXFLAGS)
+	$(CXX) -c -o $@ $< $(CXXFLAGS) $(I)
