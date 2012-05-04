@@ -37,8 +37,8 @@ namespace DCI {
       dmumps_c(&id);
     }
 
-    cholCorrection = 1e-2;
-//    cholCorrection = 0;
+//    cholCorrection = 1e-2;
+    cholCorrection = 0;
     DisplayLevel = 1;
     env = new Environment;
     env->set_error_handler (&error);
@@ -730,10 +730,20 @@ namespace DCI {
           Jj[*nnzj + i] = i + 1;
           Jx[*nnzj + i] = 1;
         }
+        if (cholCorrection > 0) {
+          for (Int i = 0; i < ncon; i++) {
+            Ji[*nnzj + nvar + nconI + i] = nvar + nconI + i + 1;
+            Jj[*nnzj + nvar + nconI + i] = nvar + nconI + i + 1;
+            Jx[*nnzj + nvar + nconI + i] = cholCorrection;
+          }
+        }
         id.irn = reinterpret_cast<int*>(Ji);
         id.jcn = reinterpret_cast<int*>(Jj);
         id.a = reinterpret_cast<double*>(Jx);
-        id.nz = (int)(*nnzj) + nvar + nconI;
+        if (cholCorrection > 0)
+          id.nz = (int)(*nnzj) + nvar + nconI + ncon;
+        else
+          id.nz = (int)(*nnzj) + nvar + nconI;
       }
     } else {
       if (Running) {
