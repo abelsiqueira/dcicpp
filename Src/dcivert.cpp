@@ -62,7 +62,7 @@ namespace DCI {
     if ( (normc <= rho) && (!Aavail) ) {
       if (ncon > 0) {
         if (!Linear)
-          call_ccfsg_xc (dciTrue, ScaleVertical); //CuterJacob
+          call_ccfsg_xc (dciTrue); //CuterJacob
         Aavail = dciTrue;
 
         call_ofg_xc (); //Just g

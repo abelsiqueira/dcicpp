@@ -4,7 +4,7 @@
 
 using namespace DCI;
 
-/* Let's make the problem
+/* Let's make the problem HS15
  * min f(x)
  * s.t. cI(x) => 0
  *      x1 <= 0.5

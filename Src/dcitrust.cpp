@@ -103,7 +103,7 @@ namespace DCI {
     d.sdmult(*J, 0, one, zero, gtmp);
     alpha = normgtmp/d.norm();
     alpha *= alpha;
-    if (ScaleVertical) {
+    if (!ScaleVertical) {
       for (Int i = 0; i < nvar + nconI; i++) {
         Real gtmpi = gtmpx[i];
         if (gtmpi > 0)
@@ -127,7 +127,7 @@ namespace DCI {
       } 
     }
     dcp.scale (gtmp, -alpha);
-    if (!ScaleVertical)
+    if (ScaleVertical)
       scale_xc (dcp);
     ndcp = dcp.norm(0);
 
@@ -213,7 +213,7 @@ namespace DCI {
         if (!dnavail) {
           naflag = NAstep (ctmp, dn); 
           dnavail = dciTrue;
-          if (!ScaleVertical)
+          if (ScaleVertical)
             scale_xc (dn);
 
           if (naflag > 1)
