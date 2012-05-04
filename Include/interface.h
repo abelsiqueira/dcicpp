@@ -218,7 +218,7 @@ namespace DCI {
       Bool Aavail, gavail, LimLbd, FreshA;
       Real minBk;
       Bool UseCG;
-      Bool UseMUMPS;
+      Bool UseMUMPS, ScaleVertical;
       Bool PartialPenal, project_dcp, project_dn, project_bfgs;
       Bool trustWorstdn, trustConvexBox, penal_trust, penal_bfgs;
       Real cholCorrection;

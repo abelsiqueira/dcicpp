@@ -62,14 +62,14 @@ namespace DCI {
     if ( (normc <= rho) && (!Aavail) ) {
       if (ncon > 0) {
         if (!Linear)
-          call_ccfsg_xc (); //CuterJacob
+          call_ccfsg_xc (dciTrue, ScaleVertical); //CuterJacob
         Aavail = dciTrue;
 
         call_ofg_xc (); //Just g
 
         gavail = dciTrue;
 
-        if (!Linear) {
+        if (!Linear && !UseMUMPS) {
           analyze_J ();
           cholesky_J ();
         }
@@ -147,12 +147,12 @@ namespace DCI {
           // dcivert failed. Recompute A
 
           if (!Linear) {
-            call_ccfsg_xc (dciTrue, scaleJ); //CuterJacob
+            call_ccfsg_xc (dciTrue, ScaleVertical); //CuterJacob
           }
           Aavail = dciTrue;
           oldAcnt = 0;
 
-          if (!Linear) {
+          if (!Linear && !UseMUMPS) {
             this->cholesky_J ();
           }
 
