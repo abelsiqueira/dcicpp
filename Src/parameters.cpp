@@ -50,6 +50,7 @@ namespace DCI {
     c2 = 5e-1;
     MaxTime = 5 * 60; // 5 minutes
     minBk = 1e-12;
+    DisplayLevel = 1;
 
     ReadParameters();
   }
@@ -67,9 +68,10 @@ namespace DCI {
       en_eps1, en_eps2, en_eps3, en_epsmu, en_epsgap, en_bfgsupd, en_c1, en_c2,
       en_MaxTime, en_minBk, en_UseCG, en_PartialPenal, en_project_dcp,
       en_project_bfgs, en_trustWorstdn, en_trustConvexBox, en_penal_trust,
-      en_penal_bfgs, en_UseMUMPS, en_ScaleVertical};
+      en_penal_bfgs, en_UseMUMPS, en_ScaleVertical, en_DisplayLevel};
     std::map<std::string, int> paramMap;
 
+    paramMap["DisplayLevel"] = en_DisplayLevel;
     paramMap["ScaleVertical"] = en_ScaleVertical;
     paramMap["UseMUMPS"] = en_UseMUMPS;
     paramMap["UseCG"] = en_UseCG;
@@ -129,6 +131,7 @@ namespace DCI {
       std::stringstream aux;
       aux << value;
       switch (paramMap[param]) {
+        case en_DisplayLevel: aux >> DisplayLevel; break;
         case en_DeltaMax: aux >> DeltaMax; break;
         case en_maxrest: aux >> maxrest; break;
         case en_maxit: aux >> maxit; break;

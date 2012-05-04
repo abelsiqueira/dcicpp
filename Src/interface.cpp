@@ -39,7 +39,6 @@ namespace DCI {
 
 //    cholCorrection = 1e-2;
     cholCorrection = 0;
-    DisplayLevel = 1;
     env = new Environment;
     env->set_error_handler (&error);
   }
@@ -171,11 +170,7 @@ namespace DCI {
     return 0;
   }
 
-  void Interface::show (Int displvl) {
-    show (std::cout, displvl);
-  }
-
-  void Interface::show (std::ostream & out, Int displvl) {
+  void Interface::show (std::ostream & out) {
     if (!Initialized) {
       out << "Problem not initialized" << std::endl;
       return;
@@ -189,8 +184,6 @@ namespace DCI {
       if (ui < dciInf)
         yoff += Max(-yi, 0.0);
     }
-
-    DisplayLevel = displvl;
 
     out << "**********************************************************" << std::endl;
     out << "Problem name: " << problemName << std::endl

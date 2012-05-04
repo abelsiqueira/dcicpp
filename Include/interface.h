@@ -19,8 +19,7 @@ namespace DCI {
       // Problem functions
       int start ();
       int solve ();
-      void show (std::ostream & = std::cout, Int = 1);
-      void show (Int);
+      void show (std::ostream & = std::cout);
       void printLatex (char * = 0) const;
       void Cuter () { StartAtOne = dciTrue; };
 

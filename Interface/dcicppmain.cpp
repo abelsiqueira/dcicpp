@@ -63,7 +63,7 @@ int MAINENTRY () {
     dci.solve ();
   } catch (...) {
   }
-  dci.show (1);
+  dci.show ();
   dci.printLatex ();
 
   FORTRAN_CLOSE ((&funit), (&ierr));

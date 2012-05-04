@@ -141,6 +141,6 @@ int main () {
 
   dci.start ();
   dci.solve ();
-  dci.show (2);
+  dci.show();
 
 }
