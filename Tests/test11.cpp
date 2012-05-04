@@ -39,7 +39,7 @@ void CPROD (Int * n, Int * m, Bool * getder, Real * x, Int * mmax, Real * y, Rea
   if ( (*n != 2) || (*m != 2) || (*mmax < *m) )
     return;
   Real x1 = x[0], x2 = x[1];
-  Real y1 = y[0], y2 = y[2];
+  Real y1 = y[0], y2 = y[1];
   q[0] = (1200*x1*x1 - 400*x2 + 2) * p[0] + (-400*x1 + y1) * p[1];
   q[1] = (-400*x1 + y1) * p[0] + (200 + 2*y2) * p[1];
 }
