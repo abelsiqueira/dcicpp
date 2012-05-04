@@ -185,14 +185,16 @@ namespace DCI {
         yoff += Max(-yi, 0.0);
     }
 
-    out << "**********************************************************" << std::endl;
-    out << "Problem name: " << problemName << std::endl
-        << std::endl
-        << "Number of Variables: " << nvar << std::endl
-        << "Number of Constraints: " << ncon << std::endl 
-        << "             Equality: " << nconE << std::endl
-        << "           Inequality: " << nconI << std::endl
-        << std::endl;
+    if (DisplayLevel > 0) {
+      out << "**********************************************************" << std::endl;
+      out << "Problem name: " << problemName << std::endl
+          << std::endl
+          << "Number of Variables: " << nvar << std::endl
+          << "Number of Constraints: " << ncon << std::endl 
+          << "             Equality: " << nconE << std::endl
+          << "           Inequality: " << nconI << std::endl
+          << std::endl;
+    }
 
     if (!Solved) {
       out << "Problem not solved yet" << std::endl;
@@ -216,13 +218,15 @@ namespace DCI {
       else if (ExitFlag == 8)
         out << "The problem infeasible" << std::endl;
 
-      out << "f(x) = " << *f << std::endl
-          << "|c(x)| = " << normc << std::endl
-          << "|g(x) + J(x)'*y| = " << normgp << std::endl
-          << "y offset = " << yoff << std::endl
-          << "BFGS? " << ((tbfgs > 0) ? "yes" : "no") << std::endl
-          << "Number of Iterations = " << iter << std::endl
-          << "Elapsed Time = " << (CurrentTime > 0 ? CurrentTime : 0) << " s" << std::endl;
+      if (DisplayLevel > 1) {
+        out << "f(x) = " << *f << std::endl
+            << "|c(x)| = " << normc << std::endl
+            << "|g(x) + J(x)'*y| = " << normgp << std::endl
+            << "y offset = " << yoff << std::endl
+            << "BFGS? " << ((tbfgs > 0) ? "yes" : "no") << std::endl
+            << "Number of Iterations = " << iter << std::endl
+            << "Elapsed Time = " << (CurrentTime > 0 ? CurrentTime : 0) << " s" << std::endl;
+      }
 
       if (DisplayLevel > 2) {
         std::cout << std::endl

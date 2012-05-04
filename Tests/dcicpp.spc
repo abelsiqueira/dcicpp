@@ -50,4 +50,4 @@ c1 0.5
 c2 5e-1
 MaxTime 5
 minBk 1e-12
-DisplayLevel 1
+DisplayLevel 0
