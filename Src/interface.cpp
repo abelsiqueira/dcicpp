@@ -218,7 +218,7 @@ namespace DCI {
       else if (ExitFlag == 8)
         out << "The problem infeasible" << std::endl;
 
-      if (DisplayLevel > 1) {
+      if (DisplayLevel > 0) {
         out << "f(x) = " << *f << std::endl
             << "|c(x)| = " << normc << std::endl
             << "|g(x) + J(x)'*y| = " << normgp << std::endl

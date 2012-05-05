@@ -1,4 +1,4 @@
-ScaleVertical 0
+ScaleVertical 1
 UseMUMPS 1
 UseCG 0
 PartialPenal 1
@@ -8,4 +8,5 @@ trustWorstdn 1
 trustConvexBox 0
 penal_trust 0
 penal_bfgs 0
-DisplayLevel 1
+DisplayLevel 2
+VerboseLevel 1

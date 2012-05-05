@@ -33,9 +33,11 @@ namespace DCI {
     Bool fail = dciFalse;
 
 #ifdef VERBOSE
-    if (nvar + ncon < 10) {
-      std::cout << "A = " << std::endl;
-      full(*J).print_more ();
+    if (VerboseLevel > 1) {
+      if (nvar + ncon < 10) {
+        std::cout << "A = " << std::endl;
+        full(*J).print_more ();
+      }
     }
 #endif
 

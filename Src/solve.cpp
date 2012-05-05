@@ -32,16 +32,18 @@ namespace DCI {
 
 
 #ifdef VERBOSE
-    std::cout
-        << "----------------------" << std::endl
-        << "  DCI-C++ First Iter" << std::endl
-        << "  Iter   = " << iter << std::endl
-        << "  f(x)   = " << *f << std::endl
-        << "  |c(x)| = " << c->norm () << std::endl
-        << "  |gp|   = " << gp->norm () << std::endl
-        << "  rho    = " << rho << std::endl
-        << "----------------------" << std::endl;
-    if (nvar + ncon < 10) {
+    if (VerboseLevel > 0) {
+      std::cout
+          << "----------------------" << std::endl
+          << "  DCI-C++ First Iter" << std::endl
+          << "  Iter   = " << iter << std::endl
+          << "  f(x)   = " << *f << std::endl
+          << "  |c(x)| = " << c->norm () << std::endl
+          << "  |gp|   = " << gp->norm () << std::endl
+          << "  rho    = " << rho << std::endl
+          << "----------------------" << std::endl;
+    }
+    if ( (nvar + ncon < 10) && (VerboseLevel > 1) ) {
       std::cout << "x = " << std::endl;
       x->print_more();
       std::cout << "xc = " << std::endl;
@@ -111,32 +113,34 @@ namespace DCI {
         Lref = Lc;
 
 #ifdef VERBOSE
-    std::cout << std::endl
-        << "----------------------" << std::endl
-        << "Vertical Step" << std::endl
-        << "  Iter   = " << iter << std::endl
-        << "  f(x)   = " << *fxc << std::endl
-        << "  |c(x)| = " << c->norm () << std::endl
-        << "  |gp|   = " << gp->norm () << std::endl
-        << "  |g|    = " << g->norm () << std::endl
-        << "  ngp    = " << ngp << std::endl
-        << "  rho    = " << rho << std::endl
-        << "  rhomax = " << rhomax << std::endl
-        << "  mu     = " << mu << std::endl
-        << "  DLH    = " << DLH << std::endl
-        << "  DLV    = " << DLV << std::endl
-        << "  DeltaH = " << DeltaH << std::endl
-        << "  DeltaV = " << DeltaV << std::endl
-        << "  tSoc   = " << tSoc << std::endl
-        << "  tSteih = " << tSteih << std::endl
-        << "  tRej   = " << tRej << std::endl
-        << "  tbfgs  = " << tbfgs << std::endl
-        << "  tRest  = " << tRest << std::endl
-        << "  itssmll= " << itssmll << std::endl
-        << "  gap  = " << gap << std::endl
-        << "  stepsize = " << (*x - *xc).norm() << std::endl
-        << "----------------------" << std::endl;
-    if (nvar + ncon < 10) {
+    if (VerboseLevel > 0) {
+      std::cout << std::endl
+          << "----------------------" << std::endl
+          << "Vertical Step" << std::endl
+          << "  Iter   = " << iter << std::endl
+          << "  f(x)   = " << *fxc << std::endl
+          << "  |c(x)| = " << c->norm () << std::endl
+          << "  |gp|   = " << gp->norm () << std::endl
+          << "  |g|    = " << g->norm () << std::endl
+          << "  ngp    = " << ngp << std::endl
+          << "  rho    = " << rho << std::endl
+          << "  rhomax = " << rhomax << std::endl
+          << "  mu     = " << mu << std::endl
+          << "  DLH    = " << DLH << std::endl
+          << "  DLV    = " << DLV << std::endl
+          << "  DeltaH = " << DeltaH << std::endl
+          << "  DeltaV = " << DeltaV << std::endl
+          << "  tSoc   = " << tSoc << std::endl
+          << "  tSteih = " << tSteih << std::endl
+          << "  tRej   = " << tRej << std::endl
+          << "  tbfgs  = " << tbfgs << std::endl
+          << "  tRest  = " << tRest << std::endl
+          << "  itssmll= " << itssmll << std::endl
+          << "  gap  = " << gap << std::endl
+          << "  stepsize = " << (*x - *xc).norm() << std::endl
+          << "----------------------" << std::endl;
+    }
+    if ( (nvar + ncon < 10) && (VerboseLevel > 1) ) {
       std::cout << "x = " << std::endl;
       x->print_more();
       std::cout << "xc = " << std::endl;
@@ -211,32 +215,34 @@ namespace DCI {
 #endif
 
 #ifdef VERBOSE
-      std::cout << std::endl
-          << "----------------------" << std::endl
-          << "Horizontal Step" << std::endl
-          << "  Iter   = " << iter << std::endl
-          << "  f(x)   = " << *f << std::endl
-          << "  |c(x)| = " << c->norm () << std::endl
-          << "  |gp|   = " << gp->norm () << std::endl
-          << "  |g|    = " << g->norm () << std::endl
-          << "  ngp    = " << ngp << std::endl
-          << "  rho    = " << rho << std::endl
-          << "  rhomax = " << rhomax << std::endl
-          << "  mu     = " << mu << std::endl
-          << "  DLH    = " << DLH << std::endl
-          << "  DLV    = " << DLV << std::endl
-          << "  DeltaH = " << DeltaH << std::endl
-          << "  DeltaV = " << DeltaV << std::endl
-          << "  tSoc   = " << tSoc << std::endl
-          << "  tSteih = " << tSteih << std::endl
-          << "  tRej   = " << tRej << std::endl
-          << "  tbfgs  = " << tbfgs << std::endl
-          << "  tRest  = " << tRest << std::endl
-          << "  itssmll= " << itssmll << std::endl
-          << "  gap  = " << gap << std::endl
-          << "  stepsize = " << (*x - *xc).norm() << std::endl
-          << "----------------------" << std::endl;
-      if (nvar + ncon < 10) {
+      if (VerboseLevel > 0) {
+        std::cout << std::endl
+            << "----------------------" << std::endl
+            << "Horizontal Step" << std::endl
+            << "  Iter   = " << iter << std::endl
+            << "  f(x)   = " << *f << std::endl
+            << "  |c(x)| = " << c->norm () << std::endl
+            << "  |gp|   = " << gp->norm () << std::endl
+            << "  |g|    = " << g->norm () << std::endl
+            << "  ngp    = " << ngp << std::endl
+            << "  rho    = " << rho << std::endl
+            << "  rhomax = " << rhomax << std::endl
+            << "  mu     = " << mu << std::endl
+            << "  DLH    = " << DLH << std::endl
+            << "  DLV    = " << DLV << std::endl
+            << "  DeltaH = " << DeltaH << std::endl
+            << "  DeltaV = " << DeltaV << std::endl
+            << "  tSoc   = " << tSoc << std::endl
+            << "  tSteih = " << tSteih << std::endl
+            << "  tRej   = " << tRej << std::endl
+            << "  tbfgs  = " << tbfgs << std::endl
+            << "  tRest  = " << tRest << std::endl
+            << "  itssmll= " << itssmll << std::endl
+            << "  gap  = " << gap << std::endl
+            << "  stepsize = " << (*x - *xc).norm() << std::endl
+            << "----------------------" << std::endl;
+      }
+      if ( (nvar + ncon < 10) && (VerboseLevel > 1) ) {
         std::cout << "x = " << std::endl;
         x->print_more();
         std::cout << "xc = " << std::endl;

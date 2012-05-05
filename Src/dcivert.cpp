@@ -101,19 +101,21 @@ namespace DCI {
       while ( (normc > rho) && (nRest <= maxrest) && (VertFlag == 0) && (CurrentTime < MaxTime) ) {
         
 #ifdef VERBOSE
-        std::cout << "Going to dcitrust: nRest " << nRest << std::endl
-                  << std::endl
-                  << "|c| = " << normc << std::endl
-                  << "rho = " << rho << std::endl
-                  << std::endl;
-        if ( (nvar < 10) && (ncon < 10) ) {
-          std::cout <<  "A = " << std::endl;
-          full(*J).print_more ();
-          std::cout << "xc = " << std::endl;
-          xc->print_more ();
-          if (Ineq) {
-            std::cout << "sc = " << std::endl;
-            sc->print_more ();
+        if (VerboseLevel > 1) {
+          std::cout << "Going to dcitrust: nRest " << nRest << std::endl
+                    << std::endl
+                    << "|c| = " << normc << std::endl
+                    << "rho = " << rho << std::endl
+                    << std::endl;
+          if ( (nvar < 10) && (ncon < 10) ) {
+            std::cout <<  "A = " << std::endl;
+            full(*J).print_more ();
+            std::cout << "xc = " << std::endl;
+            xc->print_more ();
+            if (Ineq) {
+              std::cout << "sc = " << std::endl;
+              sc->print_more ();
+            }
           }
         }
         GDBSTOP ();
@@ -134,6 +136,7 @@ namespace DCI {
 
         if (fail >= nfailv) {
 #ifdef VERBOSE
+        if (VerboseLevel > 1) {
           std::cout << "Going to Safe Guard " << std::endl
                     << std::endl;
           if ( (nvar < 10) && (ncon < 10) ) {
@@ -141,6 +144,7 @@ namespace DCI {
             full(*J).print_more ();
           }
           GDBSTOP ();
+        }
 #endif
           VertFlag = vertSafeguard ();
         } else if ( ( (normc > thetaR*oldnormc) && (oldAcnt > 0) ) || (oldAcnt > 5) || (iout == 5) ) {
