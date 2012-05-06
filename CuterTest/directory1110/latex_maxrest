@@ -1,0 +1,9 @@
+HS104      & 8 & 5 & 4 & 0.43 & con & bfgs\\ \hline
+HS107      & 9 & 6 & 2 & 0.29 & con & bfgs\\ \hline
+HS15       & 2 & 2 & 5 & 0.2 & con & bfgs\\ \hline
+HS18       & 2 & 2 & 1 & 0.2 & con & bfgs\\ \hline
+HS30       & 3 & 1 & 65 & 0.24 & con & bfgs\\ \hline
+HS63       & 3 & 2 & 1 & 0.18 & con & bfgs\\ \hline
+HS66       & 3 & 2 & 1 & 0.22 & con & bfgs\\ \hline
+HS72       & 4 & 2 & 1 & 0.24 & con & bfgs\\ \hline
+HS99EXP    & 31 & 21 & 5 & 0.83 & con & bfgs\\ \hline
