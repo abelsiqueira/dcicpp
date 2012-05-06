@@ -1,7 +1,7 @@
 HS114      & 10 & 11 & 68 & 0.29 & con & \\ \hline
 HS117      & 15 & 5 & 72 & 0.12 & con & \\ \hline
 HS32       & 3 & 2 & 37 & 0.02 & con & \\ \hline
-HS69       & 4 & 2 & 123 & 0.35 & con & \\ \hline
-HS73       & 4 & 3 & 83 & 0.06 & con & \\ \hline
+HS69       & 4 & 2 & 116 & 0.33 & con & \\ \hline
+HS73       & 4 & 3 & 83 & 0.08 & con & \\ \hline
 HS76I      & 4 & 3 & 37 & 0.03 & con & \\ \hline
 HS95       & 6 & 4 & 183 & 0.44 & con & bfgs\\ \hline

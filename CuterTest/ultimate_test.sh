@@ -19,10 +19,14 @@ do
   dirname=directory$number
   rm -f dcicpp.spc
   echo PartialPenal $n1 >> dcicpp.spc 
+  echo project_dcp 0 >> dcicpp.spc
   #echo project_dcp $n2 >> dcicpp.spc 
   echo project_bfgs $n2 >> dcicpp.spc 
   echo trustWorstdn $n3 >> dcicpp.spc 
   echo trustConvexBox $n4 >> dcicpp.spc 
+  echo penal_trust 0 >> dcicpp.spc
+  echo penal_bfgs 1 >> dcicpp.spc
+  echo ScaleVertical 1 >> dcicpp.spc
   #echo penal_trust $n6 >> dcicpp.spc 
   #echo penal_bfgs $n7 >> dcicpp.spc 
   mkdir -p $dirname
