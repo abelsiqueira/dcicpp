@@ -277,26 +277,15 @@ namespace DCI {
 
     //Strategy choices
     UseCG = dciFalse;
-//    PartialPenal = dciFalse;
     PartialPenal = dciTrue;
-    project_dcp = dciTrue;
-//    project_dcp = dciFalse;
+    project_dcp = dciFalse;
     project_dn = dciTrue;
-//    project_dn = dciFalse;
     project_bfgs = dciTrue;
-//    project_bfgs = dciFalse;
-//    trustWorstdn = dciFalse;
-    trustWorstdn = dciTrue;
-//    trustConvexBox = dciTrue;
+    trustWorstdn = dciFalse;
     trustConvexBox = dciFalse;
-    penal_trust = dciFalse;
-//    penal_trust = dciTrue;
-//    penal_bfgs = dciFalse;
+    penal_trust = dciTrue;
     penal_bfgs = dciTrue;
-
     UseMUMPS = dciTrue;
-//    UseMUMPS = dciFalse;
-
     ScaleVertical = dciTrue;
 
     //Program properties
