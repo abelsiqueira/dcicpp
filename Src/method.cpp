@@ -361,30 +361,30 @@ namespace DCI {
       Real zi = xx[i], Li = blx[i], Ui = bux[i];
       if ( (PartialPenal) && (Li > -dciInf) && (Ui < dciInf) ) {
         if ( (zi - Li) < (Ui - zi) )
-          Vx[i] *= (zi - Li);
+          Vx[i] *= Min(MaxDiag, Max(MinDiag, zi - Li));
         else
-          Vx[i] *= (Ui - zi);
+          Vx[i] *= Min(MaxDiag, Max(MinDiag, Ui - zi));
         continue;
       }
       if (Li > -dciInf)
-        Vx[i] *= (zi - Li);
+        Vx[i] *= Min(MaxDiag, Max(MinDiag, zi - Li));
       if (Ui < dciInf)
-        Vx[i] *= (Ui - zi);
+        Vx[i] *= Min(MaxDiag, Max(MinDiag, Ui - zi));
     }
     for (Int i = 0; i < nconI; i++) {
       Real zi = sx[i], Li = clx[ineqIdx[i]], Ui = cux[ineqIdx[i]];
       Int j = nvar + i;
       if ( (PartialPenal) && (Li > -dciInf) && (Ui < dciInf) ) {
         if ( (zi - Li) < (Ui - zi) )
-          Vx[j] *= (zi - Li);
+          Vx[j] *= Min(MaxDiag, Max(MinDiag, zi - Li));
         else
-          Vx[j] *= (Ui - zi);
+          Vx[j] *= Min(MaxDiag, Max(MinDiag, Ui - zi));
         continue;
       }
       if (Li > -dciInf)
-        Vx[j] *= (zi - Li);
+        Vx[j] *= Min(MaxDiag, Max(MinDiag, zi - Li));
       if (Ui < dciInf)
-        Vx[j] *= (Ui - zi);
+        Vx[j] *= Min(MaxDiag, Max(MinDiag, Ui - zi));
     }
   }
 
@@ -395,30 +395,30 @@ namespace DCI {
       Real zi = xcx[i], Li = blx[i], Ui = bux[i];
       if ( (PartialPenal) && (Li > -dciInf) && (Ui < dciInf) ) {
         if ( (zi - Li) < (Ui - zi) )
-          Vx[i] *= (zi - Li);
+          Vx[i] *= Min(MaxDiag, Max(MinDiag, zi - Li));
         else
-          Vx[i] *= (Ui - zi);
+          Vx[i] *= Min(MaxDiag, Max(MinDiag, Ui - zi));
         continue;
       }
       if (Li > -dciInf)
-        Vx[i] *= (zi - Li);
+        Vx[i] *= Min(MaxDiag, Max(MinDiag, zi - Li));
       if (Ui < dciInf)
-        Vx[i] *= (Ui - zi);
+        Vx[i] *= Min(MaxDiag, Max(MinDiag, Ui - zi));
     }
     for (Int i = 0; i < nconI; i++) {
       Real zi = scx[i], Li = clx[ineqIdx[i]], Ui = cux[ineqIdx[i]];
       Int j = nvar + i;
       if ( (PartialPenal) && (Li > -dciInf) && (Ui < dciInf) ) {
         if ( (zi - Li) < (Ui - zi) )
-          Vx[j] *= (zi - Li);
+          Vx[j] *= Min(MaxDiag, Max(MinDiag, zi - Li));
         else
-          Vx[j] *= (Ui - zi);
+          Vx[j] *= Min(MaxDiag, Max(MinDiag, Ui - zi));
         continue;
       }
       if (Li > -dciInf)
-        Vx[j] *= (zi - Li);
+        Vx[j] *= Min(MaxDiag, Max(MinDiag, zi - Li));
       if (Ui < dciInf)
-        Vx[j] *= (Ui - zi);
+        Vx[j] *= Min(MaxDiag, Max(MinDiag, Ui - zi));
     }
   }
 

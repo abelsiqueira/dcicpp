@@ -1,3 +1,5 @@
+MaxDiag 1e3
+MinDiag 0
 ScaleVertical 1
 UseCG 0
 UseMUMPS 1

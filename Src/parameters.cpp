@@ -52,6 +52,8 @@ namespace DCI {
     minBk = 1e-12;
     DisplayLevel = 1;
     VerboseLevel = 0;
+    MaxDiag = 1e20;
+    MinDiag = 0;
 
     ReadParameters();
   }
@@ -70,10 +72,12 @@ namespace DCI {
       en_MaxTime, en_minBk, en_UseCG, en_PartialPenal, en_project_dcp,
       en_project_bfgs, en_trustWorstdn, en_trustConvexBox, en_penal_trust,
       en_penal_bfgs, en_UseMUMPS, en_ScaleVertical, en_DisplayLevel,
-      en_VerboseLevel
+      en_VerboseLevel, en_MaxDiag, en_MinDiag
     };
     std::map<std::string, int> paramMap;
 
+    paramMap["MaxDiag"] = en_MaxDiag;
+    paramMap["MinDiag"] = en_MinDiag;
     paramMap["VerboseLevel"] = en_VerboseLevel;
     paramMap["DisplayLevel"] = en_DisplayLevel;
     paramMap["ScaleVertical"] = en_ScaleVertical;
@@ -135,6 +139,8 @@ namespace DCI {
       std::stringstream aux;
       aux << value;
       switch (paramMap[param]) {
+        case en_MaxDiag: aux >> MaxDiag; break;
+        case en_MinDiag: aux >> MinDiag; break;
         case en_VerboseLevel: aux >> VerboseLevel; break;
         case en_DisplayLevel: aux >> DisplayLevel; break;
         case en_DeltaMax: aux >> DeltaMax; break;
