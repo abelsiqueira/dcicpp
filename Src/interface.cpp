@@ -37,7 +37,7 @@ namespace DCI {
       dmumps_c(&id);
     }
 
-//    cholCorrection = 1e-2;
+//    cholCorrection = 1e-4;
     cholCorrection = 0;
     env = new Environment;
     env->set_error_handler (&error);

@@ -173,6 +173,21 @@ namespace DCI {
       id.icntl[3] = 0;
       id.job = 6;
       dmumps_c(&id);
+      Bool FailedMumps = dciFalse;
+      if (id.info[0] == -10)
+        FailedMumps = dciTrue;
+      while (FailedMumps) {
+        if (cholCorrection == 0)
+          cholCorrection = 1e-6;
+        else
+          cholCorrection *= 100;
+        if (cholCorrection > 1e6)
+          break;
+        call_ccfsg_xc (dciTrue, ScaleVertical);
+        dmumps_c(&id);
+        if (id.info[0] != -10)
+          FailedMumps = dciFalse;;
+      }
 //      std::cout << "sol = " << std::endl;
 //      for (size_t i = 0; i < nvar + nconI + Pr.size(); i++)
 //        std::cout << rhs[i] << ' ';
@@ -227,6 +242,21 @@ namespace DCI {
       id.icntl[3] = 0;
       id.job = 6;
       dmumps_c(&id);
+      Bool FailedMumps = dciFalse;
+      if (id.info[0] == -10)
+        FailedMumps = dciTrue;
+      while (FailedMumps) {
+        if (cholCorrection == 0)
+          cholCorrection = 1e-6;
+        else
+          cholCorrection *= 100;
+        if (cholCorrection > 1e6)
+          break;
+        call_ccfsg_xc (dciTrue, ScaleVertical);
+        dmumps_c(&id);
+        if (id.info[0] != -10)
+          FailedMumps = dciFalse;;
+      }
       dr.reset(nvar + nconI);
       //rhs(1:nvar+nconI)     = -A'*inv(A*A')*r
       //rhs(nvar+nconI+1:end) = inv(A*A')*r
