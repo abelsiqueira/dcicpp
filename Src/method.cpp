@@ -422,7 +422,7 @@ namespace DCI {
     }
   }
 
-  void Interface::updyineq () {
+  void Interface::updyineq () { //This is -mu*Penalization on obj fun
     for (Int i = 0; i < nvar; i++) {
       Real bli = blx[i], bui = bux[i], xi = xx[i];
       yineqx[i] = 0;
@@ -490,6 +490,14 @@ namespace DCI {
     }
   }
 
+  /* yineq = -mu*P(x) = theta_U - theta_L
+   * theta_L, theta_U >= 0
+   * theta_L = max(0.0, -yineq)
+   * theta_U = max(0.0, yineq)
+   *
+   * (Z - L)*theta_L = 0
+   * (U - Z)*theta_U = 0
+   */
   Real Interface::calc_gap () {
     Real gap = 0;
     for (Int i = 0; i < nvar; i++)  {
@@ -514,6 +522,9 @@ namespace DCI {
     return gap;
   }
 
+  /* -mu*P_s(s) - lambda_I = 0
+   * yineq_s = -mu*P_s(s)
+   */
   Real Interface::calc_ydif () {
     Real dif = 0;
     for (Int i = 0; i < nconI; i++)

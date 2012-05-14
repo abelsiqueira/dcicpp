@@ -67,7 +67,18 @@ namespace DCI {
     gap = 1;
     Real ydif = 0;
 
-    while ( ( (cnormi > csic) || ( (normgp > csig) && (ngp > csig*1e-2) ) || (mu > epsmu) || (gap > epsgap) || (ydif > 1e-6) ) && (iter <= maxit) && (tRest <= maxrest) && (itssmll <= maxssmll) && (VertFlag == 0) && (rhomax >= rhomin) && (!Unlimited) && (CurrentTime < MaxTime) ) {
+    while ( ( (cnormi > csic) || 
+              ( (normgp > csig) && (ngp > csig*1e-2) ) || 
+              (mu > epsmu) || 
+              (gap > epsgap) || 
+              (ydif > 1e-6) ) && 
+            (iter <= maxit) && 
+            (tRest <= maxrest) && 
+            (itssmll <= maxssmll) && 
+            (VertFlag == 0) && 
+            (rhomax >= rhomin) && 
+            (!Unlimited) && 
+            (CurrentTime < MaxTime) ) {
 
       calc_ydif ();
       iter++;
@@ -167,7 +178,13 @@ namespace DCI {
 
       CurrentTime = getTime() - StartTime;
 
-      if ( ( (cnormi > csic) || ( (normgp > csig) && (ngp > csig*1e-2) ) ) && (VertFlag == 0) && (rhomax >= rhomin) && (!Unlimited) && (CurrentTime < MaxTime) ) {
+      if ( ( (cnormi > csic) || 
+             ( (normgp > csig) && 
+               (ngp > csig*1e-2) ) ) && 
+           (VertFlag == 0) && 
+           (rhomax >= rhomin) && 
+           (!Unlimited) && 
+           (CurrentTime < MaxTime) ) {
 
         horzstep (norms); 
         checkInfactibility ();
@@ -178,8 +195,6 @@ namespace DCI {
         tSteih += nSteih;
         tRej += nRej;
 
-        updyineq ();
-        gap = calc_gap ();
 
         if (nSteih > 0)
           engp = fabs (DLH)/( fabs((*f) - (*fxc)) + norms);
@@ -196,10 +211,10 @@ namespace DCI {
         *x = *xc;
         if (Ineq)
           *s = *sc;
-        updyineq ();
-        gap = calc_gap ();
         *f = *fxc;
       } 
+      updyineq ();
+      gap = calc_gap ();
 
 #ifdef LOCALTEST
       Vector ytmp (*y);

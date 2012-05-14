@@ -42,7 +42,10 @@ namespace DCI {
 #endif
 
     CurrentTime = getTime() - StartTime;
-    while ( (!fail) && ( (newnormc > zeta1*rho) || (DLH > eta1*qd) ) && (CurrentTime < MaxTime) ) {
+    while ( (!fail) && 
+            ( (newnormc > zeta1*rho) || 
+              (DLH > eta1*qd) ) && 
+            (CurrentTime < MaxTime) ) {
 
       SteihFlag = dcisteih (d, qd, gtd);
 
@@ -68,7 +71,10 @@ namespace DCI {
       else
         normd = d.norm ();
 
-      if ( first && ( (newnormc > Min (zeta1*rho, zeta1*normc + zeta2*rho) ) || ( (normc <= csic) && (newnormc > Max (csic, zeta3*normc) ) ) ) ) {
+      if ( first && 
+         ( (newnormc > Min (zeta1*rho, zeta1*normc + zeta2*rho) ) || 
+           ( (normc <= csic) && 
+             (newnormc > Max (csic, zeta3*normc) ) ) ) ) {
 
         StepFlag = NAstep (*c, ssoc);
         scale_xc (ssoc);
