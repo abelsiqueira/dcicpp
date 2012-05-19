@@ -26,7 +26,8 @@
  * C is diagonal. */
 namespace DCI {
   Int Interface::InteriorPointRestoration () {
-    Vector d(*env, nvar + nconI, 0.0);
+    Vector d(*env);
+    d.reset(nvar + nconI, 0.0);
     Real *slack, *multUpper, *multLower;
     Real upper[nvar + nconI], lower[nvar + nconI]; //Bounds for C*d.
     Vector matrixC(*env);
@@ -65,9 +66,9 @@ namespace DCI {
     }
 
     Real innerMu = 1.0;
-    multUpper = new Real[numUpper](1.0);
-    multLower = new Real[numUpper](1.0);
-    slack     = new Real[nvar + nconI](0.0);
+    multUpper = new Real[numUpper];
+    multLower = new Real[numUpper];
+    slack     = new Real[nvar + nconI];
 
     DMUMPS_STRUC_C vertID;
     int intPointMyID;
@@ -84,7 +85,7 @@ namespace DCI {
     G.transpose(*J); // G = A';
     G.aat (G); // G = G*G' = A'*A;
     Triplet GT(*env);
-    T.sparse_to_triplet(G);
+    GT.sparse_to_triplet(G);
     //Create initial matrix
     vertID.nz  = (int)(G.nnz()) + 2*(numUpper + numLower);
 
@@ -95,7 +96,7 @@ namespace DCI {
     for (int i = 0; i < numUpper; i++) {
       vertID.irn[2*i] = nvar + nconI + i + 1;
       vertID.jcn[2*i] = i + 1;
-      vertiD.a[2*i]   = matrixC[upperIndex[i]];
+      vertID.a[2*i]   = Cx[upperIndex[i]];
 
       vertID.irn[2*i + 1] = nvar + ncon + i + 1;
       vertID.jcn[2*i + 1] = nvar + ncon + i + 1;
@@ -104,15 +105,15 @@ namespace DCI {
     for (int i = 0; i < numLower; i++) {
       vertID.irn[2*i + 2*numUpper] = nvar + nconI + numUpper + i + 1;
       vertID.jcn[2*i + 2*numUpper] = i + 1;
-      vertiD.a[2*i + 2*numUpper]   = -matrixC[lowerIndex[i]];
+      vertID.a[2*i + 2*numUpper]   = -Cx[lowerIndex[i]];
 
       vertID.irn[2*i + 1 + 2*numUpper] = nvar + ncon + numUpper + i + 1;
       vertID.jcn[2*i + 1 + 2*numUpper] = nvar + ncon + numUpper + i + 1;
-      vertID.a[2*i + 1 + 2*numUpper]   = (lower[i] - slack[lower[i]])/multLower[i];
+      vertID.a[2*i + 1 + 2*numUpper]   = (lower[i] - slack[lowerIndex[i]])/multLower[i];
     }
     int k = 2*numUpper + 2*numLower;
     int gtnnz = (*GT.get_pnnz());
-    int *pirn = GT.get_linti(), *pjcn = GT.get_lintj();
+    long int *pirn = GT.get_linti(), *pjcn = GT.get_lintj();
     double *pa = GT.get_doublex();
     for (int i = 0; i < gtnnz; i++) {
       vertID.irn[k + i] = pirn[i] + 1;
@@ -123,7 +124,7 @@ namespace DCI {
     Vector dualResidue(*env);
     pReal rdx = dualResidue.get_doublex();
     Vector primalResidue(*env, nvar + nconI);
-    pReal rpx = primalResidue.get_doublex(), pReal dx = d.get_doublex();
+    pReal rpx = primalResidue.get_doublex(), dx = d.get_doublex();
     Real one[2] = {1,0}, zero[2] = {0,0};
 
     dualResidue.sdmult(*J, 1, one, zero, *c);
@@ -137,7 +138,7 @@ namespace DCI {
       for (int i = 0; i < nvar + nconI; i++)
         rpx[i] = Cx[i]*dx[i] - slack[i];
 
-      vertID.rhs = new int[nvar + nconI + numUpper + numLower];
+      vertID.rhs = new double[nvar + nconI + numUpper + numLower];
       for (int i = 0; i < nvar + nconI; i++)
         vertID.rhs[i] = -rdx[i];
       for (int i = 0; i < numUpper; i++) {
@@ -186,7 +187,7 @@ namespace DCI {
       }
       for (int i = 0; i < numLower; i++) {
         int j = lowerIndex[i];
-        innerMu += (lower[i] - slack[lower[i]])*multLower[i];
+        innerMu += (lower[i] - slack[lowerIndex[i]])*multLower[i];
         if (slackStep[j] < 0)
           alphaAff = Min(alphaAff, (lower[i] - slack[j])/slackStep[j]);
         if (lowerStep[i] > 0)
@@ -197,12 +198,12 @@ namespace DCI {
       Real innerMuAff = 0.0;
       for (int i = 0; i < numUpper; i++) {
         int j = upperIndex[i];
-        inneqMuAff += (upper[i] - slack[j] - alphaAff*slackStep[j])*
+        innerMuAff += (upper[i] - slack[j] - alphaAff*slackStep[j])*
                       (multUpper[i] + alphaAff*upperStep[i]);
       }
       for (int i = 0; i < numLower; i++) {
         int j = lowerIndex[i];
-        inneqMuAff += (lower[i] - slack[j] - alphaAff*slackStep[j])*
+        innerMuAff += (lower[i] - slack[j] - alphaAff*slackStep[j])*
                       (multLower[i] + alphaAff*lowerStep[i]);
       }
       Real sigma = pow(innerMuAff/innerMu, 3);
@@ -215,20 +216,19 @@ namespace DCI {
       for (int i = 0; i < nvar + nconI; i++)
         rpx[i] = Cx[i]*dx[i] - slack[i];
 
-      vertID.rhs = new int[nvar + nconI + numUpper + numLower];
       for (int i = 0; i < nvar + nconI; i++)
         vertID.rhs[i] = -rdx[i];
       for (int i = 0; i < numUpper; i++) {
         int j = nvar + nconI + i;
         vertID.rhs[j] = upper[i] - slack[upperIndex[i]] - 
           slackStep[upperIndex[i]]*upper[i] -
-          sigma*vertMu/multUpper[i] - rpx[upperIndex[i]];
+          sigma*innerMu/multUpper[i] - rpx[upperIndex[i]];
       }
       for (int i = 0; i < numLower; i++) {
         int j = nvar + nconI + numUpper + i;
         vertID.rhs[j] = slack[lowerIndex[i]] - lower[i] +
           slackStep[lowerIndex[i]]*lower[i] -
-          sigma*vertMu/multLower[i] + rpx[lowerIndex[i]];
+          sigma*innerMu/multLower[i] + rpx[lowerIndex[i]];
       }
 
       vertID.icntl[0] = -1;
@@ -264,7 +264,7 @@ namespace DCI {
       }
       for (int i = 0; i < numLower; i++) {
         int j = lowerIndex[i];
-        innerMu += (lower[i] - slack[lower[i]])*multLower[i];
+        innerMu += (lower[i] - slack[lowerIndex[i]])*multLower[i];
         if (slackStep[j] < 0)
           alphaPrimal = Min(alphaPrimal, (1 - epsmu)*(lower[i] - slack[j])/slackStep[j]);
         if (lowerStep[i] > 0)
@@ -299,7 +299,7 @@ namespace DCI {
       for (int i = 0; i < numUpper; i++) {
         vertID.irn[2*i] = nvar + nconI + i + 1;
         vertID.jcn[2*i] = i + 1;
-        vertiD.a[2*i]   = matrixC[upperIndex[i]];
+        vertID.a[2*i]   = Cx[upperIndex[i]];
 
         vertID.irn[2*i + 1] = nvar + ncon + i + 1;
         vertID.jcn[2*i + 1] = nvar + ncon + i + 1;
@@ -308,11 +308,11 @@ namespace DCI {
       for (int i = 0; i < numLower; i++) {
         vertID.irn[2*i + 2*numUpper] = nvar + nconI + numUpper + i + 1;
         vertID.jcn[2*i + 2*numUpper] = i + 1;
-        vertiD.a[2*i + 2*numUpper]   = -matrixC[lowerIndex[i]];
+        vertID.a[2*i + 2*numUpper]   = -Cx[lowerIndex[i]];
 
         vertID.irn[2*i + 1 + 2*numUpper] = nvar + ncon + numUpper + i + 1;
         vertID.jcn[2*i + 1 + 2*numUpper] = nvar + ncon + numUpper + i + 1;
-        vertID.a[2*i + 1 + 2*numUpper]   = (lower[i] - slack[lower[i]])/multLower[i];
+        vertID.a[2*i + 1 + 2*numUpper]   = (lower[i] - slack[lowerIndex[i]])/multLower[i];
       }
 
       dualResidue = *c;
@@ -329,5 +329,7 @@ namespace DCI {
     free(slack);
     free(multUpper);
     free(multLower);
+
+    return 0;
   }
 }
