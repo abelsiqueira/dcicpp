@@ -122,8 +122,10 @@ namespace DCI {
 #endif
         nRest++;
 
-        trflag = dcitrust (oldnormc);
-        trflag = InteriorPointRestoration ();
+        if (nconI == 0)
+          trflag = dcitrust (oldnormc);
+        else
+          trflag = InteriorPointRestoration ();
 
         checkInfactibility ();
 
