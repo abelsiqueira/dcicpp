@@ -123,6 +123,7 @@ namespace DCI {
         nRest++;
 
         trflag = dcitrust (oldnormc);
+        trflag = InteriorPointRestoration ();
 
         checkInfactibility ();
 

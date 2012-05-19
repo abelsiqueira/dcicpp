@@ -104,6 +104,7 @@ namespace DCI {
       Int quadstep (Vector &, Real &);
       Int dcisteih (Vector &, Real &, Real &);
       Int dcitrust (Real);
+      Int InteriorPointRestoration ();
       void NAproj (Vector &, Vector &, Vector &);
       Int NAstep (Vector &, Vector &);
       Int dcibfgs (const Vector &, Int &);
