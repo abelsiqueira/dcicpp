@@ -32,6 +32,59 @@
 
 
 namespace DCI {
+  Real IntervalMinimization (Real a, Real b, Real (*ObjectiveFunction)(Real)) {
+    if (a > b) {
+      int t = a;
+      a = b;
+      b = t;
+    }
+    Real minInterval = (b - a)/2e16;
+    Real fa = (*ObjectiveFunction)(a);
+    Real fb = (*ObjectiveFunction)(b);
+    Real x, fx;
+
+    while (b - a > minInterval) {
+      x = (a + b)/2;
+      fx = (*ObjectiveFunction)(x);
+      if (fa < fb) {
+        b = x;
+        fb = fx;
+      } else {
+        a = x;
+        fa = fx;
+      }
+    }
+  }
+
+  Real CalculateObjectiveFuncion (Real alphaPrimal, Real alphaDual, 
+      Int numUpper, Int numLower, pReal oldrdx, pReal oldrpx, pReal dsvx, 
+      pReal Cx, pReal dStep, pReal slackStep, pReal upperStep, pReal lowerStep, 
+      pInt upperIndex, pInt lowerIndex, Int nvar, Int nconI) {
+
+    Real rdx[nvar + nconI], rpx[nvar + nconI];
+
+    for (int i = 0; i < nvar + nconI; i++) {
+      rpx[i] = oldrpx[i] + alphaPrimal*(Cx[i]*dStep[i] - slackStep[i]);
+      rdx[i] = oldrdx[i] + alphaPrimal*dsvx[i];
+    }
+    for (int i = 0; i < numUpper; i++) {
+      int j = upperIndex[i];
+      rdx[j] += alphaDual*Cx[j]*upperStep[i];
+    }
+    for (int i = 0; i < numLower; i++) {
+      int j = upperIndex[i];
+      rdx[j] -= alphaDual*Cx[j]*lowerStep[i];
+    }
+
+    Real f = 0.0;
+
+    for (int i = 0; i < nvar + nconI; i++) {
+      f += pow(rpx[i], 2) + pow(rdx[i], 2);
+    }
+
+    return f;
+  }
+
   Int Interface::InteriorPointRestoration () {
     Vector d(*env);
     Real *slack, *multUpper, *multLower;
@@ -45,11 +98,16 @@ namespace DCI {
     pReal normgx = 0;
     normgx = normGrad.get_doublex();
 
+    Vector oldxc(*xc), oldsc(*sc);
+    pReal oldxcx = oldxc.get_doublex();
+    pReal oldscx = oldsc.get_doublex();
+
     d.sdmult(*J, 0, one, zero, normGrad);
     Real alphacp = normGrad.norm()/d.norm();
     alphacp *= alphacp;
     alphacp = Min(alphacp, DeltaV/normGrad.norm());
     d.scale(normGrad, -alphacp);
+//    d.reset(nvar + nconI, 0.0);
     pReal dx = d.get_doublex();
 
     Int numUpper = 0, numLower = 0;
@@ -442,26 +500,51 @@ namespace DCI {
       for (int i = 0; i < nvar + nconI; i++)
         dotgd += Cx[i]*dStep[i]*normgx[i];
       Real oldObjFun = 0.5*pow(normc, 2), objFun = oldObjFun;
-      Vector oldxc(*xc), oldsc(*sc);
-      pReal oldxcx = oldxc.get_doublex();
-      pReal oldscx = oldsc.get_doublex();
       alphaPrimal = alphaPrimalMax;
       for (int i = 0; i < nvar; i++)
-        xcx[i] += alphaPrimal*Cx[i]*dStep[i];
+        xcx[i] = oldxcx[i] + Cx[i]*dx[i] + alphaPrimal*Cx[i]*dStep[i];
       for (int i = 0; i < nconI; i++) {
         int j = nvar + i;
-        scx[i] += alphaPrimal*Cx[j]*dStep[j];
+        scx[i] = oldscx[i] + Cx[j]*dx[j] + alphaPrimal*Cx[j]*dStep[j];
       }
       call_ccfsg_xc(dciFalse);
       normc = c->norm();
       objFun = 0.5*pow(normc, 2);
-      while (objFun > oldObjFun + 0.5*alphaPrimal*dotgd) {
+
+      Vector oldDualResidue(dualResidue), oldPrimalResidue(primalResidue);
+      pReal oldrdx = oldDualResidue.get_doublex();
+      pReal oldrpx = oldPrimalResidue.get_doublex();
+
+      for (int i = 0; i < nvar + nconI; i++) {
+        rpx[i] = oldrpx[i] + alphaPrimal*(Cx[i]*dStep[i] - slackStep[i]);
+      }
+
+      Vector dStepVector(*env, nvar + nconI, dStep);
+      dStepVector.sdmult(*J, 0, one, zero, dStepVector);
+      dStepVector.sdmult(*J, 1, one, zero, dStepVector);
+      pReal dsvx = dStepVector.get_doublex();
+
+      for (int i = 0; i < nvar + nconI; i++) {
+        rdx[i] = oldrdx[i] + alphaPrimal*dsvx[i];
+      }
+      for (int i = 0; i < numUpper; i++) {
+        int j = upperIndex[i];
+        rdx[j] += Min(alphaPrimal, alphaDualMax)*Cx[j]*upperStep[i];
+      }
+      for (int i = 0; i < numLower; i++) {
+        int j = lowerIndex[i];
+        rdx[j] -= Min(alphaPrimal, alphaDualMax)*Cx[j]*lowerStep[i];
+      }
+
+      while (objFun > oldObjFun) {
         alphaPrimal /= 2;
+        if (alphaPrimal < alphaPrimalMax*2e-8)
+          break;
         for (int i = 0; i < nvar; i++)
-          xcx[i] = oldxcx[i] + alphaPrimal*Cx[i]*dStep[i];
+          xcx[i] = oldxcx[i] + Cx[i]*dx[i] + alphaPrimal*Cx[i]*dStep[i];
         for (int i = 0; i < nconI; i++) {
           int j = nvar + i;
-          scx[i] = oldscx[i] + alphaPrimal*Cx[j]*dStep[j];
+          scx[i] = oldscx[i] + Cx[j]*dx[j] + alphaPrimal*Cx[j]*dStep[j];
         }
         call_ccfsg_xc(dciFalse);
         normc = c->norm();
