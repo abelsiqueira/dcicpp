@@ -56,10 +56,10 @@ namespace DCI {
     }
   }
 
-  Real CalculateObjectiveFuncion (Real alphaPrimal, Real alphaDual, 
+  Real Interface::InteriorPointObjFun (Real alphaPrimal, Real alphaDual, 
       Int numUpper, Int numLower, pReal oldrdx, pReal oldrpx, pReal dsvx, 
       pReal Cx, pReal dStep, pReal slackStep, pReal upperStep, pReal lowerStep, 
-      pInt upperIndex, pInt lowerIndex, Int nvar, Int nconI) {
+      pInt upperIndex, pInt lowerIndex) {
 
     Real rdx[nvar + nconI], rpx[nvar + nconI];
 
@@ -72,7 +72,7 @@ namespace DCI {
       rdx[j] += alphaDual*Cx[j]*upperStep[i];
     }
     for (int i = 0; i < numLower; i++) {
-      int j = upperIndex[i];
+      int j = lowerIndex[i];
       rdx[j] -= alphaDual*Cx[j]*lowerStep[i];
     }
 
@@ -536,20 +536,55 @@ namespace DCI {
         rdx[j] -= Min(alphaPrimal, alphaDualMax)*Cx[j]*lowerStep[i];
       }
 
-      while (objFun > oldObjFun) {
-        alphaPrimal /= 2;
-        if (alphaPrimal < alphaPrimalMax*2e-8)
-          break;
-        for (int i = 0; i < nvar; i++)
-          xcx[i] = oldxcx[i] + Cx[i]*dx[i] + alphaPrimal*Cx[i]*dStep[i];
-        for (int i = 0; i < nconI; i++) {
-          int j = nvar + i;
-          scx[i] = oldscx[i] + Cx[j]*dx[j] + alphaPrimal*Cx[j]*dStep[j];
+      //IntervalMinimization
+      Real alphaPrimalLeft = 0, alphaPrimalRight = alphaPrimalMax;
+      Real leftObjFun, rightObjFun;
+      leftObjFun = InteriorPointObjFun (alphaPrimalLeft, 
+          Min(alphaDualMax, alphaPrimalLeft), numUpper, numLower, oldrdx, oldrpx,
+          dsvx, Cx, dStep, slackStep, upperStep, lowerStep, upperIndex,
+          lowerIndex);
+      rightObjFun = InteriorPointObjFun (alphaPrimalRight, 
+          Min(alphaDualMax,alphaPrimalRight), numUpper, numLower, oldrdx, oldrpx,
+          dsvx, Cx, dStep, slackStep, upperStep, lowerStep, upperIndex,
+          lowerIndex);
+      while (rightObjFun - leftObjFun > alphaPrimalMax/2e8) {
+        Real x = (alphaPrimalLeft + alphaPrimalRight)/2;
+        Real fx = InteriorPointObjFun (x, 
+          Min(alphaDualMax, x), numUpper, numLower, oldrdx, oldrpx,
+          dsvx, Cx, dStep, slackStep, upperStep, lowerStep, upperIndex,
+          lowerIndex);
+
+        if (leftObjFun < rightObjFun) {
+          alphaPrimalRight = x;
+          rightObjFun = fx;
+        } else {
+          alphaPrimalLeft = x;
+          leftObjFun = fx;
         }
-        call_ccfsg_xc(dciFalse);
-        normc = c->norm();
-        objFun = 0.5*pow(normc, 2);
       }
+      alphaPrimal = (alphaPrimalLeft + alphaPrimalRight)/2;
+      for (int i = 0; i < nvar; i++)
+        xcx[i] = oldxcx[i] + Cx[i]*dx[i] + alphaPrimal*Cx[i]*dStep[i];
+      for (int i = 0; i < nconI; i++) {
+        int j = nvar + i;
+        scx[i] = oldscx[i] + Cx[j]*dx[j] + alphaPrimal*Cx[j]*dStep[j];
+      }
+      //IntervalMinimization End
+/*       while (objFun > oldObjFun) {
+ *         alphaPrimal /= 2;
+ *         if (alphaPrimal < alphaPrimalMax*2e-8)
+ *           break;
+ *         for (int i = 0; i < nvar; i++)
+ *           xcx[i] = oldxcx[i] + Cx[i]*dx[i] + alphaPrimal*Cx[i]*dStep[i];
+ *         for (int i = 0; i < nconI; i++) {
+ *           int j = nvar + i;
+ *           scx[i] = oldscx[i] + Cx[j]*dx[j] + alphaPrimal*Cx[j]*dStep[j];
+ *         }
+ *         call_ccfsg_xc(dciFalse);
+ *         normc = c->norm();
+ *         objFun = 0.5*pow(normc, 2);
+ *       }
+ */
       for (int i = 0; i < nvar; i++) {
         dx[i] += alphaPrimal*dStep[i];
         slack[i] += alphaPrimal*slackStep[i];

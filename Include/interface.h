@@ -105,6 +105,8 @@ namespace DCI {
       Int dcisteih (Vector &, Real &, Real &);
       Int dcitrust (Real);
       Int InteriorPointRestoration ();
+      Real InteriorPointObjFun (Real, Real, Int, Int, pReal, pReal, pReal, pReal,
+          pReal, pReal, pReal, pReal, pInt, pInt);
       void NAproj (Vector &, Vector &, Vector &);
       Int NAstep (Vector &, Vector &);
       Int dcibfgs (const Vector &, Int &);
@@ -223,6 +225,7 @@ namespace DCI {
       Bool trustWorstdn, trustConvexBox, penal_trust, penal_bfgs;
       Real cholCorrection;
       Real MaxDiag, MinDiag;
+      //Interior Point Variables
 
   };
 }
