@@ -32,30 +32,6 @@
 
 
 namespace DCI {
-  Real IntervalMinimization (Real a, Real b, Real (*ObjectiveFunction)(Real)) {
-    if (a > b) {
-      int t = a;
-      a = b;
-      b = t;
-    }
-    Real minInterval = (b - a)/2e16;
-    Real fa = (*ObjectiveFunction)(a);
-    Real fb = (*ObjectiveFunction)(b);
-    Real x, fx;
-
-    while (b - a > minInterval) {
-      x = (a + b)/2;
-      fx = (*ObjectiveFunction)(x);
-      if (fa < fb) {
-        b = x;
-        fb = fx;
-      } else {
-        a = x;
-        fa = fx;
-      }
-    }
-  }
-
   Real Interface::InteriorPointObjFun (Real alphaPrimal, Real alphaDual, 
       Int numUpper, Int numLower, pReal oldrdx, pReal oldrpx, pReal dsvx, 
       pReal Cx, pReal dStep, pReal slackStep, pReal upperStep, pReal lowerStep, 
@@ -91,12 +67,13 @@ namespace DCI {
     Real upper[nvar + nconI], lower[nvar + nconI]; //Bounds for C*d.
     Vector matrixC(*env);
     matrixC.reset(nvar + nconI, 1.0);
-    Int iter = 0, maxIterIPRestoration = 1;
+    Int iter = 0, maxIterIPRestoration = 10;
     Vector normGrad(*env);
     Real one[2] = {1,0}, zero[2] = {0,0};
     normGrad.sdmult(*J, 1, one, zero, *c);
     pReal normgx = 0;
     normgx = normGrad.get_doublex();
+    Real oldnormc = normc;
 
     Vector oldxc(*xc), oldsc(*sc);
     pReal oldxcx = oldxc.get_doublex();
@@ -130,11 +107,17 @@ namespace DCI {
     for (Int i = 0; i < nvar; i++) {
       Real zi = xcx[i], li = blx[i], ui = bux[i];
       if (li > -dciInf) {
-        lower[numLower] = (li - zi) * (1 - 1e-1);
+        lower[numLower] = Max( (li - zi) * (1 - 1e-1), -DeltaV);
+        lowerIndex[numLower++] = i;
+      } else {
+        lower[numLower] = -DeltaV;
         lowerIndex[numLower++] = i;
       }
       if (ui < dciInf) {
-        upper[numUpper] = (ui - zi) * (1 - 1e-1);
+        upper[numUpper] = Min( (ui - zi) * (1 - 1e-1), DeltaV);
+        upperIndex[numUpper++] = i;
+      } else {
+        upper[numUpper] = DeltaV;
         upperIndex[numUpper++] = i;
       }
     }
@@ -173,6 +156,10 @@ namespace DCI {
     }
     for (int i = 0; i < nvar + nconI; i++)
       dx[i] = slack[i]/Cx[i];
+
+    Real normSlack = 0.0;
+    for (int i = 0; i < nvar + nconI; i++)
+      normSlack += pow(slack[i], 2);
 
     DMUMPS_STRUC_C vertID;
     int intPointMyID;
@@ -686,6 +673,14 @@ namespace DCI {
 
       dualResidue = normGrad;
       rdx = dualResidue.get_doublex();
+    }
+
+    if (normc > oldnormc) {
+      *xc = oldxc;
+      *sc = oldsc;
+      normc = oldnormc;
+      DeltaV /= 4;
+      call_ccfsg(dciFalse);
     }
 
     free(vertID.rhs);
