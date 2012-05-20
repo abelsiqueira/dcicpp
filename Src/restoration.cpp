@@ -1,7 +1,10 @@
-#define RESTORATIONPRINT
+//#define RESTORATIONPRINT
 
 #include "interface.h"
 #include <cmath>
+/* Os limites tem que ser atualizados para os pontos atuais
+ *
+ * l <= d + alpha*deltaD <= u */
 
 /* Interior Point Restoration
  *
@@ -31,12 +34,23 @@
 namespace DCI {
   Int Interface::InteriorPointRestoration () {
     Vector d(*env);
-    d.reset(nvar + nconI, 0.0);
     Real *slack, *multUpper, *multLower;
     Real upper[nvar + nconI], lower[nvar + nconI]; //Bounds for C*d.
     Vector matrixC(*env);
     matrixC.reset(nvar + nconI, 1.0);
-    Int iter = 0, maxIterIPRestoration = 100;
+    Int iter = 0, maxIterIPRestoration = 1;
+    Vector normGrad(*env);
+    Real one[2] = {1,0}, zero[2] = {0,0};
+    normGrad.sdmult(*J, 1, one, zero, *c);
+    pReal normgx = 0;
+    normgx = normGrad.get_doublex();
+
+    d.sdmult(*J, 0, one, zero, normGrad);
+    Real alphacp = normGrad.norm()/d.norm();
+    alphacp *= alphacp;
+    alphacp = Min(alphacp, DeltaV/normGrad.norm());
+    d.scale(normGrad, -alphacp);
+    pReal dx = d.get_doublex();
 
     Int numUpper = 0, numLower = 0;
     Int upperIndex[nvar + nconI], lowerIndex[nvar + nconI];
@@ -85,12 +99,22 @@ namespace DCI {
     slack     = new Real[nvar + nconI];
     Real rhsClone[nvar + nconI + numUpper + numLower];
 
-    for (int i = 0; i < numUpper; i++)
-      multUpper[i] = 1.0;
-    for (int i = 0; i < numLower; i++)
-      multLower[i] = 1.0;
     for (int i = 0; i < nvar + nconI; i++)
-      slack[i] = 0.0;
+      slack[i] = Cx[i]*dx[i];
+    for (int i = 0; i < numUpper; i++) {
+      int j = upperIndex[i];
+      multUpper[i] = 1.0;
+      if (slack[j] >= upper[i])
+        slack[j] = upper[i]/2;
+    }
+    for (int i = 0; i < numLower; i++) {
+      int j = lowerIndex[i];
+      multLower[i] = 1.0;
+      if (slack[j] <= lower[i])
+        slack[j] = lower[i]/2;
+    }
+    for (int i = 0; i < nvar + nconI; i++)
+      dx[i] = slack[i]/Cx[i];
 
     DMUMPS_STRUC_C vertID;
     int intPointMyID;
@@ -177,17 +201,12 @@ namespace DCI {
 
 
     Vector dualResidue(*env);
-    Vector normGrad(*env);
     Vector primalResidue(*env, nvar + nconI);
     pReal rdx = 0;
-    pReal rpx = primalResidue.get_doublex(), dx = d.get_doublex();
-    pReal normgx = 0;
-    Real one[2] = {1,0}, zero[2] = {0,0};
+    pReal rpx = primalResidue.get_doublex();
     Real normrd = 1.0;
     Real normrp = 1.0;
 
-    normGrad.sdmult(*J, 1, one, zero, *c);
-    normgx = normGrad.get_doublex();
     dualResidue = normGrad;
     rdx = dualResidue.get_doublex();
     //******************************************************
@@ -390,41 +409,103 @@ namespace DCI {
       }
 
       Real alphaPrimal = 1.0, alphaDual = 1.0;
+      Real alphaPrimalMax = 1.0, alphaDualMax = 1.0;
       innerMu = 0.0;
       for (int i = 0; i < numUpper; i++) {
         int j = upperIndex[i];
         innerMu += (upper[i] - slack[upperIndex[i]])*multUpper[i];
         if (slackStep[j] > 0)
-          alphaPrimal = Min(alphaPrimal, (1 - 1e-1)*(upper[i] - slack[j])/slackStep[j]);
+          alphaPrimalMax = Min(alphaPrimalMax, (1 - 1e-1)*(upper[i] - slack[j])/slackStep[j]);
         if (upperStep[i] < 0)
-          alphaDual = Min(alphaDual, (1e-1 - 1)*multUpper[i]/upperStep[i]);
-        assert(alphaPrimal > 0);
-        assert(alphaDual > 0);
+          alphaDualMax = Min(alphaDualMax, (1e-1 - 1)*multUpper[i]/upperStep[i]);
+        assert(alphaPrimalMax > 0);
+        assert(alphaDualMax > 0);
       }
       for (int i = 0; i < numLower; i++) {
         int j = lowerIndex[i];
         innerMu -= (lower[i] - slack[lowerIndex[i]])*multLower[i];
         if (slackStep[j] < 0)
-          alphaPrimal = Min(alphaPrimal, (1 - 1e-1)*(lower[i] - slack[j])/slackStep[j]);
+          alphaPrimalMax = Min(alphaPrimalMax, (1 - 1e-1)*(lower[i] - slack[j])/slackStep[j]);
         if (lowerStep[i] < 0)
-          alphaDual = Min(alphaDual, (1e-1 - 1)*multLower[i]/lowerStep[i]);
-        assert(alphaPrimal > 0);
-        assert(alphaDual > 0);
+          alphaDualMax = Min(alphaDualMax, (1e-1 - 1)*multLower[i]/lowerStep[i]);
+        assert(alphaPrimalMax > 0);
+        assert(alphaDualMax > 0);
       }
       innerMu /= (numUpper + numLower);
 
+      /* Armijo test
+       * search for t such that
+       * f(x + t*d) < f(x) + a*t*dot(g(x),d) 
+       * In our situation,
+       * f(x) = 0.5*||A*x + h||^2 */
+      Real dotgd = 0.0;
+      for (int i = 0; i < nvar + nconI; i++)
+        dotgd += Cx[i]*dStep[i]*normgx[i];
+      Real oldObjFun = 0.5*pow(normc, 2), objFun = oldObjFun;
+      Vector oldxc(*xc), oldsc(*sc);
+      pReal oldxcx = oldxc.get_doublex();
+      pReal oldscx = oldsc.get_doublex();
+      alphaPrimal = alphaPrimalMax;
+      for (int i = 0; i < nvar; i++)
+        xcx[i] += alphaPrimal*Cx[i]*dStep[i];
+      for (int i = 0; i < nconI; i++) {
+        int j = nvar + i;
+        scx[i] += alphaPrimal*Cx[j]*dStep[j];
+      }
+      call_ccfsg_xc(dciFalse);
+      normc = c->norm();
+      objFun = 0.5*pow(normc, 2);
+      while (objFun > oldObjFun + 0.5*alphaPrimal*dotgd) {
+        alphaPrimal /= 2;
+        for (int i = 0; i < nvar; i++)
+          xcx[i] = oldxcx[i] + alphaPrimal*Cx[i]*dStep[i];
+        for (int i = 0; i < nconI; i++) {
+          int j = nvar + i;
+          scx[i] = oldscx[i] + alphaPrimal*Cx[j]*dStep[j];
+        }
+        call_ccfsg_xc(dciFalse);
+        normc = c->norm();
+        objFun = 0.5*pow(normc, 2);
+      }
       for (int i = 0; i < nvar; i++) {
         dx[i] += alphaPrimal*dStep[i];
         slack[i] += alphaPrimal*slackStep[i];
-        xcx[i] += alphaPrimal*Cx[i]*dStep[i];
       }
       for (int i = 0; i < nconI; i++) {
         int j = nvar + i;
         dx[j] += alphaPrimal*dStep[j];
         slack[j] += alphaPrimal*slackStep[j];
-        scx[i] += alphaPrimal*Cx[j]*dStep[j];
       }
+      alphaDual = Min(alphaDualMax, alphaPrimal);
 
+      //This really belongs here?
+/*       numLower = 0;
+ *       numUpper = 0;
+ *       for (Int i = 0; i < nvar; i++) {
+ *         Real zi = xcx[i], li = blx[i], ui = bux[i];
+ *         if (li > -dciInf) {
+ *           lower[numLower] = (li - zi) * (1 - 1e-1);
+ *           lowerIndex[numLower++] = i;
+ *         }
+ *         if (ui < dciInf) {
+ *           upper[numUpper] = (ui - zi) * (1 - 1e-1);
+ *           upperIndex[numUpper++] = i;
+ *         }
+ *       }
+ *       for (Int i = 0; i < nconI; i++) {
+ *         Int j = nvar + i;
+ *         Real zi = scx[i], li = clx[ineqIdx[i]], ui = cux[ineqIdx[i]];
+ *         if (li > -dciInf) {
+ *           lower[numLower] = (li - zi) * (1 - 1e-1);
+ *           lowerIndex[numLower++] = j;
+ *         }
+ *         if (ui < dciInf) {
+ *           upper[numUpper] = (ui - zi) * (1 - 1e-1);
+ *           upperIndex[numUpper++] = j;
+ *         }
+ *       }
+ */
+      //^^
 #ifdef RESTORATIONPRINT
       std::cout << "xc = " << std::endl;
       xc->print_more();
@@ -434,7 +515,6 @@ namespace DCI {
 #endif
 
       checkInfactibility ();
-      assert(0);
       for (int i = 0; i < numUpper; i++) {
         multUpper[i] += alphaDual*upperStep[i];
         assert(multUpper[i] > 0);
@@ -446,7 +526,7 @@ namespace DCI {
         assert(slack[lowerIndex[i]] > lower[i]);
       }
 
-      call_ccfsg(dciFalse);
+      call_ccfsg_xc(dciFalse);
       normc = c->norm();
 
       if ( ( (normrp < 1e-6) && (normrd < 1e-6) && (innerMu < 1e-6) ) ||
