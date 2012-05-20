@@ -122,7 +122,7 @@ namespace DCI {
 #endif
         nRest++;
 
-        if (nconI == 0)
+        if ((nconI == 0) || (!UseVertInteriorPoint) )
           trflag = dcitrust (oldnormc);
         else
           trflag = InteriorPointRestoration ();

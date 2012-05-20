@@ -72,10 +72,11 @@ namespace DCI {
       en_MaxTime, en_minBk, en_UseCG, en_PartialPenal, en_project_dcp,
       en_project_bfgs, en_trustWorstdn, en_trustConvexBox, en_penal_trust,
       en_penal_bfgs, en_UseMUMPS, en_ScaleVertical, en_DisplayLevel,
-      en_VerboseLevel, en_MaxDiag, en_MinDiag
+      en_VerboseLevel, en_MaxDiag, en_MinDiag, en_UseVertInteriorPoint
     };
     std::map<std::string, int> paramMap;
 
+    paramMap["UseVertInteriorPoint"] = en_UseVertInteriorPoint;
     paramMap["MaxDiag"] = en_MaxDiag;
     paramMap["MinDiag"] = en_MinDiag;
     paramMap["VerboseLevel"] = en_VerboseLevel;
@@ -139,6 +140,7 @@ namespace DCI {
       std::stringstream aux;
       aux << value;
       switch (paramMap[param]) {
+        case en_UseVertInteriorPoint: aux >> UseVertInteriorPoint; break;
         case en_MaxDiag: aux >> MaxDiag; break;
         case en_MinDiag: aux >> MinDiag; break;
         case en_VerboseLevel: aux >> VerboseLevel; break;
@@ -293,6 +295,7 @@ namespace DCI {
     penal_bfgs = dciTrue;
     UseMUMPS = dciTrue;
     ScaleVertical = dciTrue;
+    UseVertInteriorPoint = dciTrue;
 
     //Program properties
     Ineq = dciFalse; //Has some inequalities

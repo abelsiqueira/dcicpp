@@ -9,3 +9,4 @@ ScaleVertical 1
 VerboseLevel 0
 MaxDiag 1e3
 MinDiag 1e-12
+UseVertInteriorPoint 0
