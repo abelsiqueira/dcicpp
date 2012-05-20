@@ -1,3 +1,5 @@
+#define RESTORATIONPRINT
+
 #include "interface.h"
 #include <cmath>
 
@@ -24,6 +26,8 @@
 /* Important informations:
  * A is ncon x (nvar + nconI) matrix 
  * C is diagonal. */
+
+
 namespace DCI {
   Int Interface::InteriorPointRestoration () {
     Vector d(*env);
@@ -40,16 +44,25 @@ namespace DCI {
     if (ScaleVertical)
       scale_xc(matrixC);
 
+#ifdef RESTORATIONPRINT
+    std::cout << "xc = " << std::endl;
+    xc->print_more();
+    std::cout << "sc = " << std::endl;
+    sc->print_more();
+    std::cout << "|c| = " << c->norm() << std::endl;
+#endif
+    checkInfactibility ();
+
     pReal Cx = matrixC.get_doublex();
 
     for (Int i = 0; i < nvar; i++) {
       Real zi = xcx[i], li = blx[i], ui = bux[i];
       if (li > -dciInf) {
-        lower[numLower] = (li - zi) * (1 - epsmu);
+        lower[numLower] = (li - zi) * (1 - 1e-1);
         lowerIndex[numLower++] = i;
       }
       if (ui < dciInf) {
-        upper[numUpper] = (ui - zi) * (1 - epsmu);
+        upper[numUpper] = (ui - zi) * (1 - 1e-1);
         upperIndex[numUpper++] = i;
       }
     }
@@ -57,11 +70,11 @@ namespace DCI {
       Int j = nvar + i;
       Real zi = scx[i], li = clx[ineqIdx[i]], ui = cux[ineqIdx[i]];
       if (li > -dciInf) {
-        lower[numLower] = (li - zi) * (1 - epsmu);
+        lower[numLower] = (li - zi) * (1 - 1e-1);
         lowerIndex[numLower++] = j;
       }
       if (ui < dciInf) {
-        upper[numUpper] = (ui - zi) * (1 - epsmu);
+        upper[numUpper] = (ui - zi) * (1 - 1e-1);
         upperIndex[numUpper++] = j;
       }
     }
@@ -70,6 +83,7 @@ namespace DCI {
     multUpper = new Real[numUpper];
     multLower = new Real[numLower];
     slack     = new Real[nvar + nconI];
+    Real rhsClone[nvar + nconI + numUpper + numLower];
 
     for (int i = 0; i < numUpper; i++)
       multUpper[i] = 1.0;
@@ -126,22 +140,42 @@ namespace DCI {
     int gtnnz = (*GT.get_pnnz());
     long int *pirn = GT.get_linti(), *pjcn = GT.get_lintj();
     double *pa = GT.get_doublex();
+    bool diagonalVisited[nvar + nconI];
+    for (int i = 0; i < nvar + nconI; i++)
+      diagonalVisited[i] = false;
     for (int i = 0; i < gtnnz; i++) {
       if (pirn[i] < pjcn[i])
         continue;
       vertID.irn[k] = pirn[i] + 1;
       vertID.jcn[k] = pjcn[i] + 1;
-      vertID.a[k]   = pa[i];
+      if (pirn[i] == pjcn[i]) {
+        vertID.a[k]   = pa[i] + 1e-2;
+        diagonalVisited[pirn[i]] = true;
+      } else
+        vertID.a[k]   = pa[i];
       k++;
+    }
+    for (int i = 0; i < nvar + nconI; i++) {
+      if (diagonalVisited[i])
+        continue;
+      vertID.irn[k] = i + 1;
+      vertID.jcn[k] = i + 1;
+      vertID.a[k] = 1e-2;
+      k++;
+      diagonalVisited[i] = true;
     }
     vertID.nz = k;
 
+#ifdef RESTORATIONPRINT
     std::cout << "Augmented Matrix: " << std::endl;
     for (int i = 0; i < vertID.nz; i++) {
       std::cout << '(' << vertID.irn[i] << ','
            << vertID.jcn[i] << ") = "
            << vertID.a[i] << std::endl;
     }
+#endif
+
+
     Vector dualResidue(*env);
     Vector normGrad(*env);
     Vector primalResidue(*env, nvar + nconI);
@@ -184,14 +218,47 @@ namespace DCI {
         vertID.rhs[j] = slack[lowerIndex[i]] - lower[i] + rpx[lowerIndex[i]];
       }
 
+#ifdef RESTORATIONPRINT
+      std::cout << "RHS: " << std::endl;
+      for (int i = 0; i < nvar + nconI + numUpper + numLower; i++)
+        std::cout << vertID.rhs[i] << std::endl;
+#endif
+
       vertID.icntl[0] = -1;
       vertID.icntl[1] = -1;
       vertID.icntl[2] = -1;
       vertID.icntl[3] = 0;
       vertID.job = 6;
 
+      for (int i = 0; i < nvar + nconI + numUpper + numLower; i++)
+        rhsClone[i] = vertID.rhs[i];
       //Factorize matrix
       dmumps_c(&vertID);
+
+#ifdef RESTORATIONPRINT
+      std::cout << "SOL: " << std::endl;
+      for (int i = 0 ; i < nvar + nconI + numUpper + numLower; i++)
+        std::cout << vertID.rhs[i] << std::endl;
+
+      Real mumpsResidue = 0.0;
+      Real mumpsAxmb[vertID.n];
+
+      for (int i = 0; i < nvar + nconI + numUpper + numLower; i++)
+        mumpsAxmb[i] = rhsClone[i];
+      for (int k = 0; k < vertID.nz; k++) {
+        int i = vertID.irn[k], j = vertID.jcn[k];
+        Real Aij = vertID.a[k];
+        Real xj = vertID.rhs[j - 1], xi = vertID.rhs[i - 1];
+        mumpsAxmb[i - 1] -= Aij*xj;
+        if (i != j)
+          mumpsAxmb[j - 1] -= Aij*xi;
+      }
+      for (int k = 0; k < nvar + nconI + numUpper + numLower; k++) {
+        mumpsResidue += pow(mumpsAxmb[k], 2);
+      }
+      std::cout << "||Ax - b||^2 = " << mumpsResidue << std::endl;
+#endif
+
 
       Real dStep[nvar + nconI], slackStep[nvar + nconI];
       Real upperStep[numUpper], lowerStep[numLower];
@@ -228,6 +295,8 @@ namespace DCI {
           alphaAff = Min(alphaAff, -multLower[i]/lowerStep[i]);
       }
       innerMu /= (numUpper + numLower);
+      if (alphaAff < 1e-9)
+        break;
       
       Real innerMuAff = 0.0;
       for (int i = 0; i < numUpper; i++) {
@@ -241,7 +310,7 @@ namespace DCI {
                       (multLower[i] + alphaAff*lowerStep[i]);
       }
       innerMuAff /= numUpper + numLower;
-      Real sigma = pow(innerMuAff/innerMu, 3);
+      Real sigma = Min(pow(innerMuAff/innerMu, 3), 1e2);
 
       for (Int i = 0; i < nvar + nconI; i++)
         rdx[i] = normgx[i];
@@ -249,9 +318,11 @@ namespace DCI {
         rdx[upperIndex[i]] += Cx[upperIndex[i]]*multUpper[i];
       for (Int i = 0; i < numLower; i++)
         rdx[lowerIndex[i]] -= Cx[lowerIndex[i]]*multLower[i];
+      normrd = dualResidue.norm();
 
       for (int i = 0; i < nvar + nconI; i++)
         rpx[i] = Cx[i]*dx[i] - slack[i];
+      normrp = primalResidue.norm();
 
       for (int i = 0; i < nvar + nconI; i++)
         vertID.rhs[i] = -rdx[i];
@@ -268,13 +339,42 @@ namespace DCI {
           sigma*innerMu/multLower[i] + rpx[lowerIndex[i]];
       }
 
+#ifdef RESTORATIONPRINT
+      std::cout << "RHS: " << std::endl;
+      for (int i = 0; i < nvar + nconI + numUpper + numLower; i++)
+        std::cout << vertID.rhs[i] << std::endl;
+#endif
+
       vertID.icntl[0] = -1;
       vertID.icntl[1] = -1;
       vertID.icntl[2] = -1;
       vertID.icntl[3] = 0;
       vertID.job = 6;
 
+      for (int i = 0; i < nvar + nconI + numUpper + numLower; i++)
+        rhsClone[i] = vertID.rhs[i];
       dmumps_c(&vertID);
+
+#ifdef RESTORATIONPRINT
+      std::cout << "SOL: " << std::endl;
+      for (int i = 0 ; i < nvar + nconI + numUpper + numLower; i++)
+        std::cout << vertID.rhs[i] << std::endl;
+
+      for (int i = 0; i < nvar + nconI + numUpper + numLower; i++)
+        mumpsAxmb[i] = rhsClone[i];
+      for (int k = 0; k < vertID.nz; k++) {
+        int i = vertID.irn[k], j = vertID.jcn[k];
+        Real Aij = vertID.a[k];
+        Real xj = vertID.rhs[j - 1], xi = vertID.rhs[i - 1];
+        mumpsAxmb[i - 1] -= Aij*xj;
+        if (i != j)
+          mumpsAxmb[j - 1] -= Aij*xi;
+      }
+      for (int k = 0; k < nvar + nconI + numUpper + numLower; k++) {
+        mumpsResidue += pow(mumpsAxmb[k], 2);
+      }
+      std::cout << "||Ax - b||^2 = " << mumpsResidue << std::endl;
+#endif
 
       for (int i = 0; i < nvar + nconI; i++) {
         dStep[i] = vertID.rhs[i];
@@ -295,9 +395,9 @@ namespace DCI {
         int j = upperIndex[i];
         innerMu += (upper[i] - slack[upperIndex[i]])*multUpper[i];
         if (slackStep[j] > 0)
-          alphaPrimal = Min(alphaPrimal, (1 - epsmu)*(upper[i] - slack[j])/slackStep[j]);
+          alphaPrimal = Min(alphaPrimal, (1 - 1e-1)*(upper[i] - slack[j])/slackStep[j]);
         if (upperStep[i] < 0)
-          alphaDual = Min(alphaDual, (epsmu - 1)*multUpper[i]/upperStep[i]);
+          alphaDual = Min(alphaDual, (1e-1 - 1)*multUpper[i]/upperStep[i]);
         assert(alphaPrimal > 0);
         assert(alphaDual > 0);
       }
@@ -305,9 +405,9 @@ namespace DCI {
         int j = lowerIndex[i];
         innerMu -= (lower[i] - slack[lowerIndex[i]])*multLower[i];
         if (slackStep[j] < 0)
-          alphaPrimal = Min(alphaPrimal, (1 - epsmu)*(lower[i] - slack[j])/slackStep[j]);
+          alphaPrimal = Min(alphaPrimal, (1 - 1e-1)*(lower[i] - slack[j])/slackStep[j]);
         if (lowerStep[i] < 0)
-          alphaDual = Min(alphaDual, (epsmu - 1)*multLower[i]/lowerStep[i]);
+          alphaDual = Min(alphaDual, (1e-1 - 1)*multLower[i]/lowerStep[i]);
         assert(alphaPrimal > 0);
         assert(alphaDual > 0);
       }
@@ -324,7 +424,17 @@ namespace DCI {
         slack[j] += alphaPrimal*slackStep[j];
         scx[i] += alphaPrimal*Cx[j]*dStep[j];
       }
+
+#ifdef RESTORATIONPRINT
+      std::cout << "xc = " << std::endl;
+      xc->print_more();
+      std::cout << "sc = " << std::endl;
+      sc->print_more();
+      std::cout << "|c| = " << c->norm() << std::endl;
+#endif
+
       checkInfactibility ();
+      assert(0);
       for (int i = 0; i < numUpper; i++) {
         multUpper[i] += alphaDual*upperStep[i];
         assert(multUpper[i] > 0);
@@ -361,6 +471,15 @@ namespace DCI {
         vertID.jcn[2*i + 1 + 2*numUpper] = nvar + ncon + numUpper + i + 1;
         vertID.a[2*i + 1 + 2*numUpper]   = (lower[i] - slack[lowerIndex[i]])/multLower[i];
       }
+
+#ifdef RESTORATIONPRINT
+      std::cout << "Augmented Matrix: " << std::endl;
+      for (int i = 0; i < vertID.nz; i++) {
+        std::cout << '(' << vertID.irn[i] << ','
+             << vertID.jcn[i] << ") = "
+             << vertID.a[i] << std::endl;
+      }
+#endif
 
       normGrad = *c;
       normGrad.sdmult(*J, 0, one, one, d);
