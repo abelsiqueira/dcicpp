@@ -12,7 +12,7 @@ namespace DCI {
     Vector dn (*env);
     Real dnnorm = 0;
     Int iout = 0, ibfgs = 0;
-    Bool scaleJ = dciTrue;
+    Bool scaleJ = ScaleVertical;
 
     call_ccfsg_xc (dciTrue, scaleJ);
     if (!Linear)
