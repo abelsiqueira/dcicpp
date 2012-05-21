@@ -75,9 +75,14 @@ namespace DCI {
     normgx = normGrad.get_doublex();
     Real oldnormc = normc;
 
-    Vector oldxc(*xc), oldsc(*sc);
+    Vector oldxc(*xc), oldsc(*env);
     pReal oldxcx = oldxc.get_doublex();
-    pReal oldscx = oldsc.get_doublex();
+    pReal oldscx = 0;
+
+    if (Ineq) {
+      oldsc = *sc;
+      oldscx = oldsc.get_doublex();
+    }
 
     d.sdmult(*J, 0, one, zero, normGrad);
     Real alphacp = normGrad.norm()/d.norm();
@@ -96,8 +101,10 @@ namespace DCI {
 #ifdef RESTORATIONPRINT
     std::cout << "xc = " << std::endl;
     xc->print_more();
-    std::cout << "sc = " << std::endl;
-    sc->print_more();
+    if (Ineq) {
+      std::cout << "sc = " << std::endl;
+      sc->print_more();
+    }
     std::cout << "|c| = " << c->norm() << std::endl;
 #endif
     checkInfactibility ();
@@ -251,6 +258,7 @@ namespace DCI {
     pReal rpx = primalResidue.get_doublex();
     Real normrd = 1.0;
     Real normrp = 1.0;
+    vertID.rhs = new double[nvar + nconI + numUpper + numLower];
 
     dualResidue = normGrad;
     rdx = dualResidue.get_doublex();
@@ -270,7 +278,6 @@ namespace DCI {
         rpx[i] = Cx[i]*dx[i] - slack[i];
       normrp = primalResidue.norm();
 
-      vertID.rhs = new double[nvar + nconI + numUpper + numLower];
       for (int i = 0; i < nvar + nconI; i++)
         vertID.rhs[i] = -rdx[i];
       for (int i = 0; i < numUpper; i++) {
@@ -336,7 +343,7 @@ namespace DCI {
         upperStep[i] = vertID.rhs[j];
       }
       for (int i = 0; i < numLower; i++) {
-        int j = nvar + ncon + numUpper + i;
+        int j = nvar + nconI + numUpper + i;
         lowerStep[i] = vertID.rhs[j];
       }
 
@@ -449,7 +456,7 @@ namespace DCI {
         upperStep[i] = vertID.rhs[j];
       }
       for (int i = 0; i < numLower; i++) {
-        int j = nvar + ncon + numUpper + i;
+        int j = nvar + nconI + numUpper + i;
         lowerStep[i] = vertID.rhs[j];
       }
 
@@ -614,8 +621,10 @@ namespace DCI {
 #ifdef RESTORATIONPRINT
       std::cout << "xc = " << std::endl;
       xc->print_more();
-      std::cout << "sc = " << std::endl;
-      sc->print_more();
+      if (Ineq) {
+        std::cout << "sc = " << std::endl;
+        sc->print_more();
+      }
       std::cout << "|c| = " << c->norm() << std::endl;
 #endif
 
@@ -643,8 +652,8 @@ namespace DCI {
         vertID.jcn[2*i] = i + 1;
         vertID.a[2*i]   = Cx[upperIndex[i]];
 
-        vertID.irn[2*i + 1] = nvar + ncon + i + 1;
-        vertID.jcn[2*i + 1] = nvar + ncon + i + 1;
+        vertID.irn[2*i + 1] = nvar + nconI + i + 1;
+        vertID.jcn[2*i + 1] = nvar + nconI + i + 1;
         vertID.a[2*i + 1]   = -(upper[i] - slack[upperIndex[i]])/multUpper[i];
       }
       for (int i = 0; i < numLower; i++) {
@@ -652,8 +661,8 @@ namespace DCI {
         vertID.jcn[2*i + 2*numUpper] = i + 1;
         vertID.a[2*i + 2*numUpper]   = -Cx[lowerIndex[i]];
 
-        vertID.irn[2*i + 1 + 2*numUpper] = nvar + ncon + numUpper + i + 1;
-        vertID.jcn[2*i + 1 + 2*numUpper] = nvar + ncon + numUpper + i + 1;
+        vertID.irn[2*i + 1 + 2*numUpper] = nvar + nconI + numUpper + i + 1;
+        vertID.jcn[2*i + 1 + 2*numUpper] = nvar + nconI + numUpper + i + 1;
         vertID.a[2*i + 1 + 2*numUpper]   = (lower[i] - slack[lowerIndex[i]])/multLower[i];
       }
 
@@ -677,7 +686,8 @@ namespace DCI {
 
     if (normc > oldnormc) {
       *xc = oldxc;
-      *sc = oldsc;
+      if (Ineq)
+        *sc = oldsc;
       normc = oldnormc;
       DeltaV /= 4;
       call_ccfsg(dciFalse);

@@ -1,6 +1,7 @@
 MaxDiag 1e3
 MinDiag 0
 ScaleVertical 1
+UseVertInteriorPoint 1
 UseCG 0
 UseMUMPS 1
 PartialPenal 1
