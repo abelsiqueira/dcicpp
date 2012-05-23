@@ -135,7 +135,6 @@ namespace DCI {
 
         if (normc > phi2*oldnormc) {
           fail = fail + 1;
-//          fail = 0;
         } else
           fail = 0;
 
@@ -151,7 +150,8 @@ namespace DCI {
           GDBSTOP ();
         }
 #endif
-          VertFlag = vertSafeguard ();
+          call_ccfsg_xc (dciTrue, ScaleVertical);
+//          VertFlag = vertSafeguard ();
         } else if ( ( (normc > thetaR*oldnormc) && (oldAcnt > 0) ) || (oldAcnt > 5) || (iout == 5) ) {
           // dcivert failed. Recompute A
 

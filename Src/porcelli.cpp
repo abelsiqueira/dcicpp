@@ -17,6 +17,78 @@
  */
 
 namespace DCI {
+  /* This function must (approximately) solve
+   * min m(d) = 0.5*norm */
+  Int Interface::LeastSquareTrustRegion (Vector & d) {
+    d.reset(nvar + nconI, 0.0);
+    Int nLstSqrs = 0, maxLstSqrs = nvar + nconI;
+    Real theta, theta0, thetanew, alpha, beta, gamma;
+    Vector lsGrad(*env);
+    Real one[2] = {1,0}, zero[2] = {0,0}, mone[2] = {-1,0};
+    Vector r(*env), p(*env), q(*env), dnew(*env);
+    Real gtd, dtq, gtp, ptp, dtd, dtdnew, delta2, dtp, qd = 0;
+
+    delta2 = DeltaV*DeltaV;
+
+    lsGrad.sdmult(*J, 1, mone, zero, *c);
+    r = lsGrad;
+    theta0 = r.dot(r);
+    p = r;
+    theta = theta0;
+    gtd = 0;
+    
+    while ( (theta > eps2) && (theta > eps1*theta0) && 
+            (nLstSqrs <= maxLstSqrs) && (CurrentTime < MaxTime) ) {
+      q.sdmult(*J, 0, one, zero, p);
+      q.sdmult(*J, 1, one, zero, q);
+      gamma = p.dot(q);
+      dtq = d.dot(q);
+      gtp = lsGrad.dot(p);
+      ptp = p.dot(p);
+
+      if (gamma <= eps3*ptp) {
+        // Almost singular matrix.Stops
+        return 1;
+      }
+      alpha = theta/gamma;
+      dnew = d;
+      dnew.saxpy (p, alpha);
+      dtdnew = dnew.dot(dnew);
+
+      if (dtdnew > delta2) {
+        // Out of the region
+        // Truncate step and stops
+        dtp = d.dot(p);
+        Real root1 = (-dtp + sqrt(dtp*dtp + (delta2 - dtd)*ptp))/ptp;
+
+        d.saxpy (p, root1);
+        gtd += root1*gtp;
+        qd += root1*dtq + 0.5*root1*root1*gamma + root1*gtp;
+
+        return 2;
+      }
+
+      if (alpha < dciTiny)
+        return -2;
+
+      r.saxpy (q, -alpha);
+
+      thetanew = r.dot(r);
+      beta = thetanew/theta;
+      qd = qd + alpha + dtq + 0.5*alpha*alpha*gamma + alpha*gtp;
+      p.scale(beta);
+      p.saxpy(r,1);
+      d = dnew;
+      gtd += alpha*gtp;
+      dtd = dtdnew;
+      theta = thetanew;
+
+      CurrentTime = getTime() - StartTime;
+    }
+
+    return 0;
+  }
+  
   Int Interface::Porcelli () {
     Real oldnormc = c->norm();
     Vector d(*env), dcp(*env), dn(*env);
@@ -186,7 +258,8 @@ namespace DCI {
       // sc + dcps >= epsmu*sc
       dnavail = dciFalse;
       if (!dnavail) {
-        naflag = NAstep (ctmp, dn); 
+        naflag = LeastSquareTrustRegion (dn);
+//        naflag = NAstep (ctmp, dn); 
         dnavail = dciTrue;
 //        if (ScaleVertical) scale_xc (dn);
 
