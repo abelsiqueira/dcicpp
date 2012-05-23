@@ -104,6 +104,7 @@ namespace DCI {
       Int quadstep (Vector &, Real &);
       Int dcisteih (Vector &, Real &, Real &);
       Int dcitrust (Real);
+      Int Porcelli ();
       Int InteriorPointRestoration ();
       Real InteriorPointObjFun (Real, Real, Int, Int, pReal, pReal, pReal, pReal,
           pReal, pReal, pReal, pReal, pInt, pInt);
@@ -223,6 +224,7 @@ namespace DCI {
       Bool UseMUMPS, ScaleVertical;
       Bool UseVertInteriorPoint;
       Bool PartialPenal, project_dcp, project_dn, project_bfgs;
+      Bool PorcelliPenal;
       Bool trustWorstdn, trustConvexBox, penal_trust, penal_bfgs;
       Real cholCorrection;
       Real MaxDiag, MinDiag;
