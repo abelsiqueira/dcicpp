@@ -25,7 +25,7 @@ namespace DCI {
     Real theta, theta0, thetanew, alpha, beta, gamma;
     Vector lsGrad(*env);
     Real one[2] = {1,0}, zero[2] = {0,0}, mone[2] = {-1,0};
-    Vector r(*env), p(*env), q(*env), dnew(*env);
+    Vector r(*env), p(*env), q(*env), dnew(*env), t(*env);
     Real gtd, dtq, gtp, ptp, dtd, dtdnew, delta2, dtp, qd = 0;
 
     delta2 = DeltaV*DeltaV;
@@ -33,7 +33,7 @@ namespace DCI {
     lsGrad.sdmult(*J, 1, mone, zero, *c);
     r = lsGrad;
     theta0 = r.dot(r);
-    p = r;
+    p = lsGrad;
     theta = theta0;
     gtd = 0;
     
@@ -141,46 +141,6 @@ namespace DCI {
         scalingMatrix[j] = 1;
       }
     }
-/*     if (penal_trust) {
- *       for (Int i = 0; i < nvar; i++) {
- *         Real val = 0;
- *         if ( (bux[i] < dciInf) && (blx[i] > -dciInf) ) {
- *           if (PartialPenal) {
- *             if ( (xcx[i] - blx[i]) < (bux[i] - xcx[i]) ) {
- *               val = 1;
- *             } else {
- *               val = -1;
- *             }
- *           } else {
- *             val = bux[i] + blx[i] - 2*xcx[i];
- *           }
- *         } else if (bux[i] < dciInf) {
- *           val = -1;
- *         } else if (blx[i] > -dciInf) {
- *           val = 1;
- *         }
- *         gtmpx[i] -= mu*val;
- *       }
- *       for (Int i = 0; i < nconI; i++) {
- *         Real val = 0;
- *         if ( (cux[ineqIdx[i]] < dciInf) && (clx[ineqIdx[i]] > -dciInf) ) {
- *           if (PartialPenal) {
- *             if ( (scx[i] - clx[ineqIdx[i]]) < (cux[ineqIdx[i]] - scx[i]) ) {
- *               val = 1;
- *             } else {
- *               val = -1;
- *             }
- *           } else {
- *             val = cux[ineqIdx[i]] + clx[ineqIdx[i]] - 2*scx[i];
- *           }
- *         } else if (cux[ineqIdx[i]] < dciInf)
- *           val = -1;
- *         else if (clx[ineqIdx[i]] > -dciInf)
- *           val = 1;
- *         gtmpx[nvar + i] -= mu*val;
- *       }
- *     }
- */
     normgtmp = gtmp.norm ();
 //    DeltaV = normgtmp;
 
@@ -276,9 +236,7 @@ namespace DCI {
           ndn = 0;
         else
           ndn = dn.norm (0);
-
-        if (ndn > DeltaV)
-          dn.scale(DeltaV/ndn);
+        assert(ndn < DeltaV);
       }
 
       Real newtonReduction, cauchyReduction;
