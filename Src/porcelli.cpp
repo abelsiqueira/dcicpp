@@ -49,9 +49,10 @@ namespace DCI {
       gtp = lsGrad.dot(p);
       pReal dx = d.get_doublex(), px = p.get_doublex();
       ptp = p.dot(p);
-/*       for (Int i = 0; i < nvar + nconI; i++)
- *         ptp += pow(px[i]*scalingMatrix[i], 2);
- */
+      ptp = 0.0;
+      for (Int i = 0; i < nvar + nconI; i++)
+        ptp += pow(px[i]*scalingMatrix[i], 2);
+
 
       if (gamma <= eps3*ptp) {
         // Almost singular matrix.Stops
@@ -61,17 +62,18 @@ namespace DCI {
       dnew = d;
       dnew.saxpy (p, alpha);
       dtdnew = dnew.dot(dnew);
-//      pReal dnewx = dnew.get_doublex();
-//      for (Int i = 0; i < nvar + nconI; i++)
-//        dtdnew += pow(dnewx[i]*scalingMatrix[i], 2);
+      dtdnew = 0.0;
+      pReal dnewx = dnew.get_doublex();
+      for (Int i = 0; i < nvar + nconI; i++)
+        dtdnew += pow(dnewx[i]*scalingMatrix[i], 2);
 
       if (dtdnew > delta2) {
         // Out of the region
         // Truncate step and stops
         dtp = d.dot(p);
-//        dtp = 0;
-//        for (Int i = 0; i < nvar + nconI; i++)
-//          dtp += dx[i]*pow(scalingMatrix[i], 2)*px[i];
+        dtp = 0;
+        for (Int i = 0; i < nvar + nconI; i++)
+          dtp += dx[i]*pow(scalingMatrix[i], 2)*px[i];
         Real root1 = (-dtp + sqrt(dtp*dtp + (delta2 - dtd)*ptp))/ptp;
 
         d.saxpy (p, root1);
@@ -195,19 +197,25 @@ namespace DCI {
 
     aux.sdmult(*J, 0, one, zero, d);
     alpha = Min(gtmp.dot(gtmp)/aux.dot(aux), DeltaV/gtmp.norm());
+    dcp.scale (d, alpha);
+    pReal dcpx = dcp.get_doublex();
 
 //    alpha = -d.dot(gtmp)/aux.dot(aux);
 //    alpha = Min(alpha, DeltaV/d.norm());
+    alpha = 1.0;
     for (int i = 0; i < nvar + nconI; i++) {
-      Real di = dx[i], ui = (1 - epsmu)*upper[i], li = (1 - epsmu)*lower[i];
+      Real di = dcpx[i], ui = upper[i], li = lower[i];
       if (di > 0) {
         alpha = Min(alpha, ui/(Diagx[i]*di));
       } else if (di < 0) {
         alpha = Min(alpha, li/(Diagx[i]*di));
       }
     }
-    dcp.scale (d, alpha);
-    pReal dcpx = dcp.get_doublex();
+    Real theta = 0.01;
+    if (alpha < 1) {
+      alpha = Max(theta, 1 - dcp.norm())*alpha;
+      dcp.scale(alpha);
+    }
 /*     for (Int i = 0; i < nvar + nconI; i++)
  *       dcpx[i] *= scalingMatrix[i];
  */
