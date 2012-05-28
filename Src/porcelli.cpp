@@ -121,6 +121,7 @@ namespace DCI {
     Vector gtmp (*env); 
     Vector xtmp (*xc), ctmp (*c), stmp (*env);
     Real normgtmp = 0;
+    Real beta1 = 0.1, beta2 = 0.25;
 
     if (Ineq)
       stmp = *sc;
@@ -211,7 +212,7 @@ namespace DCI {
         alpha = Min(alpha, li/(Diagx[i]*di));
       }
     }
-    Real theta = 0.01;
+    Real theta = 0.99995;
     if (alpha < 1) {
       alpha = Max(theta, 1 - dcp.norm())*alpha;
       dcp.scale(alpha);
@@ -239,8 +240,8 @@ namespace DCI {
     //Ver qual eh melhor
 //    while ( (Ared < kappa1*Pred) && (Aavail || (TrustIter < 20) ) && (CurrentTime < MaxTime) ) {
 //    while ( (Ared < kappa1*Pred) && (TrustIter < 100000) ) {
-      TrustIter++;
-      DeltaV = kappa2*normd;
+//      TrustIter++;
+//      DeltaV = kappa2*normd;
 //      DeltaV = Min(kappa2*normd, 0.9*DeltaV);
 
       // Cauchy step is inside trust region
@@ -299,7 +300,7 @@ namespace DCI {
       Real newtonReduction = cauchyReduction - dotAdcphAdif - halfSqrNormAdif;
 
       Real factor = 1.0;
-      while (newtonReduction/cauchyReduction < 0.5) {
+      while (newtonReduction/cauchyReduction < beta1) {
         // Line search among from newton to cauchy
         factor *= 0.9;
         newtonReduction = cauchyReduction - factor*dotAdcphAdif - pow(factor,2)*halfSqrNormAdif;
@@ -322,14 +323,14 @@ namespace DCI {
       Ared = 0.5*(oldnormc*oldnormc - normc*normc);
       Pred = newtonReduction;
 
-      if (Ared/Pred < 0.5) {
+      if (Ared/Pred < beta2) {
         DeltaV /= 4;
         *xc = xtmp;
         if (Ineq) *sc = stmp;
         call_ccfsg_xc(dciFalse);
         normc = c->norm();
 //        std::cout << "Porcelli: Bad point" << std::endl;
-      } else {
+      } else if (Ared/Pred > 0.75) {
         DeltaV *= 2;
       }
 

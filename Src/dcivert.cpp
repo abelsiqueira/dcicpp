@@ -59,6 +59,12 @@ namespace DCI {
       gavail = dciFalse;
     }
 
+/*     Real one[2] = {1,0}, zero[2] = {0,0};
+ *     Vector gradLeastSquare(*env);
+ *     gradLeastSquare.sdmult(*J, 1, one, zero, *c);
+ *     DeltaV = gradLeastSquare.norm();
+ */
+
     if ( (normc <= rho) && (!Aavail) ) {
       if (ncon > 0) {
         if (!Linear)
