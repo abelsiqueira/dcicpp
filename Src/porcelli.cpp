@@ -40,7 +40,7 @@ namespace DCI {
     Real normGrad = normGrad0;
     
     while ( (theta > eps2) && (theta > eps1*theta0) && 
-            (normGrad > 0.1*normGrad0) &&
+            (normGrad > 0.2*normGrad0) &&
             (nLstSqrs <= maxLstSqrs) && (CurrentTime < MaxTime) ) {
       q.sdmult(*J, 0, one, zero, p);
       q.sdmult(*J, 1, one, zero, q);
@@ -259,12 +259,18 @@ namespace DCI {
 
         dnx = dn.get_doublex();
         //Project this step
+        alpha = 1.0;
         for (Int i = 0; i < nvar + nconI; i++) {
-          Real Di = Diagx[i], di = dnx[i];
-          if (di > upper[i])
-            dnx[i] = upper[i];
-          else if (di < lower[i])
-            dnx[i] = lower[i];
+          Real di = dnx[i], ui = upper[i], li = lower[i];
+          if (di > 0) {
+            alpha = Min(alpha, ui/(Diagx[i]*di));
+          } else if (di < 0) {
+            alpha = Min(alpha, li/(Diagx[i]*di));
+          }
+        }
+        if (alpha < 1) {
+          alpha = Max(theta, 1 - dn.norm())*alpha;
+          dn.scale(alpha);
         }
 
         if (naflag > 1)
