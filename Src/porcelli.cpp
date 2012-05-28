@@ -141,9 +141,9 @@ namespace DCI {
     for (Int i = 0; i < nvar; i++) {
       Real gi = gtmpx[i], zi = xcx[i], ui = bux[i], li = blx[i];
       if ( (gi < 0) && (ui < dciInf) ) {
-        scalingMatrix[i] = ui - zi;
+        scalingMatrix[i] = 1.0/sqrt(ui - zi);
       } else if ( (gi > 0) && (li > -dciInf) ) {
-        scalingMatrix[i] = zi - li;
+        scalingMatrix[i] = 1.0/sqrt(zi - li);
       } else {
         scalingMatrix[i] = 1;
       }
@@ -152,9 +152,9 @@ namespace DCI {
       Int j = nvar + i;
       Real gi = gtmpx[j], zi = scx[i], ui = cux[ineqIdx[i]], li = clx[ineqIdx[i]];
       if ( (gi < 0) && (ui < dciInf) ) {
-        scalingMatrix[j] = ui - zi;
+        scalingMatrix[j] = 1.0/sqrt(ui - zi);
       } else if ( (gi > 0) && (li > -dciInf) ) {
-        scalingMatrix[j] = zi - li;
+        scalingMatrix[j] = 1.0/sqrt(zi - li);
       } else {
         scalingMatrix[j] = 1;
       }
@@ -183,15 +183,21 @@ namespace DCI {
     }
     Vector aux(*env);
     d = gtmp;
-    pReal dx = 0;
+    pReal dx = 0; 
+    gtmpx = gtmp.get_doublex();
     dx = d.get_doublex();
     for (Int i = 0; i < nvar + nconI; i++) {
-      dx[i] *= -scalingMatrix[i];
+      gtmpx[i] /= scalingMatrix[i];
+      dx[i] = -dx[i]/pow(scalingMatrix[i], 2);
     }
+
     if (ScaleVertical) scale_xc (d);
+
     aux.sdmult(*J, 0, one, zero, d);
-    alpha = -d.dot(gtmp)/aux.dot(aux);
-    alpha = Min(alpha, DeltaV/d.norm());
+    alpha = Min(gtmp.dot(gtmp)/aux.dot(aux), DeltaV/gtmp.norm());
+
+//    alpha = -d.dot(gtmp)/aux.dot(aux);
+//    alpha = Min(alpha, DeltaV/d.norm());
     for (int i = 0; i < nvar + nconI; i++) {
       Real di = dx[i], ui = (1 - epsmu)*upper[i], li = (1 - epsmu)*lower[i];
       if (di > 0) {
