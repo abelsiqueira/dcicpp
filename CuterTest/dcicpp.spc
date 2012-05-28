@@ -10,3 +10,4 @@ VerboseLevel 0
 MaxDiag 1e3
 MinDiag 1e-12
 UseVertInteriorPoint 1
+UseVertSafeguard 1

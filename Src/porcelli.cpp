@@ -26,7 +26,7 @@ namespace DCI {
     Vector lsGrad(*env);
     Real one[2] = {1,0}, zero[2] = {0,0}, mone[2] = {-1,0};
     Vector r(*env), p(*env), q(*env), dnew(*env), t(*env);
-    Real gtd, dtq, gtp, ptp, dtd, dtdnew, delta2, dtp, qd = 0;
+    Real gtd = 0, dtq = 0, gtp = 0, ptp = 0, dtd = 0, dtdnew = 0, delta2, dtp = 0, qd = 0;
 
     delta2 = DeltaV*DeltaV;
 
@@ -98,6 +98,7 @@ namespace DCI {
 
       lsGrad = *c;
       lsGrad.sdmult(*J, 0, one, one, d);
+      lsGrad.sdmult(*J, 1, one, zero, lsGrad);
       normGrad = lsGrad.norm();
 
       CurrentTime = getTime() - StartTime;
@@ -123,16 +124,15 @@ namespace DCI {
       stmp = *sc;
 
     //Remove later if needed
-    call_ccfsg_xc (dciTrue, dciFalse);
-//    call_ccfsg_xc (dciTrue, ScaleVertical);
+//    call_ccfsg_xc (dciTrue, dciFalse);
+    call_ccfsg_xc (dciTrue, ScaleVertical);
     Aavail = dciFalse;
 
     //This method uses the Porcelli scale matrix
     Real scalingMatrix[nvar + nconI];
     Vector Diag(*env);
     Diag.reset(nvar + nconI, 1.0);
-//    if (ScaleVertical)
-//      scale_xc(Diag);
+    if (ScaleVertical) scale_xc(Diag);
     pReal Diagx = Diag.get_doublex();
 
     gtmp.sdmult (*J, 1, one, zero, ctmp); // g = J'*c
@@ -188,12 +188,12 @@ namespace DCI {
     for (Int i = 0; i < nvar + nconI; i++) {
       dx[i] *= -scalingMatrix[i];
     }
-//    if (ScaleVertical) scale_xc (d);
+    if (ScaleVertical) scale_xc (d);
     aux.sdmult(*J, 0, one, zero, d);
     alpha = -d.dot(gtmp)/aux.dot(aux);
     alpha = Min(alpha, DeltaV/d.norm());
     for (int i = 0; i < nvar + nconI; i++) {
-      Real di = dx[i], ui = upper[i], li = lower[i];
+      Real di = dx[i], ui = (1 - epsmu)*upper[i], li = (1 - epsmu)*lower[i];
       if (di > 0) {
         alpha = Min(alpha, ui/(Diagx[i]*di));
       } else if (di < 0) {
@@ -205,7 +205,7 @@ namespace DCI {
 /*     for (Int i = 0; i < nvar + nconI; i++)
  *       dcpx[i] *= scalingMatrix[i];
  */
-//    if (ScaleVertical) scale_xc (dcp);
+    if (ScaleVertical) scale_xc (dcp);
     ndcp = dcp.norm();
 
     dnavail = dciFalse;
@@ -233,21 +233,23 @@ namespace DCI {
       // sc + dcps >= epsmu*sc
       dnavail = dciFalse;
       if (!dnavail) {
-//        naflag = LeastSquareTrustRegion (dn, scalingMatrix);
-        naflag = NAstep (ctmp, dn); 
-        if (dn.norm() > DeltaV) {
-          dn.scale(DeltaV/dn.norm());
-        }
+        naflag = LeastSquareTrustRegion (dn, scalingMatrix);
+/*         naflag = NAstep (ctmp, dn); 
+ *         if (dn.norm() > DeltaV) {
+ *           dn.scale(DeltaV/dn.norm());
+ *         }
+ */
 
         dnavail = dciTrue;
-//        if (ScaleVertical) scale_xc (dn);
+        if (ScaleVertical) scale_xc (dn);
 
         dnx = dn.get_doublex();
         //Project this step
         for (Int i = 0; i < nvar + nconI; i++) {
-          if (dnx[i] > upper[i])
+          Real Di = Diagx[i], di = dnx[i];
+          if (di > upper[i])
             dnx[i] = upper[i];
-          else if (dnx[i] < lower[i])
+          else if (di < lower[i])
             dnx[i] = lower[i];
         }
 
@@ -274,7 +276,7 @@ namespace DCI {
       Real halfSqrNormAdif = 0.5*Adif.dot(Adif);
 
       Real cauchyReduction = 0.5*oldnormc*oldnormc - objValAdcph;
-      Real newtonReduction = 0.5*oldnormc*oldnormc - (objValAdcph + dotAdcphAdif + halfSqrNormAdif);
+      Real newtonReduction = cauchyReduction - dotAdcphAdif - halfSqrNormAdif;
 
       Real factor = 1.0;
       while (newtonReduction/cauchyReduction < 0.5) {
@@ -292,6 +294,8 @@ namespace DCI {
         scx[i] += Diagx[j]*(factor*dnx[j] + (1 - factor)*dcpx[j]);
       }
       
+      checkInfactibility();
+
       call_ccfsg_xc(dciFalse);
       normc = c->norm ();
 
@@ -300,12 +304,13 @@ namespace DCI {
 
       if (Ared/Pred < 0.5) {
         DeltaV /= 4;
-      } else {
-        DeltaV *= 2;
         *xc = xtmp;
         if (Ineq) *sc = stmp;
         call_ccfsg_xc(dciFalse);
         normc = c->norm();
+//        std::cout << "Porcelli: Bad point" << std::endl;
+      } else {
+        DeltaV *= 2;
       }
 
       if (normc < rho)

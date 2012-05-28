@@ -1,6 +1,7 @@
+UseVertSafeguard 0
 MaxDiag 1e3
 MinDiag 0
-ScaleVertical 1
+ScaleVertical 0
 UseVertInteriorPoint 1
 UseCG 0
 UseMUMPS 1
