@@ -24,6 +24,8 @@ namespace DCI {
       soldx = sold.get_doublex();
     }
 
+    checkInfactibility ();
+
     objfun = 0.5 * normc * normc;
     gtmp.sdmult (*J, 1, one, zero, *c);
     gtmpx = gtmp.get_doublex ();
@@ -69,6 +71,8 @@ namespace DCI {
     gnorm = gtmp.norm ();
     ibfgs = 0;
     iout = 0;
+
+    checkInfactibility ();
 
     if (normc < rho)
       return -1;
@@ -161,6 +165,8 @@ namespace DCI {
       gold = gtmp;
 
       iout = linesearch (xold, sold, p, objfun, gtd, gtmp);
+
+      checkInfactibility();
       
       gtmp.sdmult (*J, 1, one, zero, *c);
 
@@ -303,10 +309,15 @@ namespace DCI {
       if (Ineq)
         *sc = s0;
 
-      for (Int i = 0; i < nvar; i++)
+      for (Int i = 0; i < nvar; i++) {
         xcx[i] += lambda*Diagx[i]*dx[i];
-      for (Int i = 0; i < nconI; i++)
+      }
+      for (Int i = 0; i < nconI; i++) {
         scx[i] += lambda*Diagx[nvar + i]*dx[nvar + i];
+      }
+
+      
+      checkInfactibility ();
 
       call_ccfsg_xc (dciFalse);
       normc = c->norm ();
@@ -388,6 +399,8 @@ namespace DCI {
       call_ccfsg_xc (dciFalse);
       normc = c->norm ();
       objfun = 0.5 * normc * normc;
+
+      checkInfactibility ();
 
       if ( (objfun > f0 + c1*lambda*gtd0) || (objfun >= flo) ) {
         lbdhi = lambda;

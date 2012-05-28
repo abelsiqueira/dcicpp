@@ -150,8 +150,9 @@ namespace DCI {
           GDBSTOP ();
         }
 #endif
-          call_ccfsg_xc (dciTrue, ScaleVertical);
-//          VertFlag = vertSafeguard ();
+        
+//          call_ccfsg_xc (dciTrue, ScaleVertical);
+          VertFlag = vertSafeguard ();
         } else if ( ( (normc > thetaR*oldnormc) && (oldAcnt > 0) ) || (oldAcnt > 5) || (iout == 5) ) {
           // dcivert failed. Recompute A
 
