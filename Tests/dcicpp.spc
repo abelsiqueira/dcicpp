@@ -1,7 +1,7 @@
 UseVertSafeguard 0
+ScaleVertical 0
 MaxDiag 1e3
 MinDiag 0
-ScaleVertical 0
 UseVertInteriorPoint 1
 UseCG 0
 UseMUMPS 1
@@ -13,8 +13,8 @@ trustConvexBox 0
 penal_trust 0
 penal_bfgs 1
 DeltaMax 1e6
-maxrest 200
-maxit 200
+maxrest 200000
+maxit 200000
 maxssmll 5
 maxitSteih 100000
 minitSteih 100

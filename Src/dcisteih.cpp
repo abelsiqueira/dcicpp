@@ -14,12 +14,12 @@
 namespace DCI {
   Int Interface::dcisteih (Vector & d, Real & qd, Real & gtd) {
     Real delta2, dtd, theta0, theta, thetanew, alpha, beta, gamma;
-    Real dtq, gtp, dtp, ptp, root1, root2, dtdnew, qdnew;
+    Real dtHp, gtp, dtp, ptp, root1, root2, dtdnew, qdnew;
     Int SteihFlag;
-    Vector r(*env), p(d), q(d), dnew(*env), v(*env), tmp(*env);
+    Vector r(*env), p(d), Hp(d), dnew(*env), v(*env), tmp(*env);
     Real lower[nvar + nconI], upper[nvar + nconI];
 
-    pReal qx = q.get_doublex (), px = p.get_doublex ();
+    pReal Hpx = Hp.get_doublex (), px = p.get_doublex ();
     pReal dx = d.get_doublex();
 
     for (Int i = 0; i < nvar + nconI; i++)
@@ -36,10 +36,12 @@ namespace DCI {
     theta = theta0;
     gtd = 0;
     nSteih = 0;
-//    std::vector<Real> tmpDiag (nvar + nconI, 1);
-//    Vector Diag(*env, tmpDiag);
-//    pReal Diagx = Diag.get_doublex();
-//    scale_xc (Diag);
+
+    std::vector<Real> tmpDiag (nvar + nconI, 1);
+    Vector Diag(*env, tmpDiag);
+    pReal Diagx = Diag.get_doublex();
+    scale_xc (Diag);
+
     for (Int i = 0; i < nvar; i++) {
       Real xi = xcx[i], bli = blx[i], bui = bux[i];
 //      lower[i] = (bli - xi) * (1 - epsmu) / Diagx[i];
@@ -95,12 +97,16 @@ namespace DCI {
 
     while ( (theta > eps2) && (theta > eps1*theta0) && (nSteih <= maxitSteih) && (CurrentTime < MaxTime) ) {
       nSteih++;
-      call_prod_xc (GotH, px, qx);
+      call_prod_xc (GotH, px, Hpx);
       nHprod++;
-      gamma = p.dot (q);
-      dtq = d.dot (q);
+      gamma = p.dot (Hp);
+      dtHp = d.dot (Hp);
       gtp = g->dot (p);
       ptp = p.dot (p);
+      ptp = 0.0;
+      for (Int i = 0; i < nvar + nconI; i++) {
+        ptp += pow(px[i]*Diagx[i], 2);
+      }
 
       if (gamma <= eps3*ptp) {
         // Negative Curvature
@@ -131,9 +137,9 @@ namespace DCI {
 
         dnew = d;
         dnew.saxpy (p, root2);
-        qdnew = qd + root2*dtq + 0.5 * root2*root2*gamma + root2*gtp;
+        qdnew = qd + root2*dtHp + 0.5 * root2*root2*gamma + root2*gtp;
         d.saxpy (p, root1);
-        qd = qd + root1*dtq + 0.5 * root1*root1*gamma + root1*gtp;
+        qd = qd + root1*dtHp + 0.5 * root1*root1*gamma + root1*gtp;
 
         if (qdnew < qd) {
           d = dnew;
@@ -150,9 +156,17 @@ namespace DCI {
       dnew = d;
       dnew.saxpy (p, alpha);
       dtdnew = dnew.dot (dnew);
+      dtdnew = 0.0;
+      pReal dnewx = dnew.get_doublex();
+      for (Int i = 0; i < nvar + nconI; i++) {
+        dtdnew += pow(dnewx[i]*Diagx[i], 2);
+      }
 
       if (dtdnew > delta2) {
         dtp = d.dot (p);
+        dtp = 0;
+        for (Int i = 0; i < nvar + nconI; i++)
+          dtp += dx[i]*pow(Diagx[i], 2)*px[i];
         root1 = (-dtp + sqrt(dtp*dtp + (delta2 - dtd)*ptp))/ptp;
 
         Real root1max = 1;
@@ -171,7 +185,7 @@ namespace DCI {
 
         d.saxpy (p, root1);
         gtd = gtd + root1*gtp;
-        qd = qd + root1*dtq + 0.5*root1*root1*gamma + root1*gtp;
+        qd = qd + root1*dtHp + 0.5*root1*root1*gamma + root1*gtp;
         SteihFlag = 2;
         return SteihFlag;
       }
@@ -194,7 +208,7 @@ namespace DCI {
       if (alphamax < 1) {
         alpha *= alphamax;
         d.saxpy (p, alpha);
-        qd = qd + alpha*dtq + 0.5*alpha*alpha*gamma + alpha*gtp;
+        qd = qd + alpha*dtHp + 0.5*alpha*alpha*gamma + alpha*gtp;
         SteihFlag = 10;
         return SteihFlag;
       }
@@ -204,7 +218,7 @@ namespace DCI {
         upper[i] -= alpha * px[i];
       }
 
-      r.saxpy (q, -alpha);
+      r.saxpy (Hp, -alpha);
       v = r;
 
       LimLbd = dciFalse;
@@ -216,7 +230,7 @@ namespace DCI {
 
       thetanew = r.dot (r);
       beta = thetanew/theta;
-      qd = qd + alpha * dtq + 0.5*alpha*alpha*gamma + alpha*gtp;
+      qd = qd + alpha * dtHp + 0.5*alpha*alpha*gamma + alpha*gtp;
       p.scale (beta);
       p.saxpy (r, 1);
       d = dnew;

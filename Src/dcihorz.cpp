@@ -66,6 +66,7 @@ namespace DCI {
         newnormc = c->norm ();
       else
         newnormc = 0;
+
       if ( (SteihFlag == 1) || (SteihFlag == 2) )
         normd = DeltaH;
       else

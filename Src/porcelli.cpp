@@ -264,9 +264,9 @@ namespace DCI {
         for (Int i = 0; i < nvar + nconI; i++) {
           Real di = dnx[i], ui = upper[i], li = lower[i];
           if (di > 0) {
-            alpha = Min(alpha, ui/(Diagx[i]*di));
+            alpha = Min(alpha, ui/di);
           } else if (di < 0) {
-            alpha = Min(alpha, li/(Diagx[i]*di));
+            alpha = Min(alpha, li/di);
           }
         }
         if (alpha < 1) {
