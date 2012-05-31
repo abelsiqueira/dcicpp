@@ -22,6 +22,7 @@ namespace DCI {
   const Bool dciTrue = 1;
   const Real dciInf = 1e20;
   const Real dciTiny = 1e-20;
+  const Real dciEps = 1e-12;
 
   // Unconstrained
   typedef void (*pufn)    (pInt, pReal, pReal);

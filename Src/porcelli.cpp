@@ -206,11 +206,12 @@ namespace DCI {
     alpha = 1.0;
     for (int i = 0; i < nvar + nconI; i++) {
       Real di = dcpx[i], ui = upper[i], li = lower[i];
-      if (di > 0) {
+      if (di > dciEps) {
         alpha = Min(alpha, ui/(Diagx[i]*di));
-      } else if (di < 0) {
+      } else if (di < -dciEps) {
         alpha = Min(alpha, li/(Diagx[i]*di));
-      }
+      } else
+        dcpx[i] = 0;
     }
     Real theta = 0.99995;
     if (alpha < 1) {
@@ -263,11 +264,12 @@ namespace DCI {
         alpha = 1.0;
         for (Int i = 0; i < nvar + nconI; i++) {
           Real di = dnx[i], ui = upper[i], li = lower[i];
-          if (di > 0) {
+          if (di > dciEps) {
             alpha = Min(alpha, ui/di);
-          } else if (di < 0) {
+          } else if (di < -dciEps) {
             alpha = Min(alpha, li/di);
-          }
+          } else
+            di = 0;
         }
         if (alpha < 1) {
           alpha = Max(theta, 1 - dn.norm())*alpha;

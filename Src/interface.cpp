@@ -914,6 +914,7 @@ namespace DCI {
   }
 
   void Interface::checkInfactibility () {
+    return;
     for (Int i = 0; i < nvar; i++) {
       if ( (xx[i] > 1e10) || (xx[i] < -1e10) || (xcx[i] > 1e10) || (xcx[i] < -1e10) ) {
         Unlimited = dciTrue;
