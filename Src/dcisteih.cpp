@@ -44,54 +44,14 @@ namespace DCI {
 
     for (Int i = 0; i < nvar; i++) {
       Real xi = xcx[i], bli = blx[i], bui = bux[i];
-//      lower[i] = (bli - xi) * (1 - epsmu) / Diagx[i];
-//      upper[i] = (bui - xi) * (1 - epsmu) / Diagx[i];
       lower[i] = (bli - xi) * (1 - epsmu);
       upper[i] = (bui - xi) * (1 - epsmu);
-      if ( (PartialPenal) && (bli > -dciInf) && (bui < dciInf) ) {
-        if ( (xi - bli) < (bui - xi) ) {
-          lower[i] = lower[i]/(xi - bli);
-          upper[i] = upper[i]/(xi - bli);
-        } else {
-          lower[i] = lower[i]/(bui - xi);
-          upper[i] = upper[i]/(bui - xi);
-        }
-        continue;
-      }
-      if (bli > -dciInf) {
-        lower[i] = lower[i]/(xi - bli);
-        upper[i] = upper[i]/(xi - bli);
-      }
-      if (bui < dciInf) {
-        lower[i] = lower[i]/(bui - xi);
-        upper[i] = upper[i]/(bui - xi);
-      }
     }
     for (Int i = 0; i < nconI; i++) {
       Real si = scx[i], cli = clx[ineqIdx[i]], cui = cux[ineqIdx[i]];
       Int j = nvar + i;
-//      lower[j] = (cli - si) * (1 - epsmu) / Diagx[j];
-//      upper[j] = (cui - si) * (1 - epsmu) / Diagx[j];
       lower[j] = (cli - si) * (1 - epsmu);
       upper[j] = (cui - si) * (1 - epsmu);
-      if ( (PartialPenal) && (cli > -dciInf) && (cui < dciInf) ) {
-        if ( (si - cli) < (cui - si) ) {
-          lower[j] = lower[j]/(si - cli);
-          upper[j] = upper[j]/(si - cli);
-        } else {
-          lower[j] = lower[j]/(cui - si);
-          upper[j] = upper[j]/(cui - si);
-        }
-        continue;
-      }
-      if (cli > -dciInf) {
-        lower[j] = lower[j]/(si - cli);
-        upper[j] = upper[j]/(si - cli);
-      }
-      if (cui < dciInf) {
-        lower[j] = lower[j]/(cui - si);
-        upper[j] = upper[j]/(cui - si);
-      }
     }
 
 
@@ -111,21 +71,25 @@ namespace DCI {
       if (gamma <= eps3*ptp) {
         // Negative Curvature
         dtp = d.dot (p);
+        dtp = 0;
+        for (Int i = 0; i < nvar + nconI; i++)
+          dtp += dx[i]*pow(Diagx[i], 2)*px[i];
         root1 = sqrt (dtp*dtp + (delta2 - dtd)*ptp);
         root2 = (-dtp - root1)/ptp;
         root1 = (-dtp + root1)/ptp;
 
         Real root1max = 1, root2max = 1;
         for (Int i = 0; i < nvar + nconI; i++) {
-          Real pxi = px[i], lowi = lower[i], uppi = upper[i];
+          Real Di = Diagx[i], di = dx[i];
+          Real pxi = px[i], lowi = (lower[i] - Di*di), uppi = upper[i] - Di*di;
           if (pxi == 0)
             continue;
-          pxi = root1*pxi;
+          pxi = root1*pxi*Di;
           if (pxi < 0)
             root1max = Min (root1max, lowi/pxi);
           else
             root1max = Min (root1max, uppi/pxi);
-          pxi = root2*px[i];
+          pxi = root2*px[i]*Di;
           if (pxi < 0)
             root2max = Min (root2max, lowi/pxi);
           else
@@ -171,8 +135,9 @@ namespace DCI {
 
         Real root1max = 1;
         for (Int i = 0; i < nvar + nconI; i++) {
-          Real pxi = px[i], lowi = lower[i], uppi = upper[i];
-          pxi = pxi*root1;
+          Real Di = Diagx[i], di = dx[i];
+          Real pxi = px[i], lowi = lower[i] - Di*di, uppi = upper[i] - Di*di;
+          pxi = pxi*root1*Di;
           if (pxi == 0)
             continue;
           if (pxi < 0)
@@ -195,10 +160,11 @@ namespace DCI {
 
       Real alphamax = 1;
       for (Int i = 0; i < nvar + nconI; i++) {
-        Real pxi = px[i], lowi = lower[i], uppi = upper[i];
+        Real Di = Diagx[i], di = dx[i];
+        Real pxi = px[i], lowi = (lower[i] - Di*di), uppi = (upper[i] - Di*di);
         if (pxi == 0)
           continue;
-        pxi = alpha*pxi;
+        pxi = alpha*pxi*Di;
         if (pxi < 0)
           alphamax = Min (alphamax, lowi/pxi);
         else
@@ -213,10 +179,10 @@ namespace DCI {
         return SteihFlag;
       }
 
-      for (Int i = 0; i < nvar + nconI; i++) {
-        lower[i] -= alpha * px[i];
-        upper[i] -= alpha * px[i];
-      }
+//      for (Int i = 0; i < nvar + nconI; i++) {
+//        lower[i] -= alpha * px[i];
+//        upper[i] -= alpha * px[i];
+//      }
 
       r.saxpy (Hp, -alpha);
       v = r;
