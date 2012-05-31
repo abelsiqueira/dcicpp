@@ -22,3 +22,42 @@ ScaleVertical 0
 UseVertSafeguard 0
 maxit 200000
 maxrest 200000
+12e9415613940fd5b7a77bea5798c3f0e8b88826
+
+diff --git a/Src/parameters.cpp b/Src/parameters.cpp
+index 37868ff..284f735 100644
+--- a/Src/parameters.cpp
++++ b/Src/parameters.cpp
+@@ -338,10 +338,6 @@ namespace DCI {
+     if (ncon > 0) {
+       for (Int i = 0; i < nconI; i++) {
+         Real cxi = cx[ineqIdx[i]], cli = clx[ineqIdx[i]], cui = cux[ineqIdx[i]];
+-        if ( (sx[i] > cli) && (sx[i] < cui) ) {
+-          scx[i] = sx[i];
+-          continue;
+-        }
+         Real smldelta = Min ( 1.0, (cui - cli)/100);
+         assert (smldelta > 0);
+         sx[i] = Max ( Min ( cxi, cui - smldelta ), cli + smldelta );
+   7 latex_assert
+  92 latex_convergence
+  11 latex_maxiter
+   3 latex_maxrest
+  12 latex_rhomax
+ 125 total
+ 
+PartialPenal 1
+project_dcp 0
+project_bfgs 1
+trustWorstdn 0
+trustConvexBox 0
+penal_trust 0
+penal_bfgs 1
+VerboseLevel 0
+MaxDiag 1e3
+MinDiag 1e-12
+UseVertInteriorPoint 1
+ScaleVertical 0
+UseVertSafeguard 0
+maxit 200000
+maxrest 200000
