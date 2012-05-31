@@ -11,6 +11,7 @@ all: dcicppmain.o
 	$(MV) dcicppmain.o $(MYCUTER)/double/bin/dcicppma.o
 	$(CP) runcppcuter $(MYCUTER)/bin/
 	$(CP) rungdbcuter $(MYCUTER)/bin/
+	$(CP) runvalgrindcuter $(MYCUTER)/bin/
 	#$(CP) $(GOTOBLASDIR)/libgoto2.a $(MYCUTER)/double/lib/
 	#$(CP) $(GOTOBLASDIR)/libgoto2.so $(MYCUTER)/double/lib/
 	#$(CP) -t $(MYCUTER)/double/lib/ $(CHOLMODLIB)
