@@ -37,9 +37,8 @@ namespace DCI {
       dmumps_c(&id);
     }
 
-//    cholCorrection = 1e-2;
+//    cholCorrection = 1e-4;
     cholCorrection = 0;
-    DisplayLevel = 1;
     env = new Environment;
     env->set_error_handler (&error);
   }
@@ -171,11 +170,7 @@ namespace DCI {
     return 0;
   }
 
-  void Interface::show (Int displvl) {
-    show (std::cout, displvl);
-  }
-
-  void Interface::show (std::ostream & out, Int displvl) {
+  void Interface::show (std::ostream & out) {
     if (!Initialized) {
       out << "Problem not initialized" << std::endl;
       return;
@@ -190,16 +185,16 @@ namespace DCI {
         yoff += Max(-yi, 0.0);
     }
 
-    DisplayLevel = displvl;
-
-    out << "**********************************************************" << std::endl;
-    out << "Problem name: " << problemName << std::endl
-        << std::endl
-        << "Number of Variables: " << nvar << std::endl
-        << "Number of Constraints: " << ncon << std::endl 
-        << "             Equality: " << nconE << std::endl
-        << "           Inequality: " << nconI << std::endl
-        << std::endl;
+    if (DisplayLevel > 0) {
+      out << "**********************************************************" << std::endl;
+      out << "Problem name: " << problemName << std::endl
+          << std::endl
+          << "Number of Variables: " << nvar << std::endl
+          << "Number of Constraints: " << ncon << std::endl 
+          << "             Equality: " << nconE << std::endl
+          << "           Inequality: " << nconI << std::endl
+          << std::endl;
+    }
 
     if (!Solved) {
       out << "Problem not solved yet" << std::endl;
@@ -223,13 +218,15 @@ namespace DCI {
       else if (ExitFlag == 8)
         out << "The problem infeasible" << std::endl;
 
-      out << "f(x) = " << *f << std::endl
-          << "|c(x)| = " << normc << std::endl
-          << "|g(x) + J(x)'*y| = " << normgp << std::endl
-          << "y offset = " << yoff << std::endl
-          << "BFGS? " << ((tbfgs > 0) ? "yes" : "no") << std::endl
-          << "Number of Iterations = " << iter << std::endl
-          << "Elapsed Time = " << (CurrentTime > 0 ? CurrentTime : 0) << " s" << std::endl;
+      if (DisplayLevel > 0) {
+        out << "f(x) = " << *f << std::endl
+            << "|c(x)| = " << normc << std::endl
+            << "|g(x) + J(x)'*y| = " << normgp << std::endl
+            << "y offset = " << yoff << std::endl
+            << "BFGS? " << ((tbfgs > 0) ? "yes" : "no") << std::endl
+            << "Number of Iterations = " << iter << std::endl
+            << "Elapsed Time = " << (CurrentTime > 0 ? CurrentTime : 0) << " s" << std::endl;
+      }
 
       if (DisplayLevel > 2) {
         std::cout << std::endl

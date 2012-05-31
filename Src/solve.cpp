@@ -32,16 +32,18 @@ namespace DCI {
 
 
 #ifdef VERBOSE
-    std::cout
-        << "----------------------" << std::endl
-        << "  DCI-C++ First Iter" << std::endl
-        << "  Iter   = " << iter << std::endl
-        << "  f(x)   = " << *f << std::endl
-        << "  |c(x)| = " << c->norm () << std::endl
-        << "  |gp|   = " << gp->norm () << std::endl
-        << "  rho    = " << rho << std::endl
-        << "----------------------" << std::endl;
-    if (nvar + ncon < 10) {
+    if (VerboseLevel > 0) {
+      std::cout
+          << "----------------------" << std::endl
+          << "  DCI-C++ First Iter" << std::endl
+          << "  Iter   = " << iter << std::endl
+          << "  f(x)   = " << *f << std::endl
+          << "  |c(x)| = " << c->norm () << std::endl
+          << "  |gp|   = " << gp->norm () << std::endl
+          << "  rho    = " << rho << std::endl
+          << "----------------------" << std::endl;
+    }
+    if ( (nvar + ncon < 10) && (VerboseLevel > 1) ) {
       std::cout << "x = " << std::endl;
       x->print_more();
       std::cout << "xc = " << std::endl;
@@ -65,7 +67,18 @@ namespace DCI {
     gap = 1;
     Real ydif = 0;
 
-    while ( ( (cnormi > csic) || ( (normgp > csig) && (ngp > csig*1e-2) ) || (mu > epsmu) || (gap > epsgap) || (ydif > 1e-6) ) && (iter <= maxit) && (tRest <= maxrest) && (itssmll <= maxssmll) && (VertFlag == 0) && (rhomax >= rhomin) && (!Unlimited) && (CurrentTime < MaxTime) ) {
+    while ( ( (cnormi > csic) || 
+              ( (normgp > csig) && (ngp > csig*1e-2) ) || 
+              (mu > epsmu) || 
+              (gap > epsgap) || 
+              (ydif > 1e-6) ) && 
+            (iter <= maxit) && 
+            (tRest <= maxrest) && 
+            (itssmll <= maxssmll) && 
+            (VertFlag == 0) && 
+            (rhomax >= rhomin) && 
+            (!Unlimited) && 
+            (CurrentTime < MaxTime) ) {
 
       calc_ydif ();
       iter++;
@@ -111,32 +124,34 @@ namespace DCI {
         Lref = Lc;
 
 #ifdef VERBOSE
-    std::cout << std::endl
-        << "----------------------" << std::endl
-        << "Vertical Step" << std::endl
-        << "  Iter   = " << iter << std::endl
-        << "  f(x)   = " << *fxc << std::endl
-        << "  |c(x)| = " << c->norm () << std::endl
-        << "  |gp|   = " << gp->norm () << std::endl
-        << "  |g|    = " << g->norm () << std::endl
-        << "  ngp    = " << ngp << std::endl
-        << "  rho    = " << rho << std::endl
-        << "  rhomax = " << rhomax << std::endl
-        << "  mu     = " << mu << std::endl
-        << "  DLH    = " << DLH << std::endl
-        << "  DLV    = " << DLV << std::endl
-        << "  DeltaH = " << DeltaH << std::endl
-        << "  DeltaV = " << DeltaV << std::endl
-        << "  tSoc   = " << tSoc << std::endl
-        << "  tSteih = " << tSteih << std::endl
-        << "  tRej   = " << tRej << std::endl
-        << "  tbfgs  = " << tbfgs << std::endl
-        << "  tRest  = " << tRest << std::endl
-        << "  itssmll= " << itssmll << std::endl
-        << "  gap  = " << gap << std::endl
-        << "  stepsize = " << (*x - *xc).norm() << std::endl
-        << "----------------------" << std::endl;
-    if (nvar + ncon < 10) {
+    if (VerboseLevel > 0) {
+      std::cout << std::endl
+          << "----------------------" << std::endl
+          << "Vertical Step" << std::endl
+          << "  Iter   = " << iter << std::endl
+          << "  f(x)   = " << *fxc << std::endl
+          << "  |c(x)| = " << c->norm () << std::endl
+          << "  |gp|   = " << gp->norm () << std::endl
+          << "  |g|    = " << g->norm () << std::endl
+          << "  ngp    = " << ngp << std::endl
+          << "  rho    = " << rho << std::endl
+          << "  rhomax = " << rhomax << std::endl
+          << "  mu     = " << mu << std::endl
+          << "  DLH    = " << DLH << std::endl
+          << "  DLV    = " << DLV << std::endl
+          << "  DeltaH = " << DeltaH << std::endl
+          << "  DeltaV = " << DeltaV << std::endl
+          << "  tSoc   = " << tSoc << std::endl
+          << "  tSteih = " << tSteih << std::endl
+          << "  tRej   = " << tRej << std::endl
+          << "  tbfgs  = " << tbfgs << std::endl
+          << "  tRest  = " << tRest << std::endl
+          << "  itssmll= " << itssmll << std::endl
+          << "  gap  = " << gap << std::endl
+          << "  stepsize = " << (*x - *xc).norm() << std::endl
+          << "----------------------" << std::endl;
+    }
+    if ( (nvar + ncon < 10) && (VerboseLevel > 1) ) {
       std::cout << "x = " << std::endl;
       x->print_more();
       std::cout << "xc = " << std::endl;
@@ -163,7 +178,13 @@ namespace DCI {
 
       CurrentTime = getTime() - StartTime;
 
-      if ( ( (cnormi > csic) || ( (normgp > csig) && (ngp > csig*1e-2) ) ) && (VertFlag == 0) && (rhomax >= rhomin) && (!Unlimited) && (CurrentTime < MaxTime) ) {
+      if ( ( (cnormi > csic) || 
+             ( (normgp > csig) && 
+               (ngp > csig*1e-2) ) ) && 
+           (VertFlag == 0) && 
+           (rhomax >= rhomin) && 
+           (!Unlimited) && 
+           (CurrentTime < MaxTime) ) {
 
         horzstep (norms); 
         checkInfactibility ();
@@ -174,8 +195,6 @@ namespace DCI {
         tSteih += nSteih;
         tRej += nRej;
 
-        updyineq ();
-        gap = calc_gap ();
 
         if (nSteih > 0)
           engp = fabs (DLH)/( fabs((*f) - (*fxc)) + norms);
@@ -192,10 +211,10 @@ namespace DCI {
         *x = *xc;
         if (Ineq)
           *s = *sc;
-        updyineq ();
-        gap = calc_gap ();
         *f = *fxc;
       } 
+      updyineq ();
+      gap = calc_gap ();
 
 #ifdef LOCALTEST
       Vector ytmp (*y);
@@ -211,32 +230,34 @@ namespace DCI {
 #endif
 
 #ifdef VERBOSE
-      std::cout << std::endl
-          << "----------------------" << std::endl
-          << "Horizontal Step" << std::endl
-          << "  Iter   = " << iter << std::endl
-          << "  f(x)   = " << *f << std::endl
-          << "  |c(x)| = " << c->norm () << std::endl
-          << "  |gp|   = " << gp->norm () << std::endl
-          << "  |g|    = " << g->norm () << std::endl
-          << "  ngp    = " << ngp << std::endl
-          << "  rho    = " << rho << std::endl
-          << "  rhomax = " << rhomax << std::endl
-          << "  mu     = " << mu << std::endl
-          << "  DLH    = " << DLH << std::endl
-          << "  DLV    = " << DLV << std::endl
-          << "  DeltaH = " << DeltaH << std::endl
-          << "  DeltaV = " << DeltaV << std::endl
-          << "  tSoc   = " << tSoc << std::endl
-          << "  tSteih = " << tSteih << std::endl
-          << "  tRej   = " << tRej << std::endl
-          << "  tbfgs  = " << tbfgs << std::endl
-          << "  tRest  = " << tRest << std::endl
-          << "  itssmll= " << itssmll << std::endl
-          << "  gap  = " << gap << std::endl
-          << "  stepsize = " << (*x - *xc).norm() << std::endl
-          << "----------------------" << std::endl;
-      if (nvar + ncon < 10) {
+      if (VerboseLevel > 0) {
+        std::cout << std::endl
+            << "----------------------" << std::endl
+            << "Horizontal Step" << std::endl
+            << "  Iter   = " << iter << std::endl
+            << "  f(x)   = " << *f << std::endl
+            << "  |c(x)| = " << c->norm () << std::endl
+            << "  |gp|   = " << gp->norm () << std::endl
+            << "  |g|    = " << g->norm () << std::endl
+            << "  ngp    = " << ngp << std::endl
+            << "  rho    = " << rho << std::endl
+            << "  rhomax = " << rhomax << std::endl
+            << "  mu     = " << mu << std::endl
+            << "  DLH    = " << DLH << std::endl
+            << "  DLV    = " << DLV << std::endl
+            << "  DeltaH = " << DeltaH << std::endl
+            << "  DeltaV = " << DeltaV << std::endl
+            << "  tSoc   = " << tSoc << std::endl
+            << "  tSteih = " << tSteih << std::endl
+            << "  tRej   = " << tRej << std::endl
+            << "  tbfgs  = " << tbfgs << std::endl
+            << "  tRest  = " << tRest << std::endl
+            << "  itssmll= " << itssmll << std::endl
+            << "  gap  = " << gap << std::endl
+            << "  stepsize = " << (*x - *xc).norm() << std::endl
+            << "----------------------" << std::endl;
+      }
+      if ( (nvar + ncon < 10) && (VerboseLevel > 1) ) {
         std::cout << "x = " << std::endl;
         x->print_more();
         std::cout << "xc = " << std::endl;

@@ -33,14 +33,19 @@ namespace DCI {
     Bool fail = dciFalse;
 
 #ifdef VERBOSE
-    if (nvar + ncon < 10) {
-      std::cout << "A = " << std::endl;
-      full(*J).print_more ();
+    if (VerboseLevel > 1) {
+      if (nvar + ncon < 10) {
+        std::cout << "A = " << std::endl;
+        full(*J).print_more ();
+      }
     }
 #endif
 
     CurrentTime = getTime() - StartTime;
-    while ( (!fail) && ( (newnormc > zeta1*rho) || (DLH > eta1*qd) ) && (CurrentTime < MaxTime) ) {
+    while ( (!fail) && 
+            ( (newnormc > zeta1*rho) || 
+              (DLH > eta1*qd) ) && 
+            (CurrentTime < MaxTime) ) {
 
       SteihFlag = dcisteih (d, qd, gtd);
 
@@ -61,12 +66,16 @@ namespace DCI {
         newnormc = c->norm ();
       else
         newnormc = 0;
+
       if ( (SteihFlag == 1) || (SteihFlag == 2) )
         normd = DeltaH;
       else
         normd = d.norm ();
 
-      if ( first && ( (newnormc > Min (zeta1*rho, zeta1*normc + zeta2*rho) ) || ( (normc <= csic) && (newnormc > Max (csic, zeta3*normc) ) ) ) ) {
+      if ( first && 
+         ( (newnormc > Min (zeta1*rho, zeta1*normc + zeta2*rho) ) || 
+           ( (normc <= csic) && 
+             (newnormc > Max (csic, zeta3*normc) ) ) ) ) {
 
         StepFlag = NAstep (*c, ssoc);
         scale_xc (ssoc);

@@ -33,7 +33,7 @@ namespace DCI {
       stmp = *sc;
 
     //Remove later if needed
-//    call_ccfsg (dciTrue, dciTrue);
+    call_ccfsg (dciTrue, ScaleVertical);
     Aavail = dciFalse;
 
     gtmp.sdmult (*J, 1, one, zero, ctmp); // g = J'*c
@@ -103,20 +103,32 @@ namespace DCI {
     d.sdmult(*J, 0, one, zero, gtmp);
     alpha = normgtmp/d.norm();
     alpha *= alpha;
-    Vector Diag(*env);
-    Diag.reset(nvar + nconI, 1.0);
-    scale_xc(Diag);
-    pReal Diagx = Diag.get_doublex();
-    for (Int i = 0; i < nvar + nconI; i++) {
-      Real gtmpi = gtmpx[i];
-      if (gtmpi > 0)
-        alpha = Min (alpha, upper[i]/(Diagx[i]*gtmpi));
-      else if (gtmpi < 0)
-        alpha = Min (alpha, lower[i]/(Diagx[i]*gtmpi));
-      assert (alpha > 0);
-    } 
+    if (!ScaleVertical) {
+      for (Int i = 0; i < nvar + nconI; i++) {
+        Real gtmpi = gtmpx[i];
+        if (gtmpi > 0)
+          alpha = Min (alpha, upper[i]/gtmpi);
+        else if (gtmpi < 0)
+          alpha = Min (alpha, lower[i]/gtmpi);
+        assert (alpha > 0);
+      } 
+    } else {
+      Vector Diag(*env);
+      Diag.reset(nvar + nconI, 1.0);
+      scale_xc(Diag);
+      pReal Diagx = Diag.get_doublex();
+      for (Int i = 0; i < nvar + nconI; i++) {
+        Real gtmpi = gtmpx[i];
+        if (gtmpi > 0)
+          alpha = Min (alpha, upper[i]/(Diagx[i]*gtmpi));
+        else if (gtmpi < 0)
+          alpha = Min (alpha, lower[i]/(Diagx[i]*gtmpi));
+        assert (alpha > 0);
+      } 
+    }
     dcp.scale (gtmp, -alpha);
-    scale_xc (dcp);
+    if (ScaleVertical)
+      scale_xc (dcp);
     ndcp = dcp.norm(0);
 
     dnavail = dciFalse;
@@ -201,7 +213,8 @@ namespace DCI {
         if (!dnavail) {
           naflag = NAstep (ctmp, dn); 
           dnavail = dciTrue;
-          scale_xc (dn);
+          if (ScaleVertical)
+            scale_xc (dn);
 
           if (naflag > 1)
             ndn = 0;

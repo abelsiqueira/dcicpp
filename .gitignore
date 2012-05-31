@@ -15,3 +15,12 @@ GROUP.f
 OUTSDIF.d
 AUTOMAT.d
 RANGE.f
+lixo
+CuterTest/Results
+CuterTest
+Src/temp.cpp
+Tests/Matlab/
+gmon.out
+profiling
+review
+tags

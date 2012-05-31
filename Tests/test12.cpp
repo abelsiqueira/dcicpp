@@ -123,6 +123,6 @@ int main () {
 
   dci.start ();
   dci.solve ();
-  dci.show (1);
+  dci.show();
 
 }

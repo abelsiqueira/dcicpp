@@ -50,6 +50,10 @@ namespace DCI {
     c2 = 5e-1;
     MaxTime = 5 * 60; // 5 minutes
     minBk = 1e-12;
+    DisplayLevel = 1;
+    VerboseLevel = 0;
+    MaxDiag = 1e20;
+    MinDiag = 0;
 
     ReadParameters();
   }
@@ -67,9 +71,19 @@ namespace DCI {
       en_eps1, en_eps2, en_eps3, en_epsmu, en_epsgap, en_bfgsupd, en_c1, en_c2,
       en_MaxTime, en_minBk, en_UseCG, en_PartialPenal, en_project_dcp,
       en_project_bfgs, en_trustWorstdn, en_trustConvexBox, en_penal_trust,
-      en_penal_bfgs, en_UseMUMPS};
+      en_penal_bfgs, en_UseMUMPS, en_ScaleVertical, en_DisplayLevel,
+      en_VerboseLevel, en_MaxDiag, en_MinDiag, en_UseVertInteriorPoint,
+      en_UseVertSafeguard
+    };
     std::map<std::string, int> paramMap;
 
+    paramMap["UseVertSafeguard"] = en_UseVertSafeguard;
+    paramMap["UseVertInteriorPoint"] = en_UseVertInteriorPoint;
+    paramMap["MaxDiag"] = en_MaxDiag;
+    paramMap["MinDiag"] = en_MinDiag;
+    paramMap["VerboseLevel"] = en_VerboseLevel;
+    paramMap["DisplayLevel"] = en_DisplayLevel;
+    paramMap["ScaleVertical"] = en_ScaleVertical;
     paramMap["UseMUMPS"] = en_UseMUMPS;
     paramMap["UseCG"] = en_UseCG;
     paramMap["PartialPenal"] = en_PartialPenal;
@@ -128,6 +142,12 @@ namespace DCI {
       std::stringstream aux;
       aux << value;
       switch (paramMap[param]) {
+        case en_UseVertSafeguard: aux >> UseVertSafeguard; break;
+        case en_UseVertInteriorPoint: aux >> UseVertInteriorPoint; break;
+        case en_MaxDiag: aux >> MaxDiag; break;
+        case en_MinDiag: aux >> MinDiag; break;
+        case en_VerboseLevel: aux >> VerboseLevel; break;
+        case en_DisplayLevel: aux >> DisplayLevel; break;
         case en_DeltaMax: aux >> DeltaMax; break;
         case en_maxrest: aux >> maxrest; break;
         case en_maxit: aux >> maxit; break;
@@ -179,6 +199,7 @@ namespace DCI {
         case en_trustConvexBox: aux >> trustConvexBox; break;
         case en_penal_trust: aux >> penal_trust; break;
         case en_penal_bfgs: aux >> penal_bfgs; break;
+        case en_ScaleVertical: aux >> ScaleVertical; break;
       }
     }
   }
@@ -267,25 +288,18 @@ namespace DCI {
 
     //Strategy choices
     UseCG = dciFalse;
-//    PartialPenal = dciFalse;
     PartialPenal = dciTrue;
-    project_dcp = dciTrue;
-//    project_dcp = dciFalse;
+    project_dcp = dciFalse;
     project_dn = dciTrue;
-//    project_dn = dciFalse;
     project_bfgs = dciTrue;
-//    project_bfgs = dciFalse;
-//    trustWorstdn = dciFalse;
-    trustWorstdn = dciTrue;
-//    trustConvexBox = dciTrue;
+    trustWorstdn = dciFalse;
     trustConvexBox = dciFalse;
-    penal_trust = dciFalse;
-//    penal_trust = dciTrue;
-//    penal_bfgs = dciFalse;
+    penal_trust = dciTrue;
     penal_bfgs = dciTrue;
-
     UseMUMPS = dciTrue;
-//    UseMUMPS = dciFalse;
+    ScaleVertical = dciTrue;
+    UseVertInteriorPoint = dciTrue;
+    UseVertSafeguard = dciFalse;
 
     //Program properties
     Ineq = dciFalse; //Has some inequalities

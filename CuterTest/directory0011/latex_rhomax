@@ -1,0 +1,9 @@
+HS117      & 15 & 5 & 72 & 0.12 & con & \\ \hline
+HS118      & 15 & 17 & 46 & 0.11 & con & \\ \hline
+HS32       & 3 & 2 & 37 & 0.03 & con & \\ \hline
+HS36       & 3 & 1 & 38 & 0.02 & con & \\ \hline
+HS59       & 2 & 3 & 44 & 0.05 & con & bfgs\\ \hline
+HS68       & 4 & 2 & 199 & 0.12 & con & \\ \hline
+HS73       & 4 & 3 & 83 & 0.08 & con & \\ \hline
+HS96       & 6 & 4 & 134 & 0.14 & con & \\ \hline
+HS99       & 7 & 2 & 121 & 0.44 & con & \\ \hline

@@ -19,8 +19,7 @@ namespace DCI {
       // Problem functions
       int start ();
       int solve ();
-      void show (std::ostream & = std::cout, Int = 1);
-      void show (Int);
+      void show (std::ostream & = std::cout);
       void printLatex (char * = 0) const;
       void Cuter () { StartAtOne = dciTrue; };
 
@@ -105,6 +104,11 @@ namespace DCI {
       Int quadstep (Vector &, Real &);
       Int dcisteih (Vector &, Real &, Real &);
       Int dcitrust (Real);
+      Int Porcelli ();
+      Int LeastSquareTrustRegion (Vector &, pReal);
+      Int InteriorPointRestoration ();
+      Real InteriorPointObjFun (Real, Real, Int, Int, pReal, pReal, pReal, pReal,
+          pReal, pReal, pReal, pReal, pInt, pInt);
       void NAproj (Vector &, Vector &, Vector &);
       Int NAstep (Vector &, Vector &);
       Int dcibfgs (const Vector &, Int &);
@@ -189,7 +193,7 @@ namespace DCI {
       Bool Solved;
       Bool Ineq, Linear, Bounded;
       Bool Unlimited;
-      Int DisplayLevel;
+      Int DisplayLevel, VerboseLevel;
       Int ExitFlag;
       Real MaxTime, CurrentTime, StartTime;
 
@@ -218,10 +222,14 @@ namespace DCI {
       Bool Aavail, gavail, LimLbd, FreshA;
       Real minBk;
       Bool UseCG;
-      Bool UseMUMPS;
+      Bool UseMUMPS, ScaleVertical;
+      Bool UseVertInteriorPoint, UseVertSafeguard;
       Bool PartialPenal, project_dcp, project_dn, project_bfgs;
+      Bool PorcelliPenal;
       Bool trustWorstdn, trustConvexBox, penal_trust, penal_bfgs;
       Real cholCorrection;
+      Real MaxDiag, MinDiag;
+      //Interior Point Variables
 
   };
 }

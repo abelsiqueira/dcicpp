@@ -59,17 +59,23 @@ namespace DCI {
       gavail = dciFalse;
     }
 
+/*     Real one[2] = {1,0}, zero[2] = {0,0};
+ *     Vector gradLeastSquare(*env);
+ *     gradLeastSquare.sdmult(*J, 1, one, zero, *c);
+ *     DeltaV = gradLeastSquare.norm();
+ */
+
     if ( (normc <= rho) && (!Aavail) ) {
       if (ncon > 0) {
         if (!Linear)
-          call_ccfsg_xc (); //CuterJacob
+          call_ccfsg_xc (dciTrue); //CuterJacob
         Aavail = dciTrue;
 
         call_ofg_xc (); //Just g
 
         gavail = dciTrue;
 
-        if (!Linear) {
+        if (!Linear && !UseMUMPS) {
           analyze_J ();
           cholesky_J ();
         }
@@ -101,26 +107,33 @@ namespace DCI {
       while ( (normc > rho) && (nRest <= maxrest) && (VertFlag == 0) && (CurrentTime < MaxTime) ) {
         
 #ifdef VERBOSE
-        std::cout << "Going to dcitrust: nRest " << nRest << std::endl
-                  << std::endl
-                  << "|c| = " << normc << std::endl
-                  << "rho = " << rho << std::endl
-                  << std::endl;
-        if ( (nvar < 10) && (ncon < 10) ) {
-          std::cout <<  "A = " << std::endl;
-          full(*J).print_more ();
-          std::cout << "xc = " << std::endl;
-          xc->print_more ();
-          if (Ineq) {
-            std::cout << "sc = " << std::endl;
-            sc->print_more ();
+        if (VerboseLevel > 1) {
+          std::cout << "Going to dcitrust: nRest " << nRest << std::endl
+                    << std::endl
+                    << "|c| = " << normc << std::endl
+                    << "rho = " << rho << std::endl
+                    << std::endl;
+          if ( (nvar < 10) && (ncon < 10) ) {
+            std::cout <<  "A = " << std::endl;
+            full(*J).print_more ();
+            std::cout << "xc = " << std::endl;
+            xc->print_more ();
+            if (Ineq) {
+              std::cout << "sc = " << std::endl;
+              sc->print_more ();
+            }
           }
         }
         GDBSTOP ();
 #endif
         nRest++;
 
-        trflag = dcitrust (oldnormc);
+        trflag = Porcelli();
+/*         if ((!Bounded) || (!UseVertInteriorPoint) )
+ *           trflag = dcitrust (oldnormc);
+ *         else
+ *           trflag = InteriorPointRestoration ();
+ */
 
         checkInfactibility ();
 
@@ -128,12 +141,12 @@ namespace DCI {
 
         if (normc > phi2*oldnormc) {
           fail = fail + 1;
-//          fail = 0;
         } else
           fail = 0;
 
         if (fail >= nfailv) {
 #ifdef VERBOSE
+        if (VerboseLevel > 1) {
           std::cout << "Going to Safe Guard " << std::endl
                     << std::endl;
           if ( (nvar < 10) && (ncon < 10) ) {
@@ -141,18 +154,22 @@ namespace DCI {
             full(*J).print_more ();
           }
           GDBSTOP ();
+        }
 #endif
+        
+//          call_ccfsg_xc (dciTrue, ScaleVertical);
+        if (UseVertSafeguard)
           VertFlag = vertSafeguard ();
         } else if ( ( (normc > thetaR*oldnormc) && (oldAcnt > 0) ) || (oldAcnt > 5) || (iout == 5) ) {
           // dcivert failed. Recompute A
 
           if (!Linear) {
-            call_ccfsg_xc (dciTrue, scaleJ); //CuterJacob
+            call_ccfsg_xc (dciTrue, ScaleVertical); //CuterJacob
           }
           Aavail = dciTrue;
           oldAcnt = 0;
 
-          if (!Linear) {
+          if (!Linear && !UseMUMPS) {
             this->cholesky_J ();
           }
 

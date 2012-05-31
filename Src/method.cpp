@@ -173,6 +173,21 @@ namespace DCI {
       id.icntl[3] = 0;
       id.job = 6;
       dmumps_c(&id);
+      Bool FailedMumps = dciFalse;
+      if (id.info[0] == -10)
+        FailedMumps = dciTrue;
+      while (FailedMumps) {
+        if (cholCorrection == 0)
+          cholCorrection = 1e-6;
+        else
+          cholCorrection *= 100;
+        if (cholCorrection > 1e6)
+          break;
+        call_ccfsg_xc (dciTrue, ScaleVertical);
+        dmumps_c(&id);
+        if (id.info[0] != -10)
+          FailedMumps = dciFalse;;
+      }
 //      std::cout << "sol = " << std::endl;
 //      for (size_t i = 0; i < nvar + nconI + Pr.size(); i++)
 //        std::cout << rhs[i] << ' ';
@@ -227,6 +242,21 @@ namespace DCI {
       id.icntl[3] = 0;
       id.job = 6;
       dmumps_c(&id);
+      Bool FailedMumps = dciFalse;
+      if (id.info[0] == -10)
+        FailedMumps = dciTrue;
+      while (FailedMumps) {
+        if (cholCorrection == 0)
+          cholCorrection = 1e-6;
+        else
+          cholCorrection *= 100;
+        if (cholCorrection > 1e6)
+          break;
+        call_ccfsg_xc (dciTrue, ScaleVertical);
+        dmumps_c(&id);
+        if (id.info[0] != -10)
+          FailedMumps = dciFalse;;
+      }
       dr.reset(nvar + nconI);
       //rhs(1:nvar+nconI)     = -A'*inv(A*A')*r
       //rhs(nvar+nconI+1:end) = inv(A*A')*r
@@ -331,30 +361,30 @@ namespace DCI {
       Real zi = xx[i], Li = blx[i], Ui = bux[i];
       if ( (PartialPenal) && (Li > -dciInf) && (Ui < dciInf) ) {
         if ( (zi - Li) < (Ui - zi) )
-          Vx[i] *= (zi - Li);
+          Vx[i] *= Min(MaxDiag, Max(MinDiag, zi - Li));
         else
-          Vx[i] *= (Ui - zi);
+          Vx[i] *= Min(MaxDiag, Max(MinDiag, Ui - zi));
         continue;
       }
       if (Li > -dciInf)
-        Vx[i] *= (zi - Li);
+        Vx[i] *= Min(MaxDiag, Max(MinDiag, zi - Li));
       if (Ui < dciInf)
-        Vx[i] *= (Ui - zi);
+        Vx[i] *= Min(MaxDiag, Max(MinDiag, Ui - zi));
     }
     for (Int i = 0; i < nconI; i++) {
       Real zi = sx[i], Li = clx[ineqIdx[i]], Ui = cux[ineqIdx[i]];
       Int j = nvar + i;
       if ( (PartialPenal) && (Li > -dciInf) && (Ui < dciInf) ) {
         if ( (zi - Li) < (Ui - zi) )
-          Vx[j] *= (zi - Li);
+          Vx[j] *= Min(MaxDiag, Max(MinDiag, zi - Li));
         else
-          Vx[j] *= (Ui - zi);
+          Vx[j] *= Min(MaxDiag, Max(MinDiag, Ui - zi));
         continue;
       }
       if (Li > -dciInf)
-        Vx[j] *= (zi - Li);
+        Vx[j] *= Min(MaxDiag, Max(MinDiag, zi - Li));
       if (Ui < dciInf)
-        Vx[j] *= (Ui - zi);
+        Vx[j] *= Min(MaxDiag, Max(MinDiag, Ui - zi));
     }
   }
 
@@ -365,34 +395,34 @@ namespace DCI {
       Real zi = xcx[i], Li = blx[i], Ui = bux[i];
       if ( (PartialPenal) && (Li > -dciInf) && (Ui < dciInf) ) {
         if ( (zi - Li) < (Ui - zi) )
-          Vx[i] *= (zi - Li);
+          Vx[i] *= Min(MaxDiag, Max(MinDiag, zi - Li));
         else
-          Vx[i] *= (Ui - zi);
+          Vx[i] *= Min(MaxDiag, Max(MinDiag, Ui - zi));
         continue;
       }
       if (Li > -dciInf)
-        Vx[i] *= (zi - Li);
+        Vx[i] *= Min(MaxDiag, Max(MinDiag, zi - Li));
       if (Ui < dciInf)
-        Vx[i] *= (Ui - zi);
+        Vx[i] *= Min(MaxDiag, Max(MinDiag, Ui - zi));
     }
     for (Int i = 0; i < nconI; i++) {
       Real zi = scx[i], Li = clx[ineqIdx[i]], Ui = cux[ineqIdx[i]];
       Int j = nvar + i;
       if ( (PartialPenal) && (Li > -dciInf) && (Ui < dciInf) ) {
         if ( (zi - Li) < (Ui - zi) )
-          Vx[j] *= (zi - Li);
+          Vx[j] *= Min(MaxDiag, Max(MinDiag, zi - Li));
         else
-          Vx[j] *= (Ui - zi);
+          Vx[j] *= Min(MaxDiag, Max(MinDiag, Ui - zi));
         continue;
       }
       if (Li > -dciInf)
-        Vx[j] *= (zi - Li);
+        Vx[j] *= Min(MaxDiag, Max(MinDiag, zi - Li));
       if (Ui < dciInf)
-        Vx[j] *= (Ui - zi);
+        Vx[j] *= Min(MaxDiag, Max(MinDiag, Ui - zi));
     }
   }
 
-  void Interface::updyineq () {
+  void Interface::updyineq () { //This is -mu*Penalization on obj fun
     for (Int i = 0; i < nvar; i++) {
       Real bli = blx[i], bui = bux[i], xi = xx[i];
       yineqx[i] = 0;
@@ -460,6 +490,14 @@ namespace DCI {
     }
   }
 
+  /* yineq = -mu*P(x) = theta_U - theta_L
+   * theta_L, theta_U >= 0
+   * theta_L = max(0.0, -yineq)
+   * theta_U = max(0.0, yineq)
+   *
+   * (Z - L)*theta_L = 0
+   * (U - Z)*theta_U = 0
+   */
   Real Interface::calc_gap () {
     Real gap = 0;
     for (Int i = 0; i < nvar; i++)  {
@@ -484,6 +522,9 @@ namespace DCI {
     return gap;
   }
 
+  /* -mu*P_s(s) - lambda_I = 0
+   * yineq_s = -mu*P_s(s)
+   */
   Real Interface::calc_ydif () {
     Real dif = 0;
     for (Int i = 0; i < nconI; i++)

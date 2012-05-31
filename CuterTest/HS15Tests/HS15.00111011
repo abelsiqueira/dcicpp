@@ -1,0 +1,32 @@
+sifdecode  HS15
+
+ Problem name: HS15      
+
+ Double precision version will be formed. 
+
+ The objective function uses        1 nonlinear group 
+ 
+ There are        2 nonlinear inequality constraints
+ 
+ There  is        1 free variable 
+ There  is        1 variable  bounded only from above 
+ 
+ 
+VertFlag = 1
+**********************************************************
+Problem name: HS15      
+
+Number of Variables: 2
+Number of Constraints: 2
+             Equality: 0
+           Inequality: 2
+
+The restoration has failed
+f(x) = 66.3123
+|c(x)| = 0.553961
+|g(x) + J(x)'*y| = 6.11239
+y offset = 0
+BFGS? yes
+Number of Iterations = 9
+Elapsed Time = 0.02 s
+**********************************************************
