@@ -49,15 +49,22 @@ namespace DCI {
 
       SteihFlag = dcisteih (d, qd, gtd);
 
-      *x = *xc;
-      if (Ineq)
-        *s = *sc;
       pReal dx = d.get_doublex();
       scale_xc (d);
-      for (Int i = 0; i < nvar; i++)
-        xx[i] += dx[i];
-      for (Int i = 0; i < nconI; i++)
-        sx[i] += dx[nvar + i];
+      for (Int i = 0; i < nvar; i++) {
+        xx[i] = xcx[i] + dx[i];
+        if (xx[i] == bux[i])
+          xx[i] = bux[i] - 1e-12;
+        else if (xx[i] == blx[i])
+          xx[i] = blx[i] + 1e-12;
+      }
+      for (Int i = 0; i < nconI; i++) {
+        sx[i] = scx[i] + dx[nvar + i];
+        if (sx[i] == cux[i])
+          sx[i] = cux[i] - 1e-12;
+        else if (sx[i] == clx[i])
+          sx[i] = clx[i] + 1e-12;
+      }
 
       checkInfactibility ();
 
