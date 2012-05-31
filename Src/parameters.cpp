@@ -338,10 +338,6 @@ namespace DCI {
     if (ncon > 0) {
       for (Int i = 0; i < nconI; i++) {
         Real cxi = cx[ineqIdx[i]], cli = clx[ineqIdx[i]], cui = cux[ineqIdx[i]];
-        if ( (sx[i] > cli) && (sx[i] < cui) ) {
-          scx[i] = sx[i];
-          continue;
-        }
         Real smldelta = Min ( 1.0, (cui - cli)/100);
         assert (smldelta > 0);
         sx[i] = Max ( Min ( cxi, cui - smldelta ), cli + smldelta );
