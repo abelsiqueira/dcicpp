@@ -101,7 +101,6 @@ namespace DCI {
       Int vertstep ();
       Int vertSafeguard ();
       void horzstep (Real &);
-      Int quadstep (Vector &, Real &);
       Int dcisteih (Vector &, Real &, Real &);
       Int dcitrust (Real);
       Int Porcelli ();
