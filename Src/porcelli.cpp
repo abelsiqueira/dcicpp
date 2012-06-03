@@ -40,7 +40,7 @@ namespace DCI {
     Real normGrad = normGrad0;
     
     while ( (theta > eps2) && (theta > eps1*theta0) && 
-            (normGrad > 0.2*normGrad0) &&
+            (normGrad > ngp*normGrad0) &&
             (nLstSqrs <= maxLstSqrs) && (CurrentTime < MaxTime) ) {
       q.sdmult(*J, 0, one, zero, p);
       q.sdmult(*J, 1, one, zero, q);
