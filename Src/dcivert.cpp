@@ -162,6 +162,7 @@ namespace DCI {
 //          call_ccfsg_xc (dciTrue, ScaleVertical);
         if (UseVertSafeguard)
           VertFlag = vertSafeguard ();
+        VertFlag = 0;
         } else if ( ( (normc > thetaR*oldnormc) && (oldAcnt > 0) ) || (oldAcnt > 5) || (iout == 5) ) {
           // dcivert failed. Recompute A
 

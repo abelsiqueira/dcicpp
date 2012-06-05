@@ -310,8 +310,9 @@ namespace DCI {
 
       Vector xtemp(*xc), stemp((nconI ? *sc : *env));
 
-      for (Int i = 0; i < nvar; i++)
+      for (Int i = 0; i < nvar; i++) {
         xcx[i] += Diagx[i]*(factor*dnx[i] + (1 - factor)*dcpx[i]);
+      }
       for (Int i = 0; i < nconI; i++) {
         Int j = nvar + i;
         scx[i] += Diagx[j]*(factor*dnx[j] + (1 - factor)*dcpx[j]);

@@ -256,6 +256,10 @@ namespace DCI {
 
     for (Int i = 0; i < nvar; i++) {
       Real xi = xcx[i], di = Diagx[i]*dx[i], bli = blx[i], bui = bux[i];
+      if (fabs(di) < dciEps) {
+        dx[i] = 0.0;
+        continue;
+      }
       if (di == 0)
         continue;
       if (di < 0) {
@@ -279,6 +283,10 @@ namespace DCI {
 
     for (Int i = 0; i < nconI; i++) {
       Real si = scx[i], di = Diagx[nvar + i] * dx[nvar + i], cli = clx[ineqIdx[i]], cui = cux[ineqIdx[i]];
+      if (fabs(di) < dciEps) {
+        dx[nvar + i] = 0.0;
+        continue;
+      }
       if (di == 0)
         continue;
       if (di < 0) {
@@ -311,9 +319,17 @@ namespace DCI {
 
       for (Int i = 0; i < nvar; i++) {
         xcx[i] += lambda*Diagx[i]*dx[i];
+        if (xcx[i] == bux[i])
+          xcx[i] = bux[i] - dciEps;
+        else if (xcx[i] == blx[i])
+          xcx[i] = blx[i] + dciEps;
       }
       for (Int i = 0; i < nconI; i++) {
         scx[i] += lambda*Diagx[nvar + i]*dx[nvar + i];
+        if (scx[i] == cux[i])
+          scx[i] = cux[i] - dciEps;
+        else if (scx[i] == clx[i])
+          scx[i] = clx[i] + dciEps;
       }
 
       
