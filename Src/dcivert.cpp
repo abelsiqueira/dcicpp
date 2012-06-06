@@ -217,9 +217,6 @@ namespace DCI {
       update_mu ();
     } //Fim do While
 
-    if (normc > rho)
-      VertFlag = 1;
-
     if (ncon > 0)
       normy = y->norm ();
 

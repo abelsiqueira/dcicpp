@@ -102,7 +102,7 @@ namespace DCI {
 
       tRest += nRest;
       tbfgs += nbfgs;
-      assert ( (normc <= rho) || (VertFlag != 0) || (tRest > maxrest) );
+//      assert ( (normc <= rho) || (VertFlag != 0) || (tRest > maxrest) );
 
       call_ofg_xc (dciFalse);
 
