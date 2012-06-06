@@ -4,7 +4,7 @@ MaxDiag 1e3
 MinDiag 0
 UseVertInteriorPoint 1
 UseCG 0
-UseMUMPS 1
+UseMUMPS 0
 PartialPenal 1
 project_dcp 0
 project_bfgs 1

@@ -408,10 +408,20 @@ namespace DCI {
       lambda = Max (Min (lbdlo, lbdhi) + 0.01*diff, 
                Min (lambda, Max(lbdlo, lbdhi) - 0.01*diff) );
 
-      for (Int i = 0; i < nvar; i++)
+      for (Int i = 0; i < nvar; i++) {
         xcx[i] = x0x[i] + lambda * Diagx[i]*dx[i];
-      for (Int i = 0; i < nconI; i++)
+        if (xcx[i] == bux[i])
+          xcx[i] = bux[i] - dciEps;
+        else if (xcx[i] == blx[i])
+          xcx[i] == blx[i] + dciEps;
+      }
+      for (Int i = 0; i < nconI; i++) {
         scx[i] = s0x[i] + lambda * Diagx[nvar + i]*dx[nvar + i];
+        if (scx[i] == cux[ineqIdx[i]])
+          scx[i] = cux[ineqIdx[i]] - dciEps;
+        else if (scx[i] == clx[ineqIdx[i]])
+          scx[i] = clx[ineqIdx[i]] + dciEps;
+      }
       call_ccfsg_xc (dciFalse);
       normc = c->norm ();
       objfun = 0.5 * normc * normc;

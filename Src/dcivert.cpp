@@ -148,21 +148,21 @@ namespace DCI {
 
         if (fail >= nfailv) {
 #ifdef VERBOSE
-        if (VerboseLevel > 1) {
-          std::cout << "Going to Safe Guard " << std::endl
-                    << std::endl;
-          if ( (nvar < 10) && (ncon < 10) ) {
-            std::cout <<  "A = " << std::endl;
-            full(*J).print_more ();
+          if (VerboseLevel > 1) {
+            std::cout << "Going to Safe Guard " << std::endl
+                      << std::endl;
+            if ( (nvar < 10) && (ncon < 10) ) {
+              std::cout <<  "A = " << std::endl;
+              full(*J).print_more ();
+            }
+            GDBSTOP ();
           }
-          GDBSTOP ();
-        }
 #endif
         
-//          call_ccfsg_xc (dciTrue, ScaleVertical);
-        if (UseVertSafeguard)
-          VertFlag = vertSafeguard ();
-        VertFlag = 0;
+          call_ccfsg_xc (dciTrue, ScaleVertical);
+          if (UseVertSafeguard)
+            VertFlag = vertSafeguard ();
+          VertFlag = 0;
         } else if ( ( (normc > thetaR*oldnormc) && (oldAcnt > 0) ) || (oldAcnt > 5) || (iout == 5) ) {
           // dcivert failed. Recompute A
 
@@ -216,6 +216,9 @@ namespace DCI {
 
       update_mu ();
     } //Fim do While
+
+    if (normc > rho)
+      VertFlag = 1;
 
     if (ncon > 0)
       normy = y->norm ();

@@ -1,4 +1,5 @@
 PartialPenal 1
+UseMUMPS 1
 project_dcp 0
 project_bfgs 1
 trustWorstdn 0

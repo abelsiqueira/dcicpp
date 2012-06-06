@@ -40,7 +40,7 @@ namespace DCI {
     Real normGrad = normGrad0;
     
     while ( (theta > eps2) && (theta > eps1*theta0) && 
-            (normGrad > ngp*normGrad0) &&
+            (normGrad > 0.1*normGrad0) &&
             (nLstSqrs <= maxLstSqrs) && (CurrentTime < MaxTime) ) {
       q.sdmult(*J, 0, one, zero, p);
       q.sdmult(*J, 1, one, zero, q);
@@ -312,10 +312,18 @@ namespace DCI {
 
       for (Int i = 0; i < nvar; i++) {
         xcx[i] += Diagx[i]*(factor*dnx[i] + (1 - factor)*dcpx[i]);
+        if (xcx[i] == bux[i])
+          xcx[i] = bux[i] - dciEps;
+        else if (xcx[i] == blx[i])
+          xcx[i] = blx[i] + dciEps;
       }
       for (Int i = 0; i < nconI; i++) {
         Int j = nvar + i;
         scx[i] += Diagx[j]*(factor*dnx[j] + (1 - factor)*dcpx[j]);
+        if (scx[i] == cux[ineqIdx[i]])
+          scx[i] = cux[ineqIdx[i]] - dciEps;
+        else if (scx[i] == clx[ineqIdx[i]])
+          scx[i] = clx[ineqIdx[i]] + dciEps;
       }
       
       checkInfactibility();
