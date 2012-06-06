@@ -384,3 +384,100 @@ ScaleVertical 0
 UseVertSafeguard 0
 maxit 200000
 maxrest 200000
+43d6573995a638587666c2771f9e864a3e7c2879
+  93 latex_convergence
+  22 latex_maxiter
+   1 latex_maxrest
+   5 latex_restfail
+   3 latex_rhomax
+ 124 total
+ 
+PartialPenal 1
+UseMUMPS 1
+project_dcp 0
+project_bfgs 1
+trustWorstdn 0
+trustConvexBox 0
+penal_trust 0
+penal_bfgs 0
+VerboseLevel 0
+MaxDiag 1e3
+MinDiag 0
+UseVertInteriorPoint 1
+ScaleVertical 0
+UseVertSafeguard 0
+maxit 200
+maxrest 200000
+43d6573995a638587666c2771f9e864a3e7c2879
+  92 latex_convergence
+  23 latex_maxiter
+   2 latex_maxrest
+   5 latex_restfail
+   2 latex_rhomax
+ 124 total
+ 
+PartialPenal 1
+UseMUMPS 1
+project_dcp 0
+project_bfgs 1
+trustWorstdn 0
+trustConvexBox 0
+penal_trust 0
+penal_bfgs 0
+VerboseLevel 0
+MaxDiag 1e3
+MinDiag 0
+UseVertInteriorPoint 1
+ScaleVertical 0
+UseVertSafeguard 1
+maxit 200
+maxrest 200000
+43d6573995a638587666c2771f9e864a3e7c2879
+  97 latex_convergence
+  11 latex_maxiter
+   2 latex_maxrest
+   5 latex_restfail
+   9 latex_rhomax
+ 124 total
+ 
+PartialPenal 1
+UseMUMPS 1
+project_dcp 0
+project_bfgs 1
+trustWorstdn 0
+trustConvexBox 0
+penal_trust 0
+penal_bfgs 0
+VerboseLevel 0
+MaxDiag 1e3
+MinDiag 0
+UseVertInteriorPoint 1
+ScaleVertical 0
+UseVertSafeguard 1
+maxit 200000
+maxrest 200000
+43d6573995a638587666c2771f9e864a3e7c2879
+  97 latex_convergence
+  10 latex_maxiter
+   2 latex_maxrest
+   5 latex_restfail
+   9 latex_rhomax
+   1 latex_timelimit
+ 124 total
+ 
+PartialPenal 1
+UseMUMPS 1
+project_dcp 0
+project_bfgs 1
+trustWorstdn 0
+trustConvexBox 0
+penal_trust 0
+penal_bfgs 0
+VerboseLevel 0
+MaxDiag 1e3
+MinDiag 0
+UseVertInteriorPoint 1
+ScaleVertical 0
+UseVertSafeguard 0
+maxit 200000
+maxrest 200000
