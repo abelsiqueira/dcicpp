@@ -308,7 +308,6 @@ namespace DCI {
   }
 
   void Interface::InitialValues () {
-    Real one[2] = {1,0};
 
     maxitSteih = Max (minitSteih, Min(maxitSteih, Int(nvar*relitSteih+5) ) );
     minstep *= Min (csig, csic);

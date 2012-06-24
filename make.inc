@@ -8,7 +8,7 @@ DCIVERBOSE = -DVERBOSE
 #ASSERT = -DNDEBUG
 #PROFILE = -pg
 
-CXXFLAGS = -Werror -Wextra -ggdb $(DCIVERBOSE) $(ASSERT) $(DCILONG) $(PROFILE) -m32
+CXXFLAGS = -Wall -Wextra -ggdb $(DCIVERBOSE) $(ASSERT) $(DCILONG) $(PROFILE) -m32
 
 RM = rm -f
 CP = cp -f

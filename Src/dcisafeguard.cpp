@@ -10,7 +10,7 @@ namespace DCI {
   // For bfgs use this
   Int Interface::vertSafeguard () {
     Vector dn (*env);
-    Real dnnorm = 0;
+//    Real dnnorm = 0;
     Int iout = 0, ibfgs = 0;
     Bool scaleJ = ScaleVertical;
 

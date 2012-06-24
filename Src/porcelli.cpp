@@ -24,7 +24,7 @@ namespace DCI {
     Int nLstSqrs = 0, maxLstSqrs = nvar + nconI;
     Real theta, theta0, thetanew, alpha, beta, gamma;
     Vector lsGrad(*env);
-    Real one[2] = {1,0}, zero[2] = {0,0}, mone[2] = {-1,0};
+    Real one[2] = {1,0}, zero[2] = {0,0};
     Vector r(*env), p(*env), q(*env), dnew(*env), t(*env);
     Real gtd = 0, dtq = 0, gtp = 0, ptp = 0, dtd = 0, dtdnew = 0, delta2, dtp = 0, qd = 0;
 
@@ -352,6 +352,7 @@ namespace DCI {
 
 //    }
 
+      return 0;
   }
 
 }
