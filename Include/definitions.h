@@ -9,7 +9,7 @@ namespace DCI {
   typedef long int   Int;
   typedef long int   Bool;
 #else
-  typedef long int   Int;
+  typedef int   Int;
   typedef long int   Bool;
 #endif
 

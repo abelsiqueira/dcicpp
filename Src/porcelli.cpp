@@ -350,6 +350,8 @@ namespace DCI {
 
       CurrentTime = getTime() - StartTime;
 
+      return -1;
+
 //    }
 
   }

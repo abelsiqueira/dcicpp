@@ -332,7 +332,7 @@ cd ${WorkingDir}
 
 # If needed, find the correct BLAS and package spec file
 #(( blas_set == 0 )) && BLAS=${MYCUTER}/${PRECISION}/bin/linpac.o
-BLAS="-lgoto2 -lgfortran -lgfortranbegin"
+BLAS="-lmkl_rt"
 if [[ ${SPECS} != "" ]]; then
   if [[ ! -e ${SPECS} ]]; then
      if [[ -e ${MYCUTER}/${PRECISION}/cuter-specs/${SPECS} ]]; then

@@ -181,7 +181,7 @@ namespace DCI {
 
     Sparse G(*env); // G will be A'*A;
     G.transpose(*J); // G = A';
-    Int fset[ncon];
+    bmInt fset[ncon];
     for (Int i = 0; i < ncon; i++)
       fset[i] = i;
     G.aat (G, fset, ncon); // G = G*G' = A'*A;

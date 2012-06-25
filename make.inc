@@ -1,14 +1,15 @@
 # Define DCIDIR before calling this
 # Read the INSTALL and define the variables in the $HOME/.bashrc
 
-CXX = g++
+CXX = icpc
 
-DCILONG = -DDLONG
+#DCILONG = -DDLONG
 DCIVERBOSE = -DVERBOSE
 #ASSERT = -DNDEBUG
-#PROFILE = -pg
+PROFILE = -debug
 
-CXXFLAGS = -Werror -Wextra -ggdb $(DCIVERBOSE) $(ASSERT) $(DCILONG) $(PROFILE) -m32
+#CXXFLAGS = -Werror -Wextra -ggdb $(DCIVERBOSE) $(ASSERT) $(DCILONG) $(PROFILE) -m32
+CXXFLAGS = -O3 -fexceptions -Wall -Werror $(DCIVERBOSE) $(ASSERT) $(DCILONG) $(PROFILE) $(BMLONG)
 
 RM = rm -f
 CP = cp -f
@@ -17,9 +18,12 @@ MV = mv -f
 
 DCILIBNAME = libdcicpp.a
 
-MUMPSDIR="/home/abel/Libraries/MUMPS_4.10.0"
-#I=-I$(MUMPSDIR)/libseq -I$(MUMPSDIR)/PORT/include -I$(MUMPSDIR)/include
-#MUMPSLIB=$(MUMPSDIR)/lib/libdmumps.a $(MUMPSDIR)/lib/libmumps_common.a \
+MUMPSDIR=${HOME}/MUMPS_4.10.0
+I=-I$(MUMPSDIR)/lib -I$(MUMPSDIR)/libseq -I$(MUMPSDIR)/PORT/include -I$(MUMPSDIR)/include
+MUMPSLIB=$(MUMPSDIR)/lib/libdmumps.a $(MUMPSDIR)/lib/libmumps_common.a \
         -L$(MUMPSDIR)/PORD/lib -lpord -L$(MUMPSDIR)/libseq -lmpiseq
-#DCILIB = $(DCIDIR)/Lib/$(DCILIBNAME) -lbasematrices -lcholmod -lamd -lcolamd -lccolamd -lcamd -lmetis $(MUMPSLIB) -lgoto2 -lgfortran -lgfortranbegin -lpthread
-DCILIB = $(DCIDIR)/Lib/$(DCILIBNAME) -lbasematrices -lcholmod -lamd -lcolamd -lccolamd -lcamd -lmetis -ldmumps -lmumps_common -lpord -lmpiseq -lgoto2 -lgfortran -lgfortranbegin -lpthread
+#DCILIB = $(DCIDIR)/Lib/$(DCILIBNAME) -lbasematrices -lcholmod -lamd -lcolamd -lccolamd -lcamd -lmetis $(MUMPSLIB) -lmkl_rt -lrt -lsuitesparseconfig
+
+#DCILIB = $(DCIDIR)/Lib/$(DCILIBNAME) -lbasematrices -lcholmod -lamd -lcolamd -lccolamd -lcamd -lmetis -ldmumps -lmumps_common -lpord -lmpiseq -lmkl_rt -lrt -lsuitesparseconfig
+
+DCILIB = $(DCIDIR)/Lib/$(DCILIBNAME) -lbasematrices -lcholmod -lamd -lcolamd -lccolamd -lcamd ${MUMPSDIR}/lib/libdmumps.a ${MUMPSDIR}/lib/libmumps_common.a ${MUMPSDIR}/lib/libpord.a ${MUMPSDIR}/libseq/libmpiseq.a -lifcore -limf -lmetis -lmkl_rt -lrt -lsuitesparseconfig /lib64/libpthread.so.0

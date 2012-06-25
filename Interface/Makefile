@@ -18,7 +18,7 @@ all: dcicppmain.o
 	#$(CP) $(BMLIB)/libbasematrices.a $(MYCUTER)/double/lib/
 
 %.o: %.cpp
-	$(CXX) -c -o $@ $< $(DCII) $(CXXFLAGS) -I$(CUTER)/common/include
+	$(CXX) -c -o $@ $< $(DCII) $(CXXFLAGS) -I$(CUTER)/common/include ${I}
 
 clean:
 	rm -f dcicppmain.o
