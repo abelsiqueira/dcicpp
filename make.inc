@@ -7,8 +7,9 @@ CXX = g++
 DCIVERBOSE = -DVERBOSE
 #ASSERT = -DNDEBUG
 #PROFILE = -pg
+#DEBUG = -ggdb
 
-CXXFLAGS = -Wall -Wextra -ggdb $(DCIVERBOSE) $(ASSERT) $(DCILONG) $(PROFILE) -m32
+CXXFLAGS = -Wall -Wextra $(DEBUG) $(DCIVERBOSE) $(ASSERT) $(DCILONG) $(PROFILE)
 
 RM = rm -f
 CP = cp -f
