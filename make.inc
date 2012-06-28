@@ -7,7 +7,7 @@ CXX = g++
 DCIVERBOSE = -DVERBOSE
 #ASSERT = -DNDEBUG
 #PROFILE = -pg
-#DEBUG = -ggdb
+DEBUG = -ggdb
 
 CXXFLAGS = -Wall -Wextra $(DEBUG) $(DCIVERBOSE) $(ASSERT) $(DCILONG) $(PROFILE)
 

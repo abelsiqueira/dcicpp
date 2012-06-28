@@ -220,7 +220,7 @@ namespace DCI {
       Int cholFacs;
       Bool Aavail, gavail, LimLbd, FreshA;
       Real minBk;
-      Bool UseCG;
+      Bool UseCG, UsePorcelli;
       Bool UseMUMPS, ScaleVertical;
       Bool UseVertInteriorPoint, UseVertSafeguard;
       Bool PartialPenal, project_dcp, project_dn, project_bfgs;

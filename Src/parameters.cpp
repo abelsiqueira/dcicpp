@@ -73,7 +73,7 @@ namespace DCI {
       en_project_bfgs, en_trustWorstdn, en_trustConvexBox, en_penal_trust,
       en_penal_bfgs, en_UseMUMPS, en_ScaleVertical, en_DisplayLevel,
       en_VerboseLevel, en_MaxDiag, en_MinDiag, en_UseVertInteriorPoint,
-      en_UseVertSafeguard
+      en_UseVertSafeguard, en_UsePorcelli
     };
     std::map<std::string, int> paramMap;
 
@@ -86,6 +86,7 @@ namespace DCI {
     paramMap["ScaleVertical"] = en_ScaleVertical;
     paramMap["UseMUMPS"] = en_UseMUMPS;
     paramMap["UseCG"] = en_UseCG;
+    paramMap["UsePorcelli"] = en_UsePorcelli;
     paramMap["PartialPenal"] = en_PartialPenal;
     paramMap["project_dcp"] = en_project_dcp;
     paramMap["project_bfgs"] = en_project_bfgs;
@@ -191,6 +192,7 @@ namespace DCI {
         case en_MaxTime: aux >> MaxTime; break;
         case en_minBk: aux >> minBk; break;
         case en_UseCG: aux >> UseCG; break;
+        case en_UsePorcelli: aux >> UsePorcelli; break;
         case en_UseMUMPS: aux >> UseMUMPS; break;
         case en_PartialPenal: aux >> PartialPenal; break;
         case en_project_dcp: aux >> project_dcp; break;
@@ -288,6 +290,7 @@ namespace DCI {
 
     //Strategy choices
     UseCG = dciFalse;
+    UsePorcelli = dciTrue;
     PartialPenal = dciTrue;
     project_dcp = dciFalse;
     project_dn = dciTrue;

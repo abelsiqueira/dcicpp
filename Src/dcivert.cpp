@@ -132,12 +132,12 @@ namespace DCI {
 #endif
         nRest++;
 
-        trflag = Porcelli();
-/*         if ((!Bounded) || (!UseVertInteriorPoint) )
- *           trflag = dcitrust (oldnormc);
- *         else
- *           trflag = InteriorPointRestoration ();
- */
+        if (UsePorcelli) {
+          trflag = Porcelli();
+        } else if ((!Bounded) || (!UseVertInteriorPoint) )
+            trflag = dcitrust (oldnormc);
+        else
+          trflag = InteriorPointRestoration ();
 
         checkInfactibility ();
 
