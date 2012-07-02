@@ -29,7 +29,7 @@ namespace DCI {
     qd = 2*DLH/eta1;
     newnormc = 2*rho + 1;
     nSoc = 0;
-    Real smlAlpha = 1e-3;
+//    Real smlAlpha = 1e-3;
     Bool fail = dciFalse;
 
 #ifdef VERBOSE

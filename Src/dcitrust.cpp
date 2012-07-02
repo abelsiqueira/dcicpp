@@ -146,7 +146,7 @@ namespace DCI {
     pReal dcpx = dcp.get_doublex();
     pReal dx = 0;
     pReal dnx = 0;
-    Real smlAlphamu = 1e-3;
+//    Real smlAlphamu = 1e-3;
     bool dcpOutsideRegion = false;
     for (Int i = 0; i < nvar + nconI; i++) {
       if ( (dcpx[i] >= upper[i]) || (dcpx[i] <= lower[i]) ) {
@@ -289,7 +289,7 @@ namespace DCI {
           // dn outside region and dcp inside
           Real convAux = 1.0;
           for (Int i = 0; i < nvar; i++) {
-            Real difx = dnx[i] - dcpx[i], zi = xcx[i];
+            Real difx = dnx[i] - dcpx[i];
             if (difx > 0)
               convAux = Min(convAux, (upper[i] - dcpx[i])/difx);
             else if (difx < 0)
@@ -297,7 +297,7 @@ namespace DCI {
           }
           for (Int j = 0; j < nconI; j++) {
             Int i = nvar + j;
-            Real difx = dnx[i] - dcpx[i], zi = scx[j];
+            Real difx = dnx[i] - dcpx[i];
             if (difx > 0)
               convAux = Min(convAux, (upper[i] - dcpx[i])/difx);
             else if (difx < 0)

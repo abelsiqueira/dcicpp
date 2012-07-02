@@ -241,7 +241,7 @@ namespace DCI {
     pReal dx = d.get_doublex();
     Real maxStepS = dciInf;
     Real lbdmax = dciInf;
-    Real smlStepS = 1e-3;
+//    Real smlStepS = 1e-3;
     Bool bfgsfirst = dciTrue;
 
     *xc = x0;
@@ -371,7 +371,7 @@ namespace DCI {
   }
 
   Int Interface::zoom (const Vector & x0, const Vector & s0, const Vector & d, Vector & gtmp, Real f0, Real lbdlo0, Real lbdhi0, Real & objfun, Real & gtd, Real flo0, Real fhi0, Real ishi0, Real lambda) {
-    Bool scaleJ = dciTrue;
+//    Bool scaleJ = dciTrue;
 
     if (lbdlo0 == lbdhi0) {
       lambda = lbdlo0;
@@ -413,7 +413,7 @@ namespace DCI {
         if (xcx[i] == bux[i])
           xcx[i] = bux[i] - dciEps;
         else if (xcx[i] == blx[i])
-          xcx[i] == blx[i] + dciEps;
+          xcx[i] = blx[i] + dciEps;
       }
       for (Int i = 0; i < nconI; i++) {
         scx[i] = s0x[i] + lambda * Diagx[nvar + i]*dx[nvar + i];

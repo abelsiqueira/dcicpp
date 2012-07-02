@@ -35,7 +35,6 @@ namespace DCI {
       *gp = *g;
       return;
     }
-    double one[2] = {1,0}, zero[2] = {0, 0};
     Vector ytmp (*env);
     NAproj (*g, *gp, ytmp);
     *y = ytmp;

@@ -29,11 +29,13 @@ namespace DCI {
 //    Vector dn (*env);
     Int fail = 0;
     Int oldAcnt = 1;
-    Real oldnormc, dnnorm;
+    Real oldnormc;
+//    Real dnnorm;
     Int trflag = 0;
-    Int ibfgs = 0, iout = 0;
-    Bool dnavail = dciFalse;
-    Bool scaleJ = dciTrue;;
+//    Int ibfgs = 0;
+    Int iout = 0;
+//    Bool dnavail = dciFalse;
+//    Bool scaleJ = dciTrue;;
     Vector gtmp(*env);
 
     ngp = engp;
@@ -130,12 +132,12 @@ namespace DCI {
 #endif
         nRest++;
 
-        trflag = Porcelli();
-/*         if ((!Bounded) || (!UseVertInteriorPoint) )
- *           trflag = dcitrust (oldnormc);
- *         else
- *           trflag = InteriorPointRestoration ();
- */
+        if (UsePorcelli) {
+          trflag = Porcelli();
+        } else if ((!Bounded) || (!UseVertInteriorPoint) )
+            trflag = dcitrust (oldnormc);
+        else
+          trflag = InteriorPointRestoration ();
 
         checkInfactibility ();
 
