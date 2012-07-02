@@ -10,7 +10,7 @@ namespace DCI {
   typedef long int   Bool;
 #else
   typedef int   Int;
-  typedef long int   Bool;
+  typedef int   Bool;
 #endif
 
   typedef double     Real;

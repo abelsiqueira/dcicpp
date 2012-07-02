@@ -152,7 +152,8 @@ Parse_Arguments() {
                            ;;
             -pg|--profile) let NEW=1
                            let PROFILE=1
-                           FFLAGS="${FFLAGS[@]} ${FPROFILEFLAGS[@]}"
+                           FFLAGS="-p ${FFLAGS[@]} ${FPROFILEFLAGS[@]}"
+#                           FFLAGS="-p ${FFLAGS[@]} ${FPROFILEFLAGS[@]} -prof-gen=srcpos -profdir/home/chico/dcicpp/profile"
                            ;;
             -D|--decode)   PROBLEM="$2"
                            let problem_set=1

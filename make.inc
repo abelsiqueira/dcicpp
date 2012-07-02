@@ -6,10 +6,13 @@ CXX = icpc
 #DCILONG = -DDLONG
 DCIVERBOSE = -DVERBOSE
 #ASSERT = -DNDEBUG
-PROFILE = -debug
+#PROFILE = -debug -prof-gen=srcpos -prof-dir/home/chico/dcicpp/profile 
+PROFILE = 
+#OPTIMIZE = -O3
+OPTIMIZE = 
 
 #CXXFLAGS = -Werror -Wextra -ggdb $(DCIVERBOSE) $(ASSERT) $(DCILONG) $(PROFILE) -m32
-CXXFLAGS = -O3 -fexceptions -Wall -Werror $(DCIVERBOSE) $(ASSERT) $(DCILONG) $(PROFILE) $(BMLONG)
+CXXFLAGS = -fexceptions -Wall -Werror $(DCIVERBOSE) $(ASSERT) $(DCILONG) $(BMLONG) $(PROFILE) $(OPTIMIZE)
 
 RM = rm -f
 CP = cp -f
