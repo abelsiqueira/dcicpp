@@ -326,7 +326,9 @@ namespace DCI {
           scx[i] = clx[ineqIdx[i]] + dciEps;
       }
       
+#ifndef NDEBUG
       checkInfactibility();
+#endif
 
       call_ccfsg_xc(dciFalse);
       normc = c->norm ();

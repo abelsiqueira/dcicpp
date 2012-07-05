@@ -24,7 +24,9 @@ namespace DCI {
       soldx = sold.get_doublex();
     }
 
-    checkInfactibility ();
+#ifndef NDEBUG
+    checkInfactibility();
+#endif
 
     objfun = 0.5 * normc * normc;
     gtmp.sdmult (*J, 1, one, zero, *c);
@@ -72,7 +74,9 @@ namespace DCI {
     ibfgs = 0;
     iout = 0;
 
-    checkInfactibility ();
+#ifndef NDEBUG
+    checkInfactibility();
+#endif
 
     if (normc < rho)
       return -1;
@@ -166,7 +170,9 @@ namespace DCI {
 
       iout = linesearch (xold, sold, p, objfun, gtd, gtmp);
 
+#ifndef NDEBUG
       checkInfactibility();
+#endif
       
       gtmp.sdmult (*J, 1, one, zero, *c);
 
@@ -333,7 +339,9 @@ namespace DCI {
       }
 
       
-      checkInfactibility ();
+#ifndef NDEBUG
+      checkInfactibility();
+#endif
 
       call_ccfsg_xc (dciFalse);
       normc = c->norm ();
@@ -426,7 +434,9 @@ namespace DCI {
       normc = c->norm ();
       objfun = 0.5 * normc * normc;
 
-      checkInfactibility ();
+#ifndef NDEBUG
+      checkInfactibility();
+#endif
 
       if ( (objfun > f0 + c1*lambda*gtd0) || (objfun >= flo) ) {
         lbdhi = lambda;

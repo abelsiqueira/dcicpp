@@ -1,6 +1,6 @@
 PartialPenal 1
 UsePorcelli 1
-UseMUMPS 1
+UseMUMPS 0
 project_dcp 0
 project_bfgs 1
 trustWorstdn 0
@@ -13,5 +13,7 @@ MinDiag 0
 UseVertInteriorPoint 1
 ScaleVertical 0
 UseVertSafeguard 0
-maxit 200
+maxit 200000
 maxrest 200000
+maxtime 60
+eta1 1e-12

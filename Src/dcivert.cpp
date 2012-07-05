@@ -139,7 +139,9 @@ namespace DCI {
         else
           trflag = InteriorPointRestoration ();
 
-        checkInfactibility ();
+#ifndef NDEBUG
+        checkInfactibility();
+#endif
 
         gavail = dciFalse;
 

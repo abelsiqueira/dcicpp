@@ -107,7 +107,9 @@ namespace DCI {
     }
     std::cout << "|c| = " << c->norm() << std::endl;
 #endif
-    checkInfactibility ();
+#ifndef NDEBUG
+    checkInfactibility();
+#endif
 
     pReal Cx = matrixC.get_doublex();
 
@@ -628,7 +630,9 @@ namespace DCI {
       std::cout << "|c| = " << c->norm() << std::endl;
 #endif
 
-      checkInfactibility ();
+#ifndef NDEBUG
+      checkInfactibility();
+#endif
       for (int i = 0; i < numUpper; i++) {
         multUpper[i] += alphaDual*upperStep[i];
         assert(multUpper[i] > 0);

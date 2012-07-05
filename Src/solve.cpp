@@ -84,7 +84,9 @@ namespace DCI {
       iter++;
 
       //Check for infactibility
-      checkInfactibility ();
+#ifndef NDEBUG
+      checkInfactibility();
+#endif
 
       if (DeltaH < DeltaMin) DeltaH = DeltaMin;
       if (DeltaV < DeltaMin) DeltaV = DeltaMin;
@@ -187,7 +189,9 @@ namespace DCI {
            (CurrentTime < MaxTime) ) {
 
         horzstep (norms); 
-        checkInfactibility ();
+#ifndef NDEBUG
+        checkInfactibility();
+#endif
 
         normck = normc;
 

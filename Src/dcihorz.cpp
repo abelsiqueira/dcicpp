@@ -66,7 +66,9 @@ namespace DCI {
           sx[i] = clx[i] + 1e-12;
       }
 
+#ifndef NDEBUG
       checkInfactibility ();
+#endif
 
       call_fn ();
       if (ncon > 0)

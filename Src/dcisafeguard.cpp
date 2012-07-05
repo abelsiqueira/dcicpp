@@ -23,7 +23,9 @@ namespace DCI {
 //    dnnorm = dn.norm ();
     iout = dcibfgs (dn, ibfgs);
     nbfgs += ibfgs;
-    checkInfactibility ();
+#ifndef NDEBUG
+    checkInfactibility();
+#endif
     if ( (iout == 3) && calc_feasibilityOpt () )
       return 2;
     else if ( (iout == 1) || (iout > 2) )

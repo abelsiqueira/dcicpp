@@ -913,6 +913,7 @@ namespace DCI {
     return static_cast<Real>(static_cast<Real>(t)/CLOCKS_PER_SEC);
   }
 
+#ifndef NDEBUG
   void Interface::checkInfactibility () {
 //    return;
     for (Int i = 0; i < nvar; i++) {
@@ -957,6 +958,8 @@ namespace DCI {
       assert (scx[i] > clx[ineqIdx[i]]);
     }
   }
+#endif
+  
 
 
 }

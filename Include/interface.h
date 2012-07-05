@@ -121,7 +121,9 @@ namespace DCI {
       void InitialValues ();
       void Initialization ();
       Real getTime ();
+#ifndef NDEBUG
       void checkInfactibility ();
+#endif
       void scale_x (Vector &);
       void scale_xc (Vector &);
       void updyineq ();
