@@ -908,9 +908,11 @@ namespace DCI {
   }
 
   Real Interface::getTime () {
-    clock_t t = clock();
+    timespec ts;
 
-    return static_cast<Real>(static_cast<Real>(t)/CLOCKS_PER_SEC);
+    clock_gettime(CLOCK_REALTIME, &ts);
+    return static_cast<Real>(ts.tv_nsec)/static_cast<double>(1e9) + 
+           static_cast<Real>(ts.tv_sec);
   }
 
   void Interface::checkInfactibility () {
