@@ -9,7 +9,7 @@ ASSERT = -DNDEBUG
 PROFILE = -pg
 DEBUG = -ggdb
 
-CXXFLAGS = -Wall -Wextra $(DEBUG) $(DCIVERBOSE) $(ASSERT) $(DCILONG) $(PROFILE)
+CXXFLAGS = -Wall -Wextra $(DEBUG) $(DCIVERBOSE) $(ASSERT) $(DCILONG) $(PROFILE) -lrt
 
 RM = rm -f
 CP = cp -f
