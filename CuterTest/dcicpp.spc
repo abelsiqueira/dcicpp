@@ -13,7 +13,7 @@ MinDiag 0
 UseVertInteriorPoint 1
 ScaleVertical 0
 UseVertSafeguard 0
-maxit 200000
+maxit 200
 maxrest 200000
-maxtime 60
+MaxTime 60
 eta1 1e-12
