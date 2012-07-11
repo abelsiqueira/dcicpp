@@ -875,14 +875,15 @@ namespace DCI {
       problemName = "No name";
       return;
     }
-    char pname[10], vnames[10*nvar];
+    char pname[9], vnames[9*nvar];
     if (ncon == 0)
       (*unames) (&nvar, pname, vnames);
     else {
-      char gnames[10*ncon];
+      char gnames[9*ncon];
       (*cnames) (&nvar, &ncon, pname, vnames, gnames);
     }
-    problemName = pname;
+    pname[8] = 0;
+    problemName.assign(pname);
   }
 
   void Interface::analyze_J () {
