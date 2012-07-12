@@ -17,3 +17,16 @@ maxit 200
 maxrest 200000
 MaxTime 60
 eta1 1e-12
+eta2 0.2
+eta3 0.6
+thetaR 0.9
+rhomin 1e-8
+phi1 1.0
+phi2 0.45
+kappa1 0.0001
+kappa2 0.71875
+kappa3 0.7
+kappa4 2.5
+alphaR 0.75
+alphaI 2.5
+alphaS 0.0625
