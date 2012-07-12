@@ -902,7 +902,7 @@ namespace DCI {
     LJ->factorize (*J, cholCorrection);
     cholFacs++;
     if (!env->IsPosDef()) {
-      cholCorrection = 1;
+      cholCorrection = 1e-12;
       LJ->factorize (*J, cholCorrection);
       cholFacs++;
     }
