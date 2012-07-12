@@ -35,7 +35,7 @@ void COFG (Int * n, Real * x, Real * f, Real * g, Bool * grad) {
   }
 }
 
-void CPROD (Int * n, Int * m, Bool * getder, Real * x, Int * mmax, Real * y, Real * p, Real * q) {
+void CPROD (Int * n, Int * m, Bool * , Real * x, Int * mmax, Real * y, Real * p, Real * q) {
   if ( (*n != 2) || (*m != 2) || (*mmax < *m) )
     return;
   Real x1 = x[0], x2 = x[1];
@@ -54,7 +54,7 @@ void CFN (Int * n, Int * m, Real * x, Real * f, Int * mmax, Real * c) {
   c[1] = x1 + x2*x2;
 }
 
-void CCFSG (Int * n, Int * m, Real * x, Int * mmax, Real * c, Int * nnzJ, Int * jmax, Real * J, Int * indvar, Int * indfun, Bool * Grad) {
+void CCFSG (Int * , Int * , Real * x, Int * , Real * c, Int * nnzJ, Int * , Real * J, Int * indvar, Int * indfun, Bool * Grad) {
   Real x1 = x[0], x2 = x[1];
   c[0] = x1 * x2 - 1;
   c[1] = x1 + x2*x2;

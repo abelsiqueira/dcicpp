@@ -42,8 +42,9 @@ void CPROD (Int * n, Int * m, Bool * getder, Real * x, Int * mmax,
   }
 }
 
-void CFN (Int * n, Int * m, Real * x, Real * f, Int * mmax, Real * c) {
+void CFN (Int * n, Int * , Real * x, Real * f, Int * , Real * c) {
   Real xi = 0;
+  
   *f = 0;
   c[0] = -1;
   for (Int i = 0; i < *n; i++) {

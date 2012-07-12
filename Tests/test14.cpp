@@ -20,7 +20,7 @@ using namespace DCI;
 void COFG (Int * n, Real * x, Real * f, Real * g, Bool * grad) {
   if (*n != 6)
     return;
-  Real x1 = x[0], x2 = x[1], x3 = x[2], x4 = x[3], x5 = x[4], x6 = x[5];
+  Real x1 = x[0], x2 = x[1], x4 = x[3], x5 = x[4];
   *f = x1 + 2*x2 + 4*x5 + exp(x1*x4);
   if (*grad == dciTrue) {
     g[0] = 1 + x4*exp(x1*x4);
@@ -32,11 +32,10 @@ void COFG (Int * n, Real * x, Real * f, Real * g, Bool * grad) {
   }
 }
 
-void CPROD (Int * n, Int * m, Bool * getder, Real * x, Int * mmax, Real * y, Real * p, Real * q) {
+void CPROD (Int * n, Int * m, Bool * , Real * x, Int * mmax, Real * y, Real * p, Real * q) {
   if ( (*n != 6) || (*m != 6) || (*mmax < *m) )
     return;
-  Real x1 = x[0], x2 = x[1], x3 = x[2], x4 = x[3], x5 = x[4], x6 = x[5];
-  Real y1 = y[0], y2 = y[1], y3 = y[2], y4 = y[3], y5 = y[4], y6 = y[5];
+  Real x1 = x[0], x4 = x[3];
   q[0] = x4*x4*exp(x1*x4) * p[0];
   q[1] = 0;
   q[2] = 0;
@@ -45,7 +44,7 @@ void CPROD (Int * n, Int * m, Bool * getder, Real * x, Int * mmax, Real * y, Rea
   q[5] = 0;
 }
 
-void CFN (Int * n, Int * m, Real * x, Real * f, Int * mmax, Real * c) {
+void CFN (Int * , Int * , Real * x, Real * f, Int * , Real * c) {
   Real x1 = x[0], x2 = x[1], x3 = x[2], x4 = x[3], x5 = x[4], x6 = x[5];
   *f = x1 + 2*x2 + 4*x5 + exp(x1*x4);
   c[0] = x1 + 2*x2 + 5*x5 - 6;
@@ -56,7 +55,7 @@ void CFN (Int * n, Int * m, Real * x, Real * f, Int * mmax, Real * c) {
   c[5] = x3 + x6 - 2;
 }
 
-void CCFSG (Int * n, Int * m, Real * x, Int * mmax, Real * c, Int * nnzJ, Int * jmax, Real * J, Int * indvar, Int * indfun, Bool * Grad) {
+void CCFSG (Int * , Int * , Real * x, Int * , Real * c, Int * nnzJ, Int * , Real * J, Int * indvar, Int * indfun, Bool * Grad) {
   Real x1 = x[0], x2 = x[1], x3 = x[2], x4 = x[3], x5 = x[4], x6 = x[5];
   c[0] = x1 + 2*x2 + 5*x5 - 6;
   c[1] = x1 + x2 + x3 - 3;
@@ -132,7 +131,7 @@ int main () {
   Int n = 6, m = 6;
   DCI::Interface dci;
   Real x[n], bl[n], bu[n];
-  Real y[m], cl[m], cu[m];
+  Real cl[m], cu[m];
   Bool equatn[m], linear[m];
 
   dci.set_cofg (COFG);
