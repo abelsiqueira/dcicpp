@@ -875,11 +875,11 @@ namespace DCI {
       problemName = "No name";
       return;
     }
-    char pname[9], vnames[9*nvar];
+    char pname[10], vnames[10*nvar];
     if (ncon == 0)
       (*unames) (&nvar, pname, vnames);
     else {
-      char gnames[9*ncon];
+      char gnames[10*ncon];
       (*cnames) (&nvar, &ncon, pname, vnames, gnames);
     }
     pname[8] = 0;
