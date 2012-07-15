@@ -28,22 +28,14 @@ Uncompres everything. Install everything in 32 bits.
 -------------------------------------------------
 INSTALL Goto BLAS First:
 
-$ make BINARY=32
+$ make
 
 if needed use TARGET option too. We needed to set to CORE2, because our processor is not supported.
 
-$ make BINARY=32 TARGET=CORE2
+$ make TARGET=CORE2
 
 -------------------------------------------------
 INSTALL Metis:
-
-If compiling for 32 bits (for the dcicpp testing with CUTEr), you will need to add -m32 to the compiler. Edit the file 
-
-GKlib/GKlibSystem.cmake
-
-and add -m32 to the line 31. It should become
-
-set(GKlib_COPTIONS "{GKlib_COPTIONS} -m32 -std=c99 -fno-strict-aliasing")
 
 $ make config
 $ make
@@ -53,7 +45,8 @@ $ make
 INSTALL CHOLMOD and dependencies
 
 Edit UFconfig/UFconfig.mk
-- Add -m32 to CF and F77FLAGS
+Atention: UFconfig has changed to SuiteSparse_config
+http://www.cise.ufl.edu/research/sparse/SuiteSparse_config/UFconfig-3.7.1.tar.gz
 
 - Comment lines
     BLAS = -lblas -lgfortran
@@ -63,10 +56,10 @@ Edit UFconfig/UFconfig.mk
     BLAS = -L$(HOME)/Libraries/GotoBLAS2/ -lgoto2 -lgfortran -lgfortranbegin -lpthread
 
 - Edit the variables METIS_PATH and METIS to reflect your configurations. In our case
-    METIS_PATH = $(HOME)/Libraries/metis-5.0.2
+    METIS_PATH = $(HOME)/Libraries/metis-5.0.2/Lib
     METIS = /usr/local/lib/libmetis.a
 
-Go to CHOLMOD directory and type
+Go to the folders CHOLMOD, CAMD and CCOLAMD and enter
 
 $ make all
 
@@ -120,6 +113,22 @@ If needed, edit make.inc and do
 
 $ make all
 
+------------------------------------------------
+- MUMPS
+
+Copy Make.inc/Makefile.gfortran.SEQ to Makefile.inc with the command
+
+$ cp Make.inc/Makefile.gfortran.SEQ Makefile.inc
+
+Then edit the file and change the LIBBLAS to reflect your BLAS. In our case, after including
+the lines at .bashrc, we can simply put
+
+LIBBLAS = -lgoto2 -lgfortran -lgfortranbegin -lpthread
+
+Then, simply enter
+
+$ make all
+
 -------------------------------------------------
 - dcicpp
 
@@ -132,7 +141,7 @@ $ make all
 
 Download CUTEr using svn
 
-$ svn co https://magi-trac-svn.mathappl.polymtl.ca/SVN/cuter/sifdef/branches/SifDec2 ./sifdec2
+$ svn co https://magi-trac-svn.mathappl.polymtl.ca/SVN/cuter/sifdec/branches/SifDec2 ./sifdec2
 $ svn co https://magi-trac-svn.mathappl.polymtl.ca/SVN/cuter/cuter/branches/cuter64 ./cuter2
 
 Download SIF problems
@@ -170,10 +179,6 @@ export PATH="$MYCUTER/bin:$MYSIFDEC/bin:$PATH"
 Open a new terminal or use the command
 $ source $HOME/.bashrc
 
-Now, go to sifdec2 directory and edit the file config/linux.cf
-Search for Isxxx, where xxx reflects your choice of fortran compiler. In your case, we searched for Isgfo. Then, add -m32 to FortranFlags.
-Also, edit the file config/all.cf
-Search for Isgpp and add -m32 to CFlags
 -------------------------------------------------
 
 Back in the sifdec2 directory, enter
@@ -184,15 +189,10 @@ When asked if you want to run install_mysifdec, press enter (if you modified .ba
 When asked if you want to 'make all', press enter (unless same as above)
 
 -------------------------------------------------
-Go to cuter2 directory and edit the file config/linux.cf
-Repeat the procedure above to add -m32 to the fortran compiler.
-Now edit the file in cuter2/config/all.cf
-Repeat the procedure above to add -m32 to the c compiler. 
-
 Now go to the file $CUTER/common/include/cuter.h
 There, change the definition os integer and logical to long int, i.e.
-typedef long int integer
-typedef long int logical
+typedef int integer
+typedef int logical
 
 Finally, go to the cuter2 directory and enter
 
