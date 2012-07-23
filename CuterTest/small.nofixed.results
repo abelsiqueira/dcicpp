@@ -1,3 +1,11 @@
+   18 latex_assert
+  494 latex_convergence
+   95 latex_maxiter
+   55 latex_maxrest
+   14 latex_rhomax
+   86 latex_timelimit
+    3 latex_unlimited
+  765 total
 maxit 200
 maxrest 200000
 MaxTime 60
