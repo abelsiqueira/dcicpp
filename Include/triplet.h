@@ -19,12 +19,12 @@ namespace DCI {
         return static_cast < double * > (triplet->x);
       }
 
-      long int * get_linti () const {
-        return static_cast < long int * > (triplet->i);
+      Int * get_linti () const {
+        return static_cast < Int * > (triplet->i);
       }
 
-      long int * get_lintj () const {
-        return static_cast < long int * > (triplet->j);
+      Int * get_lintj () const {
+        return static_cast < Int * > (triplet->j);
       }
 
       size_t * get_pnnz () const {

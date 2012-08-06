@@ -216,7 +216,7 @@ namespace DCI {
     }
     int k = 2*numUpper + 2*numLower;
     int gtnnz = (*GT.get_pnnz());
-    long int *pirn = GT.get_linti(), *pjcn = GT.get_lintj();
+    Int *pirn = GT.get_linti(), *pjcn = GT.get_lintj();
     double *pa = GT.get_doublex();
     bool diagonalVisited[nvar + nconI];
     for (int i = 0; i < nvar + nconI; i++)
