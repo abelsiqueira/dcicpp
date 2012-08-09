@@ -31,7 +31,6 @@ namespace DCI {
     Int oldAcnt = 1;
     Real oldnormc;
 //    Real dnnorm;
-    Int trflag = 0;
 //    Int ibfgs = 0;
     Int iout = 0;
 //    Bool dnavail = dciFalse;
@@ -133,11 +132,11 @@ namespace DCI {
         nRest++;
 
         if (UsePorcelli) {
-          trflag = Porcelli();
+          Porcelli();
         } else if ((!Bounded) || (!UseVertInteriorPoint) )
-            trflag = dcitrust (oldnormc);
+            dcitrust (oldnormc);
         else
-          trflag = InteriorPointRestoration ();
+          InteriorPointRestoration ();
 
 #ifndef NDEBUG
         checkInfactibility();

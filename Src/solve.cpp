@@ -24,7 +24,7 @@ namespace DCI {
 #endif
 
     Real norms = 0;
-    Real cnormi, gpnormi;
+    Real cnormi;
     if (ncon > 0)
       cnormi = c->norm (0);
     else
@@ -112,7 +112,6 @@ namespace DCI {
         cnormi = c->norm (0);
       else
         cnormi = 0;
-      gpnormi = gp->norm (0);
 
       if (ncon > 0)
         Lc = *fxc + y->dot (*c);

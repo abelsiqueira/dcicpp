@@ -147,7 +147,6 @@ namespace DCI {
     multUpper = new Real[numUpper];
     multLower = new Real[numLower];
     slack     = new Real[nvar + nconI];
-    Real rhsClone[nvar + nconI + numUpper + numLower];
 
     for (int i = 0; i < nvar + nconI; i++)
       slack[i] = Cx[i]*dx[i];
@@ -303,12 +302,14 @@ namespace DCI {
       vertID.icntl[3] = 0;
       vertID.job = 6;
 
-      for (int i = 0; i < nvar + nconI + numUpper + numLower; i++)
-        rhsClone[i] = vertID.rhs[i];
       //Factorize matrix
       dmumps_c(&vertID);
 
 #ifdef RESTORATIONPRINT
+      Real rhsClone[nvar + nconI + numUpper + numLower];
+      for (int i = 0; i < nvar + nconI + numUpper + numLower; i++)
+        rhsClone[i] = vertID.rhs[i];
+
       std::cout << "SOL: " << std::endl;
       for (int i = 0 ; i < nvar + nconI + numUpper + numLower; i++)
         std::cout << vertID.rhs[i] << std::endl;
@@ -424,11 +425,11 @@ namespace DCI {
       vertID.icntl[3] = 0;
       vertID.job = 6;
 
-      for (int i = 0; i < nvar + nconI + numUpper + numLower; i++)
-        rhsClone[i] = vertID.rhs[i];
       dmumps_c(&vertID);
 
 #ifdef RESTORATIONPRINT
+      for (int i = 0; i < nvar + nconI + numUpper + numLower; i++)
+        rhsClone[i] = vertID.rhs[i];
       std::cout << "SOL: " << std::endl;
       for (int i = 0 ; i < nvar + nconI + numUpper + numLower; i++)
         std::cout << vertID.rhs[i] << std::endl;
@@ -495,7 +496,6 @@ namespace DCI {
       Real dotgd = 0.0;
       for (int i = 0; i < nvar + nconI; i++)
         dotgd += Cx[i]*dStep[i]*normgx[i];
-      Real oldObjFun = 0.5*pow(normc, 2), objFun = oldObjFun;
       alphaPrimal = alphaPrimalMax;
       for (int i = 0; i < nvar; i++)
         xcx[i] = oldxcx[i] + Cx[i]*dx[i] + alphaPrimal*Cx[i]*dStep[i];
@@ -505,7 +505,6 @@ namespace DCI {
       }
       call_ccfsg_xc(dciFalse);
       normc = c->norm();
-      objFun = 0.5*pow(normc, 2);
 
       Vector oldDualResidue(dualResidue), oldPrimalResidue(primalResidue);
       pReal oldrdx = oldDualResidue.get_doublex();

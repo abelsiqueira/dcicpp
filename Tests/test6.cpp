@@ -55,9 +55,6 @@ void COFG (Int * n, Real * x, Real * f, Real * g, Bool * grad) {
 
 //H(x,y) = 2*I
 void CPROD (Int * n, Int * m, Bool * getder, Real * x, Int * mmax, Real * y, Real * p, Real * q) {
-  Real unusedx = x[0], unusedy = y[0];
-  unusedx = x[0];
-  unusedy = y[0];
   if ( (*getder == 0) || (*getder == 1) ) {
     if ( (*n < *m) || (*m != 2) || (*mmax < *m) )
       throw("Error");

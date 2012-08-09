@@ -32,7 +32,7 @@ void COFG (Int * n, Real * x, Real * f, Real * g, Bool * grad) {
   }
 }
 
-void CPROD (Int * n, Int * m, Bool * , Real * x, Int * mmax, Real * y, Real * p, Real * q) {
+void CPROD (Int * n, Int * m, Bool * , Real * x, Int * mmax, Real * , Real * p, Real * q) {
   if ( (*n != 6) || (*m != 6) || (*mmax < *m) )
     return;
   Real x1 = x[0], x4 = x[3];
