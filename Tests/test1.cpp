@@ -29,11 +29,8 @@ void COFG (Int * n, Real * x, Real * f, Real * g, Bool * grad) {
 }
 
 //H(x,y) = 2*I
-void CPROD (Int * n, Int * m, Bool * getder, Real * x, Int * mmax,
-            Real * y, Real * p, Real * q) {
-  Real unusedx = x[0], unusedy = y[0];
-  unusedx = x[0];
-  unusedy = y[0];
+void CPROD (Int * n, Int * m, Bool * getder, Real * , Int * mmax,
+            Real * , Real * p, Real * q) {
   if ( (*getder == 0) || (*getder == 1) ) {
     if ( (*m != 1) || (*mmax < *m) )
       return;

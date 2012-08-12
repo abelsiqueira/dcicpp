@@ -1,5 +1,6 @@
 #include "interface.h"
 #include <cmath>
+#include <algorithm>
 #include <fstream>
 //#include <cassert>
 
@@ -195,6 +196,48 @@ namespace DCI {
           << "           Inequality: " << nconI << std::endl
           << std::endl;
     }
+
+#ifdef PRINT_MATLAB
+    if (J != 0) {
+      std::string matlab_filename("matrix_jacob");
+      matlab_filename += problemName;
+      switch (ExitFlag) {
+        case 0:
+          matlab_filename += "_conv";
+          break;
+        case 1:
+          matlab_filename += "_rhomax";
+          break;
+        case 2:
+          matlab_filename += "_maxiter";
+          break;
+        case 3:
+          matlab_filename += "_maxrest";
+          break;
+        case 4:
+          matlab_filename += "_restfail";
+          break;
+        case 5:
+          matlab_filename += "_short";
+          break;
+        case 6:
+          matlab_filename += "_unlimited";
+          break;
+        case 7:
+          matlab_filename += "_time";
+          break;
+        case 8:
+          matlab_filename += "_infeasible";
+          break;
+      }
+      matlab_filename += ".m";
+      matlab_filename.erase( remove_if(matlab_filename.begin(), 
+            matlab_filename.end(), isspace), matlab_filename.end());
+      std::ofstream matlab_file(matlab_filename.c_str());
+      J->print_matlab(matlab_file);
+      matlab_file.close();
+    }
+#endif
 
     if (!Solved) {
       out << "Problem not solved yet" << std::endl;

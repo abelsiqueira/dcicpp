@@ -112,11 +112,11 @@ namespace DCI {
   Int Interface::Porcelli () {
     Real oldnormc = c->norm();
     Vector d(*env), dcp(*env), dn(*env);
-    Real ndcp, ndn, normd;
-    Real alpha, Ared, Pred, oldDelta;
+    Real ndn;
+    Real alpha, Ared, Pred;
     Real one[2] = {1,0};
     Real zero[2] = {0,0};
-    Int iout, TrustIter, naflag;
+    Int iout, naflag;
     Bool dnavail;
     Vector gtmp (*env); 
     Vector xtmp (*xc), ctmp (*c), stmp (*env);
@@ -222,17 +222,13 @@ namespace DCI {
  *       dcpx[i] *= scalingMatrix[i];
  */
     if (ScaleVertical) scale_xc (dcp);
-    ndcp = dcp.norm();
 
     dnavail = dciFalse;
     ndn = 0;
     Ared = 0;
     Pred = 1;
-    oldDelta = DeltaV;
 //    DeltaV = DeltaV/kappa2;
-    normd = DeltaV;
     iout = 0;
-    TrustIter = 0;
 
     // For the inequalities
     pReal dnx = 0;
@@ -242,8 +238,6 @@ namespace DCI {
 //    while ( (Ared < kappa1*Pred) && (Aavail || (TrustIter < 20) ) && (CurrentTime < MaxTime) ) {
 //    while ( (Ared < kappa1*Pred) && (TrustIter < 100000) ) {
 //      TrustIter++;
-//      DeltaV = kappa2*normd;
-//      DeltaV = Min(kappa2*normd, 0.9*DeltaV);
 
       // Cauchy step is inside trust region
       // sc + dcps >= epsmu*sc

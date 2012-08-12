@@ -13,7 +13,7 @@ http://www.cise.ufl.edu/research/sparse/amd/current/AMD.tar.gz
 http://www.cise.ufl.edu/research/sparse/camd/current/CAMD.tar.gz
 http://www.cise.ufl.edu/research/sparse/colamd/current/COLAMD.tar.gz
 http://www.cise.ufl.edu/research/sparse/ccolamd/current/CCOLAMD.tar.gz
-http://www.cise.ufl.edu/research/sparse/UFconfig/current/UFconfig.tar.gz
+http://www.cise.ufl.edu/research/sparse/SuiteSparse_config/current/SuiteSparse_config.tar.gz
 
 - Metis
 http://glaros.dtc.umn.edu/gkhome/fetch/sw/metis/metis-5.0.2.tar.gz
@@ -44,9 +44,7 @@ $ make
 -------------------------------------------------
 INSTALL CHOLMOD and dependencies
 
-Edit UFconfig/UFconfig.mk
-Atention: UFconfig has changed to SuiteSparse_config
-http://www.cise.ufl.edu/research/sparse/SuiteSparse_config/UFconfig-3.7.1.tar.gz
+Edit SuiteSparse_config/SuiteSparse_config.mk
 
 - Comment lines
     BLAS = -lblas -lgfortran
@@ -70,6 +68,16 @@ add the following lines, editing to reflect your configuration, to the file $HOM
 These lines are in the file addtobash.rc
 
 -------------------------------------------------
+ROOTCUTER="$HOME/Libraries"
+
+export CUTER="$ROOTCUTER/cuter2"
+export MYCUTER="$CUTER/CUTEr.large.pc.lnx.gfo"
+export SIFDEC="$ROOTCUTER/sifdec2"
+export MYSIFDEC="$SIFDEC/SifDec.large.pc.lnx.gfo"
+export MASTSIF="$ROOTCUTER/mastsif"
+export MANPATH="$CUTER/common/man:$SIFDEC/common/man:$MANPATH"
+export PATH="$MYCUTER/bin:$MYSIFDEC/bin:$PATH"
+
 export GOTOBLASDIR="$HOME/Libraries/GotoBLAS2"
 export GOTOBLASLIBS="$GOTOBLASDIR/libgoto2.a $GOTOBLASDIR/libgoto2.so -lgfortran -lgfortranbegin -lpthread"
 
@@ -81,28 +89,31 @@ AMDDIR="$TIMDAVISDIR/AMD"
 CAMDDIR="$TIMDAVISDIR/CAMD"
 COLAMDDIR="$TIMDAVISDIR/COLAMD"
 CCOLAMDDIR="$TIMDAVISDIR/CCOLAMD"
-UFCONFIGDIR="$TIMDAVISDIR/UFconfig"
+SSCONFIG="$TIMDAVISDIR/SuiteSparse_config"
 BMDIR="$LIBSDIR/base_matrices"
 DCICPPDIR="$LIBSDIR/dcicpp"
+MUMPSDIR="$LIBSDIR/MUMPS_4.10.0"
 
-TIMDAVISLIB="$CHOLMODDIR/Lib:$AMDDIR/Lib:$CAMDDIR/Lib:$COLAMDDIR/Lib:$CCOLAMDDIR/Lib"
+TIMDAVISLIB="$CHOLMODDIR/Lib:$AMDDIR/Lib:$CAMDDIR/Lib:$COLAMDDIR/Lib:$CCOLAMDDIR/Lib:$SSCONFIGDIR"
 METISLIB="$METISDIR"
 BMLIB="$BMDIR/Lib"
 CUTERLIB="$MYCUTER/double/lib"
 DCICPPLIB="$DCICPPDIR/Lib"
+MUMPSLIB="$MUMPSDIR/lib:$MUMPSDIR/PORD/lib:$MUMPSDIR/libseq"
 
-TIMDAVISI="$CHOLMODDIR/Include:$UFCONFIGDIR"
+TIMDAVISI="$CHOLMODDIR/Include:$SUITESPARSEDIR"
 METISI="$METISDIR/Lib"
 BMI="$BMDIR/Include"
 CUTERI="$CUTER/common/include"
 DCICPPI="$DCICPPDIR/Include"
+MUMPSI="$MUMPSDIR/libseq:$MUMPSDIR/PORD/include:$MUMPSDIR/include"
 
-export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/usr/local/lib:$TIMDAVISLIB:$METISLIB:$BMLIB:$CUTERLIB:$GOTOBLASDIR:$DCICPPLIB"
-export LIBRARY_PATH="$LIBRARY_PATH:/usr/local/lib:$TIMDAVISLIB:$METISLIB:$BMLIB:$CUTERLIB:$GOTOBLASDIR:$DCICPPLIB"
+export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/usr/local/lib:$TIMDAVISLIB:$METISLIB:$BMLIB:$CUTERLIB:$GOTOBLASDIR:$DCICPPLIB:$MUMPSLIB"
+export LIBRARY_PATH="$LIBRARY_PATH:/usr/local/lib:$TIMDAVISLIB:$METISLIB:$BMLIB:$CUTERLIB:$GOTOBLASDIR:$DCICPPLIB:$MUMPSLIB"
 export LIBPATH="$LIBPATH:/usr/local/lib:$TIMDAVISLIB:$METISLIB:$BMLIB:$CUTERLIB:$GOTOBLASDIR:$DCICPPLIB"
-export CPLUS_INCLUDE_PATH="$CPLUS_INCLUDE_PATH:$TIMDAVISI:$METISI:$BMI:$CUTERI:$DCICPPI"
-export C_INCLUDE_PATH="$C_INCLUDE_PATH:$TIMDAVISI:$METISI:$BMI:$CUTERI:$DCICPPI"
-export INCLUDE_PATH="$INCLUDE_PATH:$TIMDAVISI:$METISI:$BMI:$CUTERI:$DCICPPI"
+export CPLUS_INCLUDE_PATH="$CPLUS_INCLUDE_PATH:$TIMDAVISI:$METISI:$BMI:$CUTERI:$DCICPPI:$MUMPSI"
+export C_INCLUDE_PATH="$C_INCLUDE_PATH:$TIMDAVISI:$METISI:$BMI:$CUTERI:$DCICPPI:$MUMPSI"
+export INCLUDE_PATH="$INCLUDE_PATH:$TIMDAVISI:$METISI:$BMI:$CUTERI:$DCICPPI:$MUMPSI"
 -------------------------------------------------
 Remove the CUTER parts, if you do not intend to use CUTEr.
 
@@ -178,7 +189,6 @@ export PATH="$MYCUTER/bin:$MYSIFDEC/bin:$PATH"
 -------------------------------------------------
 Open a new terminal or use the command
 $ source $HOME/.bashrc
-
 -------------------------------------------------
 
 Back in the sifdec2 directory, enter

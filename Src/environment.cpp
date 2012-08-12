@@ -10,7 +10,8 @@ namespace DCI {
 //  }
 
   Environment::Environment () : base_common () {
-    useSupernodal();
+//    useSupernodal();
+    useSimplicial();
   }
 
   Environment::~Environment () {

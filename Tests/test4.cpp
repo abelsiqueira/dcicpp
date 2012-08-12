@@ -38,9 +38,7 @@ void COFG (Int * n, Real * x, Real * f, Real * g, Bool * grad) {
 }
 
 //H(x,y) = 2*I
-void CPROD (Int * n, Int * m, Bool * getder, Real * x, Int * mmax, Real * y, Real * p, Real * q) {
-  Real unused;
-  unused = x[0];
+void CPROD (Int * n, Int * m, Bool * getder, Real * , Int * mmax, Real * y, Real * p, Real * q) {
   if ( (*getder == 0) || (*getder == 1) ) {
     if ( (*n != 2) || (*m != 2) || (*mmax < *m) )
       throw("Wrong Dimensions");

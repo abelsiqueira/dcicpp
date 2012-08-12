@@ -176,8 +176,9 @@ namespace DCI {
       if (id.info[0] == -10)
         FailedMumps = dciTrue;
       while (FailedMumps) {
+        std::cout << "Failed MUMPS" << std::endl;
         if (cholCorrection == 0)
-          cholCorrection = 1e-6;
+          cholCorrection = 1e-12;
         else
           cholCorrection *= 100;
         if (cholCorrection > 1e6)
@@ -245,8 +246,9 @@ namespace DCI {
       if (id.info[0] == -10)
         FailedMumps = dciTrue;
       while (FailedMumps) {
+        std::cout << "Failed MUMPS" << std::endl;
         if (cholCorrection == 0)
-          cholCorrection = 1e-6;
+          cholCorrection = 1e-12;
         else
           cholCorrection *= 100;
         if (cholCorrection > 1e6)
