@@ -48,6 +48,12 @@ namespace DCI {
             (CurrentTime < MaxTime) ) {
 
       SteihFlag = dcisteih (d, qd, gtd);
+#ifdef VERBOSE
+      if (VerboseLevel > 1) {
+        std::cout << "SteihFlag = " << SteihFlag 
+                  << ", nSteih = " << nSteih << std::endl;
+      }
+#endif
 
       pReal dx = d.get_doublex();
       scale_xc (d);
