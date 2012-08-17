@@ -202,6 +202,9 @@ namespace DCI {
       std::string matlab_filename("matrix_jacob");
       matlab_filename += problemName;
       switch (ExitFlag) {
+        case -1:
+          matlab_filename += "_assert";
+          break;
         case 0:
           matlab_filename += "_conv";
           break;
