@@ -50,7 +50,7 @@ namespace DCI {
           << "  DCI-C++ First Iter" << std::endl
           << "  Iter   = " << iter << std::endl
           << "  f(x)   = " << *f << std::endl
-          << "  |c(x)| = " << c->norm () << std::endl
+          << "  |c(x)| = " << (ncon > 0 ? c->norm () : 0) << std::endl
           << "  |gp|   = " << gp->norm () << std::endl
           << "  rho    = " << rho << std::endl
           << "----------------------" << std::endl;
@@ -148,7 +148,7 @@ namespace DCI {
           << "Vertical Step" << std::endl
           << "  Iter   = " << iter << std::endl
           << "  f(x)   = " << *fxc << std::endl
-          << "  |c(x)| = " << c->norm () << std::endl
+          << "  |c(x)| = " << (ncon > 0 ? c->norm () : 0) << std::endl
           << "  |gp|   = " << gp->norm () << std::endl
           << "  |g|    = " << g->norm () << std::endl
           << "  ngp    = " << ngp << std::endl
@@ -260,7 +260,7 @@ namespace DCI {
             << "Horizontal Step" << std::endl
             << "  Iter   = " << iter << std::endl
             << "  f(x)   = " << *f << std::endl
-            << "  |c(x)| = " << c->norm () << std::endl
+            << "  |c(x)| = " << (ncon > 0 ? c->norm () : 0) << std::endl
             << "  |gp|   = " << gp->norm () << std::endl
             << "  |g|    = " << g->norm () << std::endl
             << "  ngp    = " << ngp << std::endl
