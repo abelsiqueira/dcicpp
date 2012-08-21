@@ -1,5 +1,7 @@
 #include <interface.h>
 //#include <cassert>
+#include <algorithm>
+#include <fstream>
 #include <cmath>
 
 namespace DCI {
@@ -30,6 +32,16 @@ namespace DCI {
     else
       cnormi = 0;
 
+#ifdef PLOT_MATLAB
+      std::string plot_filename("plot_matlab");
+      plot_filename += problemName;
+      plot_filename += ".m";
+      plot_filename.erase(remove_if(plot_filename.begin(),
+            plot_filename.end(), isspace), plot_filename.end());
+      std::ofstream plot_file(plot_filename.c_str());
+      plot_file << "normc = " << (ncon > 0 ? c->norm() : 0) << ';' << std::endl
+                << "ngp = " << ngp << ';' << std::endl;
+#endif
 
 #ifdef VERBOSE
     if (VerboseLevel > 0) {
@@ -123,6 +135,11 @@ namespace DCI {
         rhomax = rhomax/2;
       if (DLV > -0.5*DLH)
         Lref = Lc;
+
+#ifdef PLOT_MATLAB
+      plot_file << "normc(end+1) = " << (ncon > 0 ? c->norm() : 0) << ';' << std::endl
+                << "ngp(end+1) = " << ngp << ';' << std::endl;
+#endif
 
 #ifdef VERBOSE
     if (VerboseLevel > 0) {
@@ -232,6 +249,10 @@ namespace DCI {
       }
 #endif
 
+#ifdef PLOT_MATLAB
+      plot_file << "normc(end+1) = " << (ncon > 0 ? c->norm() : 0) << ';' << std::endl
+                << "ngp(end+1) = " << ngp << ';' << std::endl;
+#endif
 #ifdef VERBOSE
       if (VerboseLevel > 0) {
         std::cout << std::endl
@@ -317,6 +338,10 @@ namespace DCI {
       dmumps_c(&id);
       MPI_Finalize();
     }
+
+#ifdef PLOT_MATLAB
+    plot_file.close();
+#endif
 
     return 0;
   }
