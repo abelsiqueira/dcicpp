@@ -41,6 +41,9 @@ unctests: library
 infeastests: library
 	(cd Tests; make infeastests)
 
+arglintests: library
+	(cd Tests; make arglin)
+
 clean:
 	(cd Lib; make clean )
 	(cd Tests; make clean )

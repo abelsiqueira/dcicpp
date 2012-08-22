@@ -61,7 +61,8 @@ namespace DCI {
       std::cout << "xc = " << std::endl;
       xc->print_more();
       std::cout << "lambda = " << std::endl;
-      y->print_more();
+      if (ncon > 0)
+        y->print_more();
       if (Ineq) {
         std::cout << "s = " << std::endl;
         s->print_more();
@@ -175,7 +176,8 @@ namespace DCI {
       std::cout << "xc = " << std::endl;
       xc->print_more();
       std::cout << "lambda = " << std::endl;
-      y->print_more();
+      if (ncon > 0)
+        y->print_more();
       if (Ineq) {
         std::cout << "s = " << std::endl;
         s->print_more();
@@ -287,7 +289,8 @@ namespace DCI {
         std::cout << "xc = " << std::endl;
         xc->print_more();
         std::cout << "lambda = " << std::endl;
-        y->print_more();
+        if (ncon > 0)
+          y->print_more();
         if (Ineq) {
           std::cout << "s = " << std::endl;
           s->print_more();

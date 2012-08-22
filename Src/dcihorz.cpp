@@ -34,7 +34,7 @@ namespace DCI {
 
 #ifdef VERBOSE
     if (VerboseLevel > 1) {
-      if (nvar + ncon < 10) {
+      if (ncon > 0 && nvar + ncon < 10) {
         std::cout << "A = " << std::endl;
         full(*J).print_more ();
       }

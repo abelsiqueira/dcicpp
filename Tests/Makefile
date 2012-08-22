@@ -12,7 +12,8 @@ INTESTS = test1.tst test2.tst test3.tst test4.tst test5.tst test6.tst test7.tst 
 EQTESTS = eqtest1.tst eqtest2.tst eqtest3.tst eqtest4.tst eqtest5.tst
 UNCTESTS = unctest1.tst
 INFEASTESTS = infeastest1.tst
-ALLTESTS = $(INTESTS) $(EQTESTS) $(UNCTESTS) $(LOCALTEST) $(INFEASTESTS)
+ARGLINTESTS = arglinb.tst
+ALLTESTS = $(INTESTS) $(EQTESTS) $(UNCTESTS) $(LOCALTEST) $(INFEASTESTS) $(ARGLINTESTS)
 
 all: library $(INTESTS) 
 	$(VALGRIND) $(VALGRINDFLAGS) ./test1.tst
@@ -29,6 +30,9 @@ all: library $(INTESTS)
 	$(VALGRIND) $(VALGRINDFLAGS) ./test12.tst
 	$(VALGRIND) $(VALGRINDFLAGS) ./test13.tst
 	$(VALGRIND) $(VALGRINDFLAGS) ./test14.tst
+
+arglin: library $(ARGLINTESTS)
+	$(VALGRIND) $(VALGRINDFLAGS) ./arglinb.tst
 
 eqtests: $(EQTESTS)
 	$(VALGRIND) $(VALGRINDFLAGS) ./eqtest1.tst 
