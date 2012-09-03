@@ -66,6 +66,10 @@ int MAINENTRY () {
   dci.show ();
   dci.printLatex ();
 
+  real calls[7], time[2];
+  CREPRT(calls, time);
+  std::cout << "Setup time: " << time[0] << std::endl
+            << "Execution time: " << time[1] << std::endl;
   FORTRAN_CLOSE ((&funit), (&ierr));
 
   return 0;
