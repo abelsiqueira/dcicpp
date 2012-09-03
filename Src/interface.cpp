@@ -245,6 +245,7 @@ namespace DCI {
     if (!Solved) {
       out << "Problem not solved yet" << std::endl;
     } else {
+      out << "EXIT: ";
       if (ExitFlag == 0)
         out << "The Algorithm has Converged" << std::endl;
       else if (ExitFlag == 1)
