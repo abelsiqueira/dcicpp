@@ -3,9 +3,9 @@
 ./calc_performance_ratio.py $1
 # Agora preciso calcular t
 ./gen_t_list.sh $1.ratio
-max=$(scale=4; echo "$(tail $1.t_list -n1)+1" | bc )
-sed -i "s/max/${max}/g" $1.ratio
 sed -i '1d' $1.t_list
+max=$(echo "scale=4; $(./find_max.py $1.t_list) + 1" | bc)
+sed -i "s/max/${max}/g" $1.ratio
 # Agora gera o .m
 ./gen_perf_func.py $1 > $1.m
 # Executa o .m 

@@ -42,7 +42,7 @@ for t in t_list:
   k = k + 1
 t_list.close()
 
-p = subprocess.Popen('tail -n1 ' + sys.argv[1] + '.t_list',
+p = subprocess.Popen('./find_max.py ' + sys.argv[1] + '.t_list',
     stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
 out, err = p.communicate()
 out = float(out)

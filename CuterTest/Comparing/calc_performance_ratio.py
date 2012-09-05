@@ -12,6 +12,7 @@ file_dci = open(sys.argv[1] + '.dcicpp','r')
 file_ipopt = open(sys.argv[1] + '.ipopt','r')
 file_out = open(sys.argv[1] + '.ratio','w')
 
+smallValue = 1e-2
 maxvalue = 'max'
 
 for line_dci in file_dci:
@@ -28,7 +29,7 @@ for line_dci in file_dci:
   if result_dci != 'Converged':
     line_dci = maxvalue
   elif m == 0 and line_dci > 0:
-    line_dci = maxvalue
+    line_dci = line_dci/smallValue
   elif m == 0 and line_dci == 0:
     line_dci = 1
   else:
@@ -37,7 +38,7 @@ for line_dci in file_dci:
   if result_ipopt != 'Optimal':
     line_ipopt = maxvalue
   elif m == 0 and line_ipopt > 0:
-    line_ipopt = maxvalue
+    line_ipopt = line_ipopt/smallValue
   elif m == 0 and line_ipopt == 0:
     line_ipopt = 1
   else:
