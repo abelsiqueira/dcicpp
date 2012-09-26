@@ -85,7 +85,7 @@ namespace DCI {
       if ( (SteihFlag == 1) || (SteihFlag == 2) )
         normd = DeltaH;
       else
-        normd = d.norm ();
+        normd = d.norm (0);
 
       if ( first && 
          ( (newnormc > Min (zeta1*rho, zeta1*normc + zeta2*rho) ) || 

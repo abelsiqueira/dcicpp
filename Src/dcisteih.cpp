@@ -14,7 +14,8 @@
 namespace DCI {
   Int Interface::dcisteih (Vector & d, Real & qd, Real & gtd) {
     Real delta2, dtd, theta0, theta, thetanew, alpha, beta, gamma;
-    Real dtHp, gtp, dtp, ptp, root1, root2, dtdnew, qdnew;
+    Real dtHp, gtp, ptp, root1, root2, dtdnew, qdnew;
+//    Real dtHp, gtp, dtp, ptp, root1, root2, dtdnew, qdnew;
     Int SteihFlag;
     Vector r(*env), p(d), Hp(d), dnew(*env), v(*env), tmp(*env);
     Real lower[nvar + nconI], upper[nvar + nconI];
@@ -44,14 +45,14 @@ namespace DCI {
 
     for (Int i = 0; i < nvar; i++) {
       Real xi = xcx[i], bli = blx[i], bui = bux[i];
-      lower[i] = (bli - xi) * (1 - epsmu);
-      upper[i] = (bui - xi) * (1 - epsmu);
+      lower[i] = Max( (bli - xi) * (1 - epsmu)/Diagx[i], -DeltaH/Diagx[i] );
+      upper[i] = Min( (bui - xi) * (1 - epsmu)/Diagx[i], DeltaH/Diagx[i] );
     }
     for (Int i = 0; i < nconI; i++) {
       Real si = scx[i], cli = clx[ineqIdx[i]], cui = cux[ineqIdx[i]];
       Int j = nvar + i;
-      lower[j] = (cli - si) * (1 - epsmu);
-      upper[j] = (cui - si) * (1 - epsmu);
+      lower[j] = Max( (cli - si) * (1 - epsmu)/Diagx[j], -DeltaH/Diagx[j] );
+      upper[j] = Min( (cui - si) * (1 - epsmu)/Diagx[j], DeltaH/Diagx[j] );
     }
 
 
@@ -70,35 +71,19 @@ namespace DCI {
 
       if (gamma <= eps3*ptp) {
         // Negative Curvature
-        dtp = d.dot (p);
-        dtp = 0;
-        for (Int i = 0; i < nvar + nconI; i++)
-          dtp += dx[i]*pow(Diagx[i], 2)*px[i];
-        root1 = sqrt (dtp*dtp + (delta2 - dtd)*ptp);
-        root2 = (-dtp - root1)/ptp;
-        root1 = (-dtp + root1)/ptp;
-
-        Real root1max = 1, root2max = 1;
+        root1 = dciInf;
+        root2 = dciInf;
         for (Int i = 0; i < nvar + nconI; i++) {
-          Real Di = Diagx[i], di = dx[i];
-          Real pxi = px[i], lowi = (lower[i] - Di*di), uppi = upper[i] - Di*di;
-          if (pxi == 0)
-            continue;
-          pxi = root1*pxi*Di;
-          if (pxi < 0)
-            root1max = Min (root1max, lowi/pxi);
-          else
-            root1max = Min (root1max, uppi/pxi);
-          pxi = root2*px[i]*Di;
-          if (pxi < 0)
-            root2max = Min (root2max, lowi/pxi);
-          else
-            root2max = Min (root2max, uppi/pxi);
+          if (px[i] > 0) {
+            root1 = Min( root1, (upper[i] - dx[i])/px[i] );
+            root2 = Min( root2, -(lower[i] - dx[i])/px[i] );
+          } else if (px[i] < 0) {
+            root1 = Min( root1, (lower[i] - dx[i])/px[i] );
+            root2 = Min( root2, -(upper[i] - dx[i])/px[i] );
+          }
         }
 
-        root1 *= root1max;
-        root2 *= root2max;
-
+        root2 = -root2;
         dnew = d;
         dnew.saxpy (p, root2);
         qdnew = qd + root2*dtHp + 0.5 * root2*root2*gamma + root2*gtp;
@@ -125,28 +110,23 @@ namespace DCI {
       for (Int i = 0; i < nvar + nconI; i++) {
         dtdnew += pow(dnewx[i]*Diagx[i], 2);
       }
-
-      if (dtdnew > delta2) {
-        dtp = d.dot (p);
-        dtp = 0;
-        for (Int i = 0; i < nvar + nconI; i++)
-          dtp += dx[i]*pow(Diagx[i], 2)*px[i];
-        root1 = (-dtp + sqrt(dtp*dtp + (delta2 - dtd)*ptp))/ptp;
-
-        Real root1max = 1;
-        for (Int i = 0; i < nvar + nconI; i++) {
-          Real Di = Diagx[i], di = dx[i];
-          Real pxi = px[i], lowi = lower[i] - Di*di, uppi = upper[i] - Di*di;
-          pxi = pxi*root1*Di;
-          if (pxi == 0)
-            continue;
-          if (pxi < 0)
-            root1max = Min (root1max, lowi/pxi);
-          else
-            root1max = Min (root1max, uppi/pxi);
+      bool outsideRegion = false;
+      for (Int i = 0; i < nvar + nconI; i++)  {
+        if ( (dnewx[i] > upper[i]) || (dnewx[i] < lower[i]) ) {
+          outsideRegion = true;
+          break;
         }
+      }
 
-        root1 *= root1max;
+      if (outsideRegion) {
+        root1 = dciInf;
+        for (Int i = 0; i < nvar + nconI; i++) {
+          if (px[i] > 0) {
+            root1 = Min( root1, (upper[i] - dx[i])/px[i] );
+          } else if (px[i] < 0) {
+            root1 = Min( root1, (lower[i] - dx[i])/px[i] );
+          }
+        }
 
         d.saxpy (p, root1);
         gtd = gtd + root1*gtp;
@@ -157,32 +137,6 @@ namespace DCI {
 
       if (alpha < dciTiny)
         return -2;
-
-      Real alphamax = 1;
-      for (Int i = 0; i < nvar + nconI; i++) {
-        Real Di = Diagx[i], di = dx[i];
-        Real pxi = px[i], lowi = (lower[i] - Di*di), uppi = (upper[i] - Di*di);
-        if (pxi == 0)
-          continue;
-        pxi = alpha*pxi*Di;
-        if (pxi < 0)
-          alphamax = Min (alphamax, lowi/pxi);
-        else
-          alphamax = Min (alphamax, uppi/pxi);
-      }
-
-      if (alphamax < 1) {
-        alpha *= alphamax;
-        d.saxpy (p, alpha);
-        qd = qd + alpha*dtHp + 0.5*alpha*alpha*gamma + alpha*gtp;
-        SteihFlag = 10;
-        return SteihFlag;
-      }
-
-//      for (Int i = 0; i < nvar + nconI; i++) {
-//        lower[i] -= alpha * px[i];
-//        upper[i] -= alpha * px[i];
-//      }
 
       r.saxpy (Hp, -alpha);
       v = r;
