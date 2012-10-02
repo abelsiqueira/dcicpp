@@ -175,14 +175,14 @@ namespace DCI {
     Real lower[nvar + nconI], upper[nvar + nconI];
     for (Int i = 0; i < nvar; i++) {
       Real zi = xcx[i], li = blx[i], ui = bux[i];
-      lower[i] = (li > -dciInf ? (li - zi) * (1 - epsmu)/Diagx[i] : -dciInf);
-      upper[i] = (ui < dciInf ? (ui - zi) * (1 - epsmu)/Diagx[i] : dciInf);
+      lower[i] = Max( -DeltaV, (li > -dciInf ? (li - zi) * (1 - epsmu)/Diagx[i] : -dciInf) );
+      upper[i] = Min( DeltaV, (ui < dciInf ? (ui - zi) * (1 - epsmu)/Diagx[i] : dciInf) );
     }
     for (Int i = 0; i < nconI; i++) {
       Int j = nvar + i;
       Real zi = scx[i], li = clx[ineqIdx[i]], ui = cux[ineqIdx[i]];
-      lower[j] = (li > -dciInf ? (li - zi) * (1 - epsmu)/Diagx[j] : -dciInf);
-      upper[j] = (ui < dciInf ? (ui - zi) * (1 - epsmu)/Diagx[j] : dciInf);
+      lower[j] = Max( -DeltaV, (li > -dciInf ? (li - zi) * (1 - epsmu)/Diagx[j] : -dciInf) );
+      upper[j] = Min( DeltaV, (ui < dciInf ? (ui - zi) * (1 - epsmu)/Diagx[j] : dciInf) );
     }
     Vector aux(*env);
     d = gtmp;
@@ -244,6 +244,11 @@ namespace DCI {
       dnavail = dciFalse;
       if (!dnavail) {
         naflag = LeastSquareTrustRegion (dn, scalingMatrix);
+#ifdef VERBOSE
+        if (VerboseLevel > 1) {
+          std::cout << "Porcelli - LSTR - naflag = " << naflag << std::endl;
+        }
+#endif
 /*         naflag = NAstep (ctmp, dn); 
  *         if (dn.norm() > DeltaV) {
  *           dn.scale(DeltaV/dn.norm());
