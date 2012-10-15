@@ -104,7 +104,7 @@ namespace DCI {
       Int dcisteih (Vector &, Real &, Real &);
       Int dcitrust (Real);
       Int Porcelli ();
-      Int LeastSquareTrustRegion (Vector &, pReal);
+      Int LeastSquareTrustRegion (Vector &, pReal, pReal, pReal);
       Int InteriorPointRestoration ();
       Real InteriorPointObjFun (Real, Real, Int, Int, pReal, pReal, pReal, pReal,
           pReal, pReal, pReal, pReal, pInt, pInt);

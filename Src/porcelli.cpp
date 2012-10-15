@@ -19,7 +19,8 @@
 namespace DCI {
   /* This function must (approximately) solve
    * min m(d) = 0.5*norm */
-  Int Interface::LeastSquareTrustRegion (Vector & d, pReal scalingMatrix) {
+  Int Interface::LeastSquareTrustRegion (Vector & d, pReal scalingMatrix,
+      Real *lower, Real *upper) {
     d.reset(nvar + nconI, 0.0);
     Int nLstSqrs = 0, maxLstSqrs = nvar + nconI;
     Real theta, theta0, thetanew, alpha, beta, gamma;
@@ -56,6 +57,32 @@ namespace DCI {
 
       if (gamma <= eps3*ptp) {
         // Almost singular matrix.Stops
+        Real root1 = dciInf;
+        Real root2 = dciInf;
+
+        for (Int i = 0; i < nvar + nconI; i++) {
+          if (px[i] > 0) {
+            root1 = Min( root1, (upper[i] - dx[i])/px[i] );
+            root2 = Min( root2, -(lower[i] - dx[i])/px[i] );
+          } else if (px[i] < 0) {
+            root1 = Min( root1, (lower[i] - dx[i])/px[i] );
+            root2 = Min( root2, -(upper[i] - dx[i])/px[i] );
+          }
+        }
+
+        root2 = -root2;
+
+        dnew = d;
+        dnew.saxpy(p, root2);
+        Real qdnew = qd + root2*dtq + 0.5 * root2*root2*gamma + root2*gtp;
+        d.saxpy(p, root1);
+        qd = qd + root1*dtq + 0.5 * root1*root1*gamma + root1*gtp;
+
+        if (qdnew < qd) {
+          d = dnew;
+          qd = qdnew;
+        }
+
         return 1;
       }
       alpha = theta/gamma;
@@ -246,7 +273,7 @@ namespace DCI {
       // sc + dcps >= epsmu*sc
       dnavail = dciFalse;
       if (!dnavail) {
-        naflag = LeastSquareTrustRegion (dn, scalingMatrix);
+        naflag = LeastSquareTrustRegion (dn, scalingMatrix, lower, upper);
 #ifdef VERBOSE
         if (VerboseLevel > 1) {
           std::cout << "Porcelli - LSTR - naflag = " << naflag << std::endl;
