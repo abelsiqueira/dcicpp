@@ -342,6 +342,10 @@ namespace DCI {
       MPI_Finalize();
     }
 
+#ifndef NDEBUG
+    checkInfactibility();
+#endif
+
 #ifdef PLOT_MATLAB
     plot_file.close();
 #endif

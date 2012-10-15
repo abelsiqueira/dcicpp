@@ -971,6 +971,9 @@ namespace DCI {
     if (std::isnan(normc)) {
       throw ("|c| is nan");
     }
+    if (std::isnan(normgp)) {
+      throw ("|gp| is nan");
+    }
     for (Int i = 0; i < nvar; i++) {
       if ( (xx[i] > 1e10) || (xx[i] < -1e10) || (xcx[i] > 1e10) || (xcx[i] < -1e10) ) {
         Unlimited = dciTrue;
