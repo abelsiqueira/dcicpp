@@ -160,9 +160,12 @@ namespace DCI {
             }
             GDBSTOP ();
           }
+//          std::cout << "Entering fail at dcivert" << std::endl;
 #endif
         
           call_ccfsg_xc (dciTrue, ScaleVertical);
+          if (!UseMUMPS)
+            this->cholesky_J();
           if (UseVertSafeguard)
             VertFlag = vertSafeguard ();
           VertFlag = 0;
@@ -193,7 +196,7 @@ namespace DCI {
 
       if (!Aavail) {
         if (!Linear) {
-          call_ccfsg_xc (); //CuterJacob
+          call_ccfsg_xc (dciTrue); //CuterJacob
           this->cholesky_J ();
         }
         Aavail = dciTrue;

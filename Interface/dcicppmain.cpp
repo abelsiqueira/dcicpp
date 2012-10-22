@@ -61,10 +61,13 @@ int MAINENTRY () {
   dci.start ();
   try {
     dci.solve ();
+    dci.show ();
+    dci.printLatex ();
+  } catch (const char * ex) {
+    std::cout << ex << std::endl;
   } catch (...) {
+    std::cout << "Unhandled exception caught" << std::endl;
   }
-  dci.show ();
-  dci.printLatex ();
 
   real calls[7], time[2];
   CREPRT(calls, time);

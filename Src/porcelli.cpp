@@ -239,6 +239,9 @@ namespace DCI {
 //    while ( (Ared < kappa1*Pred) && (TrustIter < 100000) ) {
 //      TrustIter++;
 
+//    Int iter = 0;
+
+//    while (normc > rho && iter < 2) {
       // Cauchy step is inside trust region
       // sc + dcps >= epsmu*sc
       dnavail = dciFalse;
@@ -348,6 +351,13 @@ namespace DCI {
 
       if (normc < rho)
         return 0;
+
+//      for (Int i = 0; i < nvar + nconI; i++) {
+//        lower[i] -= factor*dnx[i] + (1 - factor) * dcpx[i];
+//        upper[i] -= factor*dnx[i] + (1 - factor) * dcpx[i];
+//      }
+
+//      iter++;
 
       CurrentTime = getTime() - StartTime;
 

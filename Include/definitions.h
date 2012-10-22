@@ -4,14 +4,9 @@
 #include "extra.h"
 
 namespace DCI {
-
-#ifdef LONG
-  typedef long int   Int;
-  typedef long int   Bool;
-#else
-  typedef int        Int;
-  typedef int        Bool;
-#endif
+  
+  typedef int      Int;
+  typedef int Bool;
 
   typedef double     Real;
   typedef Int *      pInt;
