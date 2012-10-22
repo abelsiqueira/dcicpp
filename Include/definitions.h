@@ -6,7 +6,7 @@
 namespace DCI {
   
   typedef int      Int;
-  typedef long int Bool;
+  typedef int Bool;
 
   typedef double     Real;
   typedef Int *      pInt;
