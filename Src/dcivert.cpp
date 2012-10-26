@@ -164,11 +164,13 @@ namespace DCI {
 #endif
         
           call_ccfsg_xc (dciTrue, ScaleVertical);
-          if (!UseMUMPS)
-            this->cholesky_J();
-          if (UseVertSafeguard)
-            VertFlag = vertSafeguard ();
-          VertFlag = 0;
+          if (calc_feasibilityOpt())
+            VertFlag = 2;
+//          if (!UseMUMPS)
+//            this->cholesky_J();
+//          if (UseVertSafeguard)
+//            VertFlag = vertSafeguard ();
+//          VertFlag = 0;
         } else if ( ( (normc > thetaR*oldnormc) && (oldAcnt > 0) ) || (oldAcnt > 5) || (iout == 5) ) {
           // dcivert failed. Recompute A
 

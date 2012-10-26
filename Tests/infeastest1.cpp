@@ -45,6 +45,25 @@ void CFN (Int * n, Int * m, Real * x, Real * f, Int * mmax, Real * c) {
   c[1] = x1 - x2*x2 - 1;
 }
 
+void CCIFG (Int *, Int * i, Real * x, Real * ci, Real * gci, Bool * Grad) {
+  Real x1 = x[0], x2 = x[1];
+  if (*i == 1) {
+    *ci = x2 - x1*x1 - 1;
+    if (*Grad == dciTrue) {
+      gci[0] = -2*x1;
+      gci[1] = 1;
+    }
+  } else if (*i == 2) {
+    *ci = x1 - x2*x2 - 1;
+    if (*Grad == dciTrue) {
+      gci[0] = 1;
+      gci[1] = -2*x2;
+    }
+  } else {
+    throw ("CCIFG out of bound");
+  }
+}
+
 void CCFSG (Int * n, Int * m, Real * x, Int * mmax, Real * c, Int * nnzJ, Int * jmax, Real * J, Int * indvar, Int * indfun, Bool * Grad) {
   Real x1 = x[0], x2 = x[1];
   c[0] = x2 - x1*x1 - 1;
@@ -86,6 +105,7 @@ int main () {
   dci.set_cprod (CPROD);
   dci.set_cfn (CFN);
   dci.set_ccfsg (CCFSG);
+  dci.set_ccifg (CCIFG);
 
   for (Int i = 0; i < 2; i++) {
     x[i] = 0;

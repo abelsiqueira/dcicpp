@@ -1,5 +1,6 @@
 #include "interface.h"
 #include <cmath>
+#include <sstream>
 #include <algorithm>
 #include <fstream>
 //#include <cassert>
@@ -360,6 +361,14 @@ namespace DCI {
           break;
         case 7:
           file.open ("latex_timelimit", std::ios_base::app);
+          break;
+        case 8:
+          file.open ("latex_infeasible", std::ios_base::app);
+          break;
+        default:
+          std::stringstream aux;
+          aux << "Exitflag value " << ExitFlag;
+          throw(aux.str());
           break;
       }
     } else

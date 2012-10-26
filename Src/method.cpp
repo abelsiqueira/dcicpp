@@ -13,9 +13,11 @@ namespace DCI {
     Vector gradc (*env, nvar);
     pReal gcx = gradc.get_doublex ();
     Bool tmpTrue = dciTrue;
+
+    feasOpt->reset(nvar, 0.0);
     
     for (Int i = 1; i <= ncon; i++) {
-      (*ccifg) (&nvar, &i, xx, &ci, gcx, &tmpTrue);
+      (*ccifg) (&nvar, &i, xcx, &ci, gcx, &tmpTrue);
       cli = clx[i-1];
       cui = cux[i-1];
 
