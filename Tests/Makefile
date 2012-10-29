@@ -11,7 +11,7 @@ LOCALTEST = localtest.tst
 INTESTS = test1.tst test2.tst test3.tst test4.tst test5.tst test6.tst test7.tst test8.tst test9.tst test10.tst test11.tst test12.tst test13.tst test14.tst
 EQTESTS = eqtest1.tst eqtest2.tst eqtest3.tst eqtest4.tst eqtest5.tst
 UNCTESTS = unctest1.tst
-INFEASTESTS = infeastest1.tst
+INFEASTESTS = infeastest1.tst infeastest2.tst infeastest3.tst infeastest3e.tst infeastest4.tst infeastest5.tst
 ARGLINTESTS = arglinb.tst
 ALLTESTS = $(INTESTS) $(EQTESTS) $(UNCTESTS) $(LOCALTEST) $(INFEASTESTS) $(ARGLINTESTS)
 
@@ -46,6 +46,7 @@ unctests: $(UNCTESTS)
 
 infeastests: $(INFEASTESTS)
 	$(VALGRIND) $(VALGRINDFLAGS) ./infeastest1.tst
+	$(VALGRIND) $(VALGRINDFLAGS) ./infeastest2.tst
 
 localtest: $(LOCALTEST)
 	$(VALGRIND) $(VALGRINDFLAGS) ./localtest.tst
