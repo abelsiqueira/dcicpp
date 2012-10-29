@@ -131,7 +131,7 @@ namespace DCI {
 #endif
         nRest++;
 
-        Real infeasible_gradient = 1.0;
+        infeasible_gradient = 1.0;
 
         if (UsePorcelli) {
           Porcelli(infeasible_gradient);

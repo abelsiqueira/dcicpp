@@ -6,24 +6,6 @@
 
 using namespace DCI;
 
-/* Infeasible problem
- *
- * min f(x)
- * s.t. cI(x) >= 0
- *
- * where
- *
- * f(x) = x(1) + x(2)
- *
- * and
- *
- * cI(x) = [x(1)^2 + x(2)^2 - 1;    <= 0
- *          x(1)^2 + x(2)^2 - 4;  >= 0
- *          x(1)^2 + x(2)^2 - 1/4]    >= 0
- *
- *
- */
-
 Real rand_between (Real a, Real b) {
   Real x = (rand()%1001)/1000.0;
   return (b - a)*x + a;
@@ -42,9 +24,9 @@ void COFG (Int * n, Real * x, Real * f, Real * g, Bool * grad) {
 
   for (Int i = 0; i < npt - 1; i++) {
     for (Int j = i+1; j < npt; j++) {
-      sum = 1/( pow(x[2*i] - x[2*j], 2) + 
-                pow(x[2*i+1] - x[2*j+1], 2) );
-      *f += sum;
+      sum = pow(x[2*i] - x[2*j], 2) + 
+            pow(x[2*i+1] - x[2*j+1], 2);
+      *f += 1/sum;
       sum *= sum;
 
       if (*grad == dciTrue) {
@@ -120,27 +102,11 @@ void CFN (Int * n, Int * m, Real * x, Real * f, Int * mmax, Real * c) {
       sum = 1/( pow(x[2*i] - x[2*j], 2) + 
                 pow(x[2*i+1] - x[2*j+1], 2) );
       *f += sum;
-      sum *= sum;
     }
     c[2*i] = x[2*i+1] - x[2*i] - 0.5;
     c[2*i+1] = x[2*i+1] - x[2*i] + 0.5;
   }
 }
-
-/* void CCIFG (Int *, Int * i, Real * x, Real * ci, Real * gci, Bool * Grad) {
- *   Real x1 = x[0], x2 = x[1];
- *   *ci = x1*x1 + x2*x2 - 1;
- *   if (*Grad == dciTrue) {
- *     gci[0] = 2*x1;
- *     gci[1] = 2*x2;
- *   }
- *   if (*i == 2) {
- *     *ci -= 3;
- *   } else if (*i == 3) {
- *     *ci += 3.0/4.0;
- *   }
- * }
- */
 
 void CCFSG (Int * n, Int * m, Real * x, Int * mmax, Real * c, Int * nnzJ, Int * jmax, Real * J, Int * indvar, Int * indfun, Bool * Grad) {
   Int npt = (*n)/2;
@@ -171,7 +137,7 @@ void CCFSG (Int * n, Int * m, Real * x, Int * mmax, Real * c, Int * nnzJ, Int * 
 }
 
 int main () {
-  Int npt = 2;
+  Int npt = 100;
   Int n = 2*npt, m = 2*npt;
   DCI::Interface dci;
   Real x[n], bl[n], bu[n];
@@ -191,15 +157,22 @@ int main () {
     bl[i] = -1;
     bu[i] = 1;
   }
+
   for (Int i = 0; i < npt; i++) {
     equatn[2*i] = dciFalse;
     equatn[2*i+1] = dciFalse;
     y[2*i] = 0;
     y[2*i+1] = 0;
+    // For infeasible points, the 4 next lines must be uncommented
     cl[2*i] = 0;
     cu[2*i] = dciInf;
     cl[2*i+1] = -dciInf;
     cu[2*i+1] = 0;
+    // For feasible points, the 4 next lines must be uncommented
+//    cl[2*i+1] = 0;
+//    cu[2*i+1] = dciInf;
+//    cl[2*i] = -dciInf;
+//    cu[2*i] = 0;
   }
   
   dci.set_x (n, x);
@@ -212,6 +185,22 @@ int main () {
 
   dci.start ();
   dci.solve ();
-  dci.show();
+//  dci.show();
+
+  pReal sol = dci.get_x();
+  std::cout << "x = [";
+  for (Int i = 0; i < npt; i++) {
+    std::cout << sol[2*i] << ' ';
+  }
+  std::cout << "];\n";
+  std::cout << "y = [";
+  for (Int i = 0; i < npt; i++) {
+    std::cout << sol[2*i+1] << ' ';
+  }
+  std::cout << "];\n";
+  std::cout << "figure" << std::endl;
+  std::cout << "plot(x,y,'ro')" << std::endl;
+  std::cout << "hold on; fplot(@(t) t + 0.5,[-1 1]); fplot(@(t) t - 0.5,[-1,1]);" << std::endl;
+  std::cout << "axis([-1 1 -1 1])" << std::endl;
 
 }

@@ -41,6 +41,8 @@ namespace DCI {
       void set_equatn (size_t n, Bool *V);
       void set_linear (size_t n, Bool *V);
 
+      Real * get_x () const { return xx; }
+
       // Internal set nvar, ncon, nmax, mmax
       void set_nvar (Int n) { nvar = n; };
       void set_ncon (Int m) { ncon = m; };
@@ -232,6 +234,7 @@ namespace DCI {
       Bool trustWorstdn, trustConvexBox, penal_trust, penal_bfgs;
       Real cholCorrection;
       Real MaxDiag, MinDiag;
+      Real infeasible_gradient;
       //Interior Point Variables
 
   };
