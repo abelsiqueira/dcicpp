@@ -57,32 +57,33 @@ namespace DCI {
 
       if (gamma <= eps3*ptp) {
         // Almost singular matrix.Stops
-        Real root1 = dciInf;
-        Real root2 = dciInf;
-
-        for (Int i = 0; i < nvar + nconI; i++) {
-          if (px[i] > 0) {
-            root1 = Min( root1, (upper[i] - dx[i])/px[i] );
-            root2 = Min( root2, -(lower[i] - dx[i])/px[i] );
-          } else if (px[i] < 0) {
-            root1 = Min( root1, (lower[i] - dx[i])/px[i] );
-            root2 = Min( root2, -(upper[i] - dx[i])/px[i] );
-          }
-        }
-
-        root2 = -root2;
-
-        dnew = d;
-        dnew.saxpy(p, root2);
-        Real qdnew = qd + root2*dtq + 0.5 * root2*root2*gamma + root2*gtp;
-        d.saxpy(p, root1);
-        qd = qd + root1*dtq + 0.5 * root1*root1*gamma + root1*gtp;
-
-        if (qdnew < qd) {
-          d = dnew;
-          qd = qdnew;
-        }
-
+/*         Real root1 = dciInf;
+ *         Real root2 = dciInf;
+ * 
+ *         for (Int i = 0; i < nvar + nconI; i++) {
+ *           if (px[i] > 0) {
+ *             root1 = Min( root1, (upper[i] - dx[i])/px[i] );
+ *             root2 = Min( root2, -(lower[i] - dx[i])/px[i] );
+ *           } else if (px[i] < 0) {
+ *             root1 = Min( root1, (lower[i] - dx[i])/px[i] );
+ *             root2 = Min( root2, -(upper[i] - dx[i])/px[i] );
+ *           }
+ *         }
+ * 
+ *         root2 = -root2;
+ * 
+ *         dnew = d;
+ *         dnew.saxpy(p, root2);
+ *         Real qdnew = qd + root2*dtq + 0.5 * root2*root2*gamma + root2*gtp;
+ *         d.saxpy(p, root1);
+ *         qd = qd + root1*dtq + 0.5 * root1*root1*gamma + root1*gtp;
+ * 
+ *         if (qdnew < qd) {
+ *           d = dnew;
+ *           qd = qdnew;
+ *         }
+ * 
+ */
         return 1;
       }
       alpha = theta/gamma;
@@ -94,14 +95,25 @@ namespace DCI {
       for (Int i = 0; i < nvar + nconI; i++)
         dtdnew += pow(dnewx[i]*scalingMatrix[i], 2);
 
-      if (dtdnew > delta2) {
+      bool outsideRegion = false;
+      for (Int i = 0; i < nvar + nconI; i++) {
+        if ( (dx[i] >= upper[i]) || (dx[i] <= lower[i]) ) {
+          outsideRegion = true;
+          break;
+        }
+      }
+
+      if (outsideRegion) {
         // Out of the region
         // Truncate step and stops
-        dtp = d.dot(p);
-        dtp = 0;
-        for (Int i = 0; i < nvar + nconI; i++)
-          dtp += dx[i]*pow(scalingMatrix[i], 2)*px[i];
-        Real root1 = (-dtp + sqrt(dtp*dtp + (delta2 - dtd)*ptp))/ptp;
+        Real root1 = dciInf;
+        for (Int i = 0; i < nvar + nconI; i++) {
+          if (px[i] > 0) {
+            root1 = Min( root1, (upper[i] - dx[i])/px[i] );
+          } else if (px[i] < 0) {
+            root1 = Min( root1, (lower[i] - dx[i])/px[i] );
+          }
+        }
 
         d.saxpy (p, root1);
         gtd += root1*gtp;
@@ -274,6 +286,7 @@ namespace DCI {
       dnavail = dciFalse;
       if (!dnavail) {
         naflag = LeastSquareTrustRegion (dn, scalingMatrix, lower, upper);
+//        naflag = NAstep (*c, dn);
 #ifdef VERBOSE
         if (VerboseLevel > 1) {
           std::cout << "Porcelli - LSTR - naflag = " << naflag << std::endl;
@@ -308,7 +321,7 @@ namespace DCI {
         if (naflag > 1)
           ndn = 0;
         else
-          ndn = dn.norm ();
+          ndn = dn.norm (0);
         assert(ndn <= DeltaV || "ndn > DeltaV");
       }
 
