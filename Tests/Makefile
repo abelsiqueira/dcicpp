@@ -13,7 +13,8 @@ EQTESTS = eqtest1.tst eqtest2.tst eqtest3.tst eqtest4.tst eqtest5.tst
 UNCTESTS = unctest1.tst
 INFEASTESTS = infeastest1.tst infeastest2.tst infeastest3.tst infeastest3e.tst infeastest4.tst infeastest5.tst
 ARGLINTESTS = arglinb.tst
-ALLTESTS = $(INTESTS) $(EQTESTS) $(UNCTESTS) $(LOCALTEST) $(INFEASTESTS) $(ARGLINTESTS)
+PIS = points_in_space1.tst
+ALLTESTS = $(INTESTS) $(EQTESTS) $(UNCTESTS) $(LOCALTEST) $(INFEASTESTS) $(ARGLINTESTS) $(PIS)
 
 all: library $(INTESTS) 
 	$(VALGRIND) $(VALGRINDFLAGS) ./test1.tst
@@ -47,6 +48,13 @@ unctests: $(UNCTESTS)
 infeastests: $(INFEASTESTS)
 	$(VALGRIND) $(VALGRINDFLAGS) ./infeastest1.tst
 	$(VALGRIND) $(VALGRINDFLAGS) ./infeastest2.tst
+	$(VALGRIND) $(VALGRINDFLAGS) ./infeastest3.tst
+	$(VALGRIND) $(VALGRINDFLAGS) ./infeastest3e.tst
+	$(VALGRIND) $(VALGRINDFLAGS) ./infeastest4.tst
+	$(VALGRIND) $(VALGRINDFLAGS) ./infeastest5.tst
+
+pis: $(PIS)
+	$(VALGRIND) $(VALGRINDFLAGS) ./points_in_space1.tst
 
 localtest: $(LOCALTEST)
 	$(VALGRIND) $(VALGRINDFLAGS) ./localtest.tst
