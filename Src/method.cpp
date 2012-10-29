@@ -3,6 +3,53 @@
 #include <cmath>
 
 namespace DCI {
+  // From point x, project g so that l < x + g < u
+  void Interface::project_bounds_x (Vector & v) {
+    pReal vx = v.get_doublex();
+    for (Int i = 0; i < nvar; i++) {
+      Real alpha = 1.0;
+      if (vx[i] > 0)
+        alpha = Min(alpha, (bux[i] - xx[i])/vx[i]);
+      else if (vx[i] < 0)
+        alpha = Min(alpha, (blx[i] - xx[i])/vx[i]);
+      if (alpha < 1)
+        vx[i] *= alpha;
+    }
+    for (Int i = 0; i < nconI; i++) {
+      Int j = nvar + i;
+      Real alpha = 1.0;
+      if (vx[j] > 0)
+        alpha = Min(alpha, (cux[i] - sx[i])/vx[j]);
+      else if (vx[j] < 0)
+        alpha = Min(alpha, (clx[i] - sx[i])/vx[j]);
+      if (alpha < 1)
+        vx[j] *= alpha;
+    }
+  }
+
+  void Interface::project_bounds_xc (Vector & v) {
+    pReal vx = v.get_doublex();
+    for (Int i = 0; i < nvar; i++) {
+      Real alpha = 1.0;
+      if (vx[i] > 0)
+        alpha = Min(alpha, (bux[i] - xcx[i])/vx[i]);
+      else if (vx[i] < 0)
+        alpha = Min(alpha, (blx[i] - xcx[i])/vx[i]);
+      if (alpha < 1)
+        vx[i] *= alpha;
+    }
+    for (Int i = 0; i < nconI; i++) {
+      Int j = nvar + i;
+      Real alpha = 1.0;
+      if (vx[j] > 0)
+        alpha = Min(alpha, (cux[i] - scx[i])/vx[j]);
+      else if (vx[j] < 0)
+        alpha = Min(alpha, (clx[i] - scx[i])/vx[j]);
+      if (alpha < 1)
+        vx[j] *= alpha;
+    }
+  }
+
   Bool Interface::calc_feasibilityOpt () {
     if (ccifg == 0)
       return 0;

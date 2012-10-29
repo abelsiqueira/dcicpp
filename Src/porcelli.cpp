@@ -148,7 +148,7 @@ namespace DCI {
     return 0;
   }
   
-  Int Interface::Porcelli () {
+  Int Interface::Porcelli (Real & infeasible_gradient) {
     Real oldnormc = c->norm();
     Vector d(*env), dcp(*env), dn(*env);
     Real ndn;
@@ -202,6 +202,10 @@ namespace DCI {
       }
     }
     normgtmp = gtmp.norm ();
+    Vector gtmp_proj(*env);
+    gtmp_proj.scale(gtmp, -1.0);
+    project_bounds_xc(gtmp_proj);
+    infeasible_gradient = gtmp_proj.norm();
 //    DeltaV = normgtmp;
 
     if (normgtmp < dciTiny) {

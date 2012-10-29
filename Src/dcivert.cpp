@@ -131,8 +131,10 @@ namespace DCI {
 #endif
         nRest++;
 
+        Real infeasible_gradient = 1.0;
+
         if (UsePorcelli) {
-          Porcelli();
+          Porcelli(infeasible_gradient);
         } else if ((!Bounded) || (!UseVertInteriorPoint) )
             dcitrust (oldnormc);
         else
@@ -164,8 +166,9 @@ namespace DCI {
 #endif
         
           call_ccfsg_xc (dciTrue, ScaleVertical);
-          if (calc_feasibilityOpt())
+          if (normc > 0 && infeasible_gradient/normc < 1e-6)
             VertFlag = 2;
+
 //          if (!UseMUMPS)
 //            this->cholesky_J();
 //          if (UseVertSafeguard)

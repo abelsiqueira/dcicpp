@@ -103,7 +103,7 @@ namespace DCI {
       void horzstep (Real &);
       Int dcisteih (Vector &, Real &, Real &);
       Int dcitrust (Real);
-      Int Porcelli ();
+      Int Porcelli (Real &);
       Int LeastSquareTrustRegion (Vector &, pReal, pReal, pReal);
       Int InteriorPointRestoration ();
       Real InteriorPointObjFun (Real, Real, Int, Int, pReal, pReal, pReal, pReal,
@@ -126,6 +126,8 @@ namespace DCI {
 #endif
       void scale_x (Vector &);
       void scale_xc (Vector &);
+      void project_bounds_x (Vector &);
+      void project_bounds_xc (Vector &);
       void updyineq ();
       void updyineq_xc ();
       void update_lambda ();
