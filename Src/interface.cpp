@@ -264,7 +264,7 @@ namespace DCI {
       else if (ExitFlag == 7)
         out << "The problem reached the time limit" << std::endl;
       else if (ExitFlag == 8)
-        out << "The problem infeasible" << std::endl;
+        out << "Stopped at a stationary for the infeasibility" << std::endl;
 
       if (DisplayLevel > 0) {
         out << "f(x) = " << *f << std::endl
