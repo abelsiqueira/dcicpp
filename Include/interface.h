@@ -111,6 +111,7 @@ namespace DCI {
       Real InteriorPointObjFun (Real, Real, Int, Int, pReal, pReal, pReal, pReal,
           pReal, pReal, pReal, pReal, pInt, pInt);
       void NAproj (Vector &, Vector &, Vector &);
+      void NAprojApprox (Vector &, Vector &, Vector &);
       Int NAstep (Vector &, Vector &);
       Int dcibfgs (const Vector &, Int &);
       Int dcibfgs2 (const Vector &, Int &);

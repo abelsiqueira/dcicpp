@@ -194,6 +194,67 @@ namespace DCI {
     mu = minother;
   }
 
+  void Interface::NAprojApprox (Vector & rin, Vector & Pr, Vector & tmp) {
+    Real mone[2] = {-1,0}, zero[2] = {0,0}, one[2] = {1,0};
+
+    Sparse M(*J);
+    M.band_inplace(-1, 1, 1);
+    Factor Mfac(*env);
+    Mfac.analyze(M);
+    static Real facCorr = 1e-6;
+    Mfac.factorize(M, facCorr);
+    if (!env->IsPosDef()) {
+      facCorr = 1e-3;
+      Mfac.factorize(M, facCorr);
+    }
+#ifdef VERBOSE
+    if (VerboseLevel > 2) {
+      M.print_more();
+    }
+#endif
+
+    Pr.sdmult (*J, 0, mone, zero, rin);
+    tmp.reset (Pr.size(), 0);
+    Vector r(*env), p(*env), Jtp(*env), JJtp (*env), t(*env);
+    r.scale(Pr, -1);
+    // M*t = r
+    t.solve (CHOLMOD_A, Mfac, r);
+    //t = r
+    p.scale(t, -1);
+    Jtp.sdmult (*J, 1, one, zero, p);
+    JJtp.sdmult (*J, 0, one, zero, Jtp);
+    Real rr, rrp, alpha, beta;
+    Real rr0;
+    rrp = r.dot(t);
+    if (rrp < 1e-12) {
+      Pr = rin;
+      return;
+    }
+    rr0 = rrp;
+    Int cgiter = 1;
+    while ( (rrp > ngp*rr0) && (cgiter < nvar + nconI) ) {
+      rr = rrp;
+      Real gamma = Jtp.dot(Jtp);
+      if (gamma < 1e-12) {
+        break;
+      }
+      alpha = rr/gamma;
+      tmp.saxpy(p, alpha);
+      r.saxpy(JJtp, alpha);
+//      t = r;
+      t.solve (CHOLMOD_A, Mfac, r);
+      rrp = r.dot(t);
+      beta = rrp/rr;
+      p.scale(beta);
+      p.saxpy(t, -1);
+      Jtp.sdmult (*J, 1, one, zero, p);
+      JJtp.sdmult (*J, 0, one, zero, Jtp);
+      cgiter++;
+    }
+    Pr = rin;
+    Pr.sdmult (*J, 1, one, one, tmp);
+  }
+
   void Interface::NAproj (Vector & r, Vector & Pr, Vector & tmp) {
     Real mone[2] = {-1,0}, zero[2] = {0,0};
     Real one[2] = {1,0};
