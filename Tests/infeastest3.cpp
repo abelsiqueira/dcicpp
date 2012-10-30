@@ -1,5 +1,8 @@
 #include <iostream>
 #include "dci.h"
+#include <cstdlib>
+#include <cmath>
+#include <ctime>
 
 using namespace DCI;
 
@@ -10,28 +13,35 @@ using namespace DCI;
  *
  * where
  *
- * f(x) = x(1) + x(2)
+ * f(x) = c(1)*x(1) + c(2)*x(2)
  *
  * and
  *
  * cE(x) = [x(1)^2 + x(2)^2 - 1;    <= 0
  *          x(1)^2 + x(2)^2 - 4]    >= 0
  *
+ * |c| = 1 => sol = -sqrt(5/2) * c
  *
  */
+
+Real v[2];
+
+Real rand_between (Real a, Real b) {
+  Real x = (rand()%1001/1000.0);
+  return (b - a)*x + a;
+}
 
 void COFG (Int * n, Real * x, Real * f, Real * g, Bool * grad) {
   if (*n != 2)
     return;
   Real x1 = x[0], x2 = x[1];
-  *f = 7*x1 + 11*x2;
+  *f = v[0]*x1 + v[1]*x2;
   if (*grad == dciTrue) {
-    g[0] = 7;
-    g[1] = 11;
+    g[0] = v[0];
+    g[1] = v[1];
   }
 }
 
-//H(x,y) = 2*I
 void CPROD (Int * n, Int * m, Bool * getder, Real * x, Int * mmax, Real * y, Real * p, Real * q) {
   Real y1 = y[0], y2 = y[1];
   q[0] = 2*(y1 + y2)*p[0];
@@ -40,21 +50,9 @@ void CPROD (Int * n, Int * m, Bool * getder, Real * x, Int * mmax, Real * y, Rea
 
 void CFN (Int * n, Int * m, Real * x, Real * f, Int * mmax, Real * c) {
   Real x1 = x[0], x2 = x[1];
-  *f = 7*x1 + 11*x2;
+  *f = v[0]*x1 + v[1]*x2;
   c[0] = x1*x1 + x2*x2 - 1;
   c[1] = c[0] - 3;
-}
-
-void CCIFG (Int *, Int * i, Real * x, Real * ci, Real * gci, Bool * Grad) {
-  Real x1 = x[0], x2 = x[1];
-  *ci = x1*x1 + x2*x2 - 1;
-  if (*Grad == dciTrue) {
-    gci[0] = 2*x1;
-    gci[1] = 2*x2;
-  }
-  if (*i == 2) {
-    *ci -= 3;
-  }
 }
 
 void CCFSG (Int * n, Int * m, Real * x, Int * mmax, Real * c, Int * nnzJ, Int * jmax, Real * J, Int * indvar, Int * indfun, Bool * Grad) {
@@ -95,11 +93,15 @@ int main () {
   Real y[m], cl[m], cu[m];
   Bool equatn[m];
 
+  srand(time(0));
+  Real theta = rand_between(0, 2*M_PI);
+  v[0] = cos(theta);
+  v[1] = sin(theta);
+
   dci.set_cofg (COFG);
   dci.set_cprod (CPROD);
   dci.set_cfn (CFN);
   dci.set_ccfsg (CCFSG);
-  dci.set_ccifg (CCIFG);
 
   for (Int i = 0; i < 2; i++) {
     x[i] = 0;
@@ -124,5 +126,11 @@ int main () {
   dci.start ();
   dci.solve ();
   dci.show();
+
+  pReal px = dci.get_x();
+  Real alpha = sqrt(5.0/2.0);
+
+  std::cout << "|sol - x| = " << pow(px[0] + alpha*v[0], 2) + pow(px[1] + alpha*v[1], 2)
+            << std::endl;
 
 }
