@@ -19,7 +19,7 @@ namespace DCI {
     ExitFlag = -1;
     error (-1, "assert", -1, "assert failed");
     GDBSTOP ();
-    throw -1;
+    throw "assert failed";
   }
 
   void Interface::GDBSTOP () {
