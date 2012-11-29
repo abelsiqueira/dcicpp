@@ -238,6 +238,8 @@ namespace DCI {
       Real infeasible_gradient;
       //Interior Point Variables
 
+      Real objfun_scale;
+      Bool UseObjfunScale;
   };
 }
 

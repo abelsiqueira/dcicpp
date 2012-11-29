@@ -73,7 +73,7 @@ namespace DCI {
       en_project_bfgs, en_trustWorstdn, en_trustConvexBox, en_penal_trust,
       en_penal_bfgs, en_UseMUMPS, en_ScaleVertical, en_DisplayLevel,
       en_VerboseLevel, en_MaxDiag, en_MinDiag, en_UseVertInteriorPoint,
-      en_UseVertSafeguard, en_UsePorcelli
+      en_UseVertSafeguard, en_UsePorcelli, en_UseObjfunScale
     };
     std::map<std::string, int> paramMap;
 
@@ -87,6 +87,7 @@ namespace DCI {
     paramMap["UseMUMPS"] = en_UseMUMPS;
     paramMap["UseCG"] = en_UseCG;
     paramMap["UsePorcelli"] = en_UsePorcelli;
+    paramMap["UseObjfunScale"] = en_UseObjfunScale;
     paramMap["PartialPenal"] = en_PartialPenal;
     paramMap["project_dcp"] = en_project_dcp;
     paramMap["project_bfgs"] = en_project_bfgs;
@@ -193,6 +194,7 @@ namespace DCI {
         case en_minBk: aux >> minBk; break;
         case en_UseCG: aux >> UseCG; break;
         case en_UsePorcelli: aux >> UsePorcelli; break;
+        case en_UseObjfunScale: aux >> UseObjfunScale; break;
         case en_UseMUMPS: aux >> UseMUMPS; break;
         case en_PartialPenal: aux >> PartialPenal; break;
         case en_project_dcp: aux >> project_dcp; break;
@@ -291,6 +293,7 @@ namespace DCI {
     //Strategy choices
     UseCG = dciFalse;
     UsePorcelli = dciTrue;
+    UseObjfunScale = dciTrue;
     PartialPenal = dciTrue;
     project_dcp = dciFalse;
     project_dn = dciTrue;
@@ -314,9 +317,14 @@ namespace DCI {
 
     maxitSteih = Max (minitSteih, Min(maxitSteih, Int(nvar*relitSteih+5) ) );
     minstep *= Min (csig, csic);
+    objfun_scale = 1.0;
     
     // Calculating the function value and c without the barrier.
     call_fn ();
+    call_ofg (dciTrue);
+    if (UseObjfunScale)
+      objfun_scale = Max(Max(1.0, g->norm()), AbsValue(*f));
+
     for (Int i = 0; i < nvar; i++) {
       Real bli = blx[i], bui = bux[i];
       if ( (xx[i] > bli) && (xx[i] < bui) ) {

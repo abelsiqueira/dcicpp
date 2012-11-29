@@ -487,6 +487,7 @@ namespace DCI {
       (*cfn) (&nvar, &ncon, xx, f, &mmax, cx);
     }
     if (Running) {
+      *f /= objfun_scale;
       *f -= mu*calc_pen ();
       Int numI = 0;
       for (Int i = 0; i < ncon; i++) {
@@ -505,6 +506,7 @@ namespace DCI {
       (*cfn) (&nvar, &ncon, xcx, fxc, &mmax, cx);
     }
     if (Running) {
+      *fxc /= objfun_scale;
       *fxc -= mu*calc_pen_xc ();
       Int numI = 0;
       for (Int i = 0; i < ncon; i++) {
@@ -523,6 +525,13 @@ namespace DCI {
       (*cofg) (&nvar, xx, f, gx, &grad);
     if (Running) {
       Real val = 0.0;
+      if (objfun_scale != 1) {
+        *f /= objfun_scale;
+        if (grad) {
+          for (Int i = 0; i < nvar; i++)
+            gx[i] /= objfun_scale;
+        }
+      }
       for (Int i = 0; i < nvar; i++) {
         Real xi = xx[i], bli = blx[i], bui = bux[i];
         if ( (bli > -dciInf) && (bui < dciInf) ) {
@@ -586,6 +595,13 @@ namespace DCI {
       (*cofg) (&nvar, xcx, fxc, gx, &grad);
     if (Running) {
       Real val = 0.0;
+      if (objfun_scale != 1) {
+        *fxc /= objfun_scale;
+        if (grad) {
+          for (Int i = 0; i < nvar; i++)
+            gx[i] /= objfun_scale;
+        }
+      }
       for (Int i = 0; i < nvar; i++) {
         Real xi = xcx[i], bli = blx[i], bui = bux[i];
         if ( (bli > -dciInf) && (bui < dciInf) ) {
@@ -832,10 +848,20 @@ namespace DCI {
       else
         ppx[i] = pxi;
     }
+    if (objfun_scale != 1) {
+      for (Int i = 0; i < ncon; i++)
+        yx[i] *= objfun_scale;
+    }
     if (ncon == 0)
       (*uprod) (&nvar, &gotder, xx, ppx, ux);
     else
       (*cprod) (&nvar, &ncon, &gotder, xx, &mmax, yx, ppx, ux);
+    if (objfun_scale != 1) {
+      for (Int i = 0; i < nvar; i++)
+        ux[i] /= objfun_scale;
+      for (Int i = 0; i < ncon; i++)
+        yx[i] /= objfun_scale;
+    }
     for (Int i = 0; i < nvar; i++) {
       Real xi = xx[i], bli = blx[i], bui = bux[i], pxi = px[i], uxi = ux[i];
       if ( (bli > -dciInf) && (bui < dciInf) ) {
@@ -890,10 +916,20 @@ namespace DCI {
       else
         ppx[i] = pxi;
     }
+    if (objfun_scale != 1) {
+      for (Int i = 0; i < ncon; i++)
+        yx[i] *= objfun_scale;
+    }
     if (ncon == 0)
       (*uprod) (&nvar, &gotder, xcx, ppx, ux);
     else
       (*cprod) (&nvar, &ncon, &gotder, xcx, &mmax, yx, ppx, ux);
+    if (objfun_scale != 1) {
+      for (Int i = 0; i < nvar; i++)
+        ux[i] /= objfun_scale;
+      for (Int i = 0; i < ncon; i++)
+        yx[i] /= objfun_scale;
+    }
     for (Int i = 0; i < nvar; i++) {
       Real xi = xcx[i], bli = blx[i], bui = bux[i], pxi = px[i], uxi = ux[i];
       if ( (bli > -dciInf) && (bui < dciInf) ) {

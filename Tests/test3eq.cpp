@@ -1,67 +1,78 @@
 #include <iostream>
+#include <cmath>
 #include "dci.h"
 
 using namespace DCI;
 
 /* Let's make the problem
  * min f(x)
- * s.t. h(x) = 0
+ * s.t. cE(x) = 0
  *
  * where
  *
- * f(x) = -x1^4 -x2^4
+ * f(x) = 0.5*dot(x,x)
  *
  * and
  *
- * h(x) = x1^2 + (x2 - 1)^2/4 - 1
+ * cE(x) = r^2 - dot(x,Dx),
  *
- * sol = [0; 3], f = -81
+ * where D = diag(1,2,3,...,n).
+ *
+ * Expected solution:
+ *
+ * x = [0, 0, 0, ..., r/sqrt(n)]
+ * lambda = r/(n*sqrt(n))
+ *
  */
 
+Real r = 3;
+
 void COFG (Int * n, Real * x, Real * f, Real * g, Bool * grad) {
-  Real xi = 0, xi2 = 0;
+  Real xi = 0;
   *f = 0;
   for (Int i = 0; i < *n; i++) {
     xi = x[i];
-    xi2 = xi*xi;
-    *f -= xi2*xi2;
-    if (*grad == 1)
-      g[i] = -4*xi*xi2;
+    *f += 0.5*xi*xi;
+    if (*grad == dciTrue)
+      g[i] = xi;
   }
 }
 
-void CPROD (Int * n, Int * m, Bool * getder, Real * x, Int * mmax, Real * y, Real * p, Real * q) {
-  Real unused = x[0];
-  unused = x[0];
+//H(x,y) = 2*I
+void CPROD (Int * n, Int * m, Bool * getder, Real * , Int * mmax, Real * y, Real * p, Real * q) {
   if ( (*getder == 0) || (*getder == 1) ) {
-    if ( (*n != 2) || (*m != 1) || (*mmax < *m) )
+    if ( (*m != 1) || (*mmax < *m) )
       return;
-    q[0] = ( -12*x[0]*x[0] + 2 * y[0]) * p[0];
-    q[1] = ( -12*x[1]*x[1] + 0.5 * y[0]) * p[1];
+    for (Int i = 0; i < *n; i++)
+      q[i] = (1 - 2*y[0]*(i+1))*p[i];
   }
 }
 
 void CFN (Int * n, Int * m, Real * x, Real * f, Int * mmax, Real * c) {
-  Real xi = 0, xi2 = 0;
+  Real xi = 0;
   *f = 0;
   for (Int i = 0; i < *n; i++) {
     xi = x[i];
-    xi2 = xi*xi;
-    *f -= xi2*xi2;
+    *f += 0.5*xi*xi;
   }
   if (*m != 1)
     return;
   if (*mmax < 1)
     return;
-  c[0] = x[0]*x[0] + (x[1] - 1)*(x[1] - 1)/4 - 1;
+  c[0] = r*r;
+  for (Int i = 0; i < *n; i++) {
+    Real xi = x[i];
+    c[0] -= xi*xi*(i+1);
+  }
 }
 
 void CCFSG (Int * n, Int * m, Real * x, Int * mmax, Real * c, Int * nnzJ, Int * jmax, Real * J, Int * indvar, Int * indfun, Bool * Grad) {
-  c[0] = x[0]*x[0] + (x[1] - 1)*(x[1] - 1)/4 - 1;
+  c[0] = r*r;
+  for (Int i = 0; i < *n; i++) {
+    Real xi = x[i];
+    c[0] -= xi*xi*(i+1);
+  }
   if (*Grad == dciFalse)
-    return;
-  Int i = 0;
-  if (*n != 2)
     return;
   if (*m != 1)
     return;
@@ -69,26 +80,25 @@ void CCFSG (Int * n, Int * m, Real * x, Int * mmax, Real * c, Int * nnzJ, Int * 
     return;
   if (*jmax < 0)
     return;
-  if (x[0] != 0) {
-    J[i] = 2*x[0];
-    indvar[i] = 0;
-    indfun[i] = 0;
-    i++;
+  Int k = 0;
+  for (Int i = 0; i < *n; i++) {
+    Real xi = x[i];
+    if (xi != 0) {
+      J[k] = -2*(i+1)*xi;
+      indvar[k] = i;
+      indfun[k] = 0;
+      k++;
+    }
   }
-  if (x[1] != 1) {
-    J[i] = (x[1] - 1)/2;
-    indvar[i] = 1;
-    indfun[i] = 0;
-    i++;
-  }
-  *nnzJ = i;
+  *nnzJ = k;
 }
 
 int main () {
-  Int n = 2, m = 1;
+  Int n = 10, m = 1;
   DCI::Interface dci;
-  Real x[n], bl[n], bu[n];
+  Real x[n], bl[n], bu[n], sol[n];
   Real y[m], cl[m], cu[m];
+  Bool equatn[m];
 
   dci.set_cofg (COFG);
   dci.set_cprod (CPROD);
@@ -96,23 +106,28 @@ int main () {
   dci.set_ccfsg (CCFSG);
 
   for (Int i = 0; i < n; i++) {
-    x[i] = (i + 1)*(i + 2);
+    x[i] = 1;
+    sol[i] = 0;
     bl[i] = -dciInf;
     bu[i] = dciInf;
   }
+  sol[n - 1] = r/sqrt(n);
   
-  for (int i = 0; i < m; i++) {
+  for (Int i = 0; i < m; i++) {
     y[i] = 0;
-    cl[i] = -dciInf;
-    cu[i] = dciInf;
+    cl[i] = 0;
+    cu[i] = 0;
+    equatn[i] = dciTrue;
   }
 
   dci.set_x (n, x);
+  dci.set_sol (n, sol);
   dci.set_bl (n, bl);
   dci.set_bu (n, bu);
   dci.set_lambda (m, y);
   dci.set_cl (m, cl);
   dci.set_cu (m, cu);
+  dci.set_equatn (m, equatn);
 
   dci.start ();
   dci.solve ();

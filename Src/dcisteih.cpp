@@ -31,6 +31,7 @@ namespace DCI {
     delta2 = DeltaH*DeltaH;
     qd = 0;
     dtd = 0;
+
     r.scale (*gp, -1);
     theta0 = r.dot (r);
     p = r;

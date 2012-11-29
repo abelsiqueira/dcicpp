@@ -55,7 +55,7 @@ namespace DCI {
           << "  rho    = " << rho << std::endl
           << "----------------------" << std::endl;
     }
-    if ( (nvar + ncon < 10) && (VerboseLevel > 1) ) {
+    if ( (nvar + ncon <= 20) && (VerboseLevel > 1) ) {
       std::cout << "x = " << std::endl;
       x->print_more();
       std::cout << "xc = " << std::endl;
@@ -81,7 +81,8 @@ namespace DCI {
     Real ydif = 0;
 
     while ( ( (cnormi > csic) || 
-              ( (normgp > csig) && (ngp > csig*1e-2) ) || 
+              ( (normgp > csig) && 
+                (ngp > csig*1e-2) ) || 
               (mu > epsmu) || 
               (gap > epsgap) || 
               (ydif > 1e-6) ) && 
@@ -153,6 +154,7 @@ namespace DCI {
           << "  |gp|   = " << gp->norm () << std::endl
           << "  |g|    = " << g->norm () << std::endl
           << "  ngp    = " << ngp << std::endl
+          << "  f_scale= " << objfun_scale << std::endl
           << "  rho    = " << rho << std::endl
           << "  rhomax = " << rhomax << std::endl
           << "  mu     = " << mu << std::endl
@@ -170,7 +172,7 @@ namespace DCI {
           << "  stepsize = " << (*x - *xc).norm() << std::endl
           << "----------------------" << std::endl;
     }
-    if ( (nvar + ncon < 10) && (VerboseLevel > 1) ) {
+    if ( (nvar + ncon <= 20) && (VerboseLevel > 1) ) {
       std::cout << "x = " << std::endl;
       x->print_more();
       std::cout << "xc = " << std::endl;
@@ -266,6 +268,7 @@ namespace DCI {
             << "  |gp|   = " << gp->norm () << std::endl
             << "  |g|    = " << g->norm () << std::endl
             << "  ngp    = " << ngp << std::endl
+            << "  f_scale= " << objfun_scale << std::endl
             << "  rho    = " << rho << std::endl
             << "  rhomax = " << rhomax << std::endl
             << "  mu     = " << mu << std::endl
@@ -283,7 +286,7 @@ namespace DCI {
             << "  stepsize = " << (*x - *xc).norm() << std::endl
             << "----------------------" << std::endl;
       }
-      if ( (nvar + ncon < 10) && (VerboseLevel > 1) ) {
+      if ( (nvar + ncon <= 20) && (VerboseLevel > 1) ) {
         std::cout << "x = " << std::endl;
         x->print_more();
         std::cout << "xc = " << std::endl;

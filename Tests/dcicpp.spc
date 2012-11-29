@@ -54,5 +54,6 @@ c1 0.5
 c2 5e-1
 MaxTime 6000
 minBk 1e-12
-DisplayLevel 1
+DisplayLevel 0
 VerboseLevel 0
+UseObjfunScale 1

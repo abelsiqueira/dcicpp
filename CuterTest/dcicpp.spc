@@ -1,4 +1,4 @@
-maxit 200
+maxit 200000
 maxrest 200000
 MaxTime 60
 PartialPenal 1
@@ -13,7 +13,7 @@ penal_bfgs 0
 MaxDiag 1e3
 MinDiag 0
 VerboseLevel 0
-DisplayLevel 0
+DisplayLevel 2
 UseVertInteriorPoint 1
 ScaleVertical 0
 UseVertSafeguard 0
@@ -27,3 +27,4 @@ phi2 0.45
 alphaR 0.75 
 alphaI 2.5 
 alphaS 0.0625
+UseObjfunScale 1

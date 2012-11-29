@@ -15,7 +15,7 @@ GROUP.f
 OUTSDIF.d
 AUTOMAT.d
 RANGE.f
-lixo
+lixo*
 CuterTest/Results
 CuterTest
 Src/temp.cpp

@@ -31,6 +31,14 @@ namespace DCI {
       return a;
   }
 
+  template <typename T >
+  T AbsValue (T x) {
+    if (x > 0)
+      return x;
+    else
+      return -x;
+  }
+
 }
 
 #endif
