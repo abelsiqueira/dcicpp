@@ -167,18 +167,12 @@ namespace DCI {
 
     //Remove later if needed
 //    call_ccfsg_xc (dciTrue, dciFalse);
-    call_ccfsg_xc (dciTrue, ScaleVertical);
+    call_ccfsg_xc (dciTrue, dciFalse);
     Aavail = dciFalse;
 
     //This method uses the Porcelli scale matrix
     Real scalingMatrix[nvar + nconI];
-    Vector Diag(*env);
-    Diag.reset(nvar + nconI, 1.0);
-    if (ScaleVertical) scale_xc(Diag);
-    pReal Diagx = Diag.get_doublex();
-
     gtmp.sdmult (*J, 1, one, zero, ctmp); // g = J'*c
-//    scale_xc(gtmp);
     pReal gtmpx = gtmp.get_doublex();
     for (Int i = 0; i < nvar; i++) {
       Real gi = gtmpx[i], zi = xcx[i], ui = bux[i], li = blx[i];
@@ -218,14 +212,14 @@ namespace DCI {
     Real lower[nvar + nconI], upper[nvar + nconI];
     for (Int i = 0; i < nvar; i++) {
       Real zi = xcx[i], li = blx[i], ui = bux[i];
-      lower[i] = Max( -DeltaV, (li > -dciInf ? (li - zi) * (1 - epsmu)/Diagx[i] : -dciInf) );
-      upper[i] = Min( DeltaV, (ui < dciInf ? (ui - zi) * (1 - epsmu)/Diagx[i] : dciInf) );
+      lower[i] = Max( -DeltaV, (li > -dciInf ? (li - zi) * (1 - epsmu) : -dciInf) );
+      upper[i] = Min( DeltaV, (ui < dciInf ? (ui - zi) * (1 - epsmu) : dciInf) );
     }
     for (Int i = 0; i < nconI; i++) {
       Int j = nvar + i;
       Real zi = scx[i], li = clx[ineqIdx[i]], ui = cux[ineqIdx[i]];
-      lower[j] = Max( -DeltaV, (li > -dciInf ? (li - zi) * (1 - epsmu)/Diagx[j] : -dciInf) );
-      upper[j] = Min( DeltaV, (ui < dciInf ? (ui - zi) * (1 - epsmu)/Diagx[j] : dciInf) );
+      lower[j] = Max( -DeltaV, (li > -dciInf ? (li - zi) * (1 - epsmu) : -dciInf) );
+      upper[j] = Min( DeltaV, (ui < dciInf ? (ui - zi) * (1 - epsmu) : dciInf) );
     }
     Vector aux(*env);
     d = gtmp;
@@ -236,8 +230,6 @@ namespace DCI {
       gtmpx[i] /= scalingMatrix[i];
       dx[i] = -dx[i]/pow(scalingMatrix[i], 2);
     }
-
-    if (ScaleVertical) scale_xc (d);
 
     aux.sdmult(*J, 0, one, zero, d);
     alpha = Min(gtmp.dot(gtmp)/aux.dot(aux), DeltaV/gtmp.norm());
@@ -250,9 +242,9 @@ namespace DCI {
     for (int i = 0; i < nvar + nconI; i++) {
       Real di = dcpx[i], ui = upper[i], li = lower[i];
       if (di > dciEps) {
-        alpha = Min(alpha, ui/(Diagx[i]*di));
+        alpha = Min(alpha, ui/(di));
       } else if (di < -dciEps) {
-        alpha = Min(alpha, li/(Diagx[i]*di));
+        alpha = Min(alpha, li/(di));
       } else
         dcpx[i] = 0;
     }
@@ -264,8 +256,6 @@ namespace DCI {
 /*     for (Int i = 0; i < nvar + nconI; i++)
  *       dcpx[i] *= scalingMatrix[i];
  */
-    if (ScaleVertical) scale_xc (dcp);
-
     dnavail = dciFalse;
     ndn = 0;
     Ared = 0;
@@ -303,7 +293,6 @@ namespace DCI {
  */
 
         dnavail = dciTrue;
-        if (ScaleVertical) scale_xc (dn);
 
         dnx = dn.get_doublex();
         //Project this step
@@ -357,7 +346,7 @@ namespace DCI {
       Vector xtemp(*xc), stemp((nconI ? *sc : *env));
 
       for (Int i = 0; i < nvar; i++) {
-        xcx[i] += Diagx[i]*(factor*dnx[i] + (1 - factor)*dcpx[i]);
+        xcx[i] += (factor*dnx[i] + (1 - factor)*dcpx[i]);
         if (xcx[i] == bux[i])
           xcx[i] = bux[i] - dciEps;
         else if (xcx[i] == blx[i])
@@ -365,7 +354,7 @@ namespace DCI {
       }
       for (Int i = 0; i < nconI; i++) {
         Int j = nvar + i;
-        scx[i] += Diagx[j]*(factor*dnx[j] + (1 - factor)*dcpx[j]);
+        scx[i] += (factor*dnx[j] + (1 - factor)*dcpx[j]);
         if (scx[i] == cux[ineqIdx[i]])
           scx[i] = cux[ineqIdx[i]] - dciEps;
         else if (scx[i] == clx[ineqIdx[i]])

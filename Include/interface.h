@@ -127,6 +127,8 @@ namespace DCI {
 #ifndef NDEBUG
       void checkInfactibility ();
 #endif
+      void UpdateScaling_x ();
+      void UpdateScaling_xc ();
       void scale_x (Vector &);
       void scale_xc (Vector &);
       void project_bounds_x (Vector &);
@@ -177,6 +179,7 @@ namespace DCI {
       pReal yineqx;
 
       Int * ineqIdx;
+      Real * Lambda; // Scaling matrix
 
       Real Lref, Lprev, Lc, Ln, Lnew;
       Real DLV, DLH;

@@ -172,6 +172,7 @@ namespace DCI {
 
       CurrentTime = getTime() - StartTime;
     }
+    UpdateScaling_x();
 
     normc = newnormc;
 

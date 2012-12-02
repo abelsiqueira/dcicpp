@@ -73,6 +73,7 @@ namespace DCI {
     delpointer (Jtrip);
     delpointer (LJ);
     delpointer (env); 
+    delpointer (Lambda);
   }
 
   int Interface::start () {
@@ -670,14 +671,10 @@ namespace DCI {
       }
 
       if (Running) {
-        Vector Diag(*env);
-        Diag.reset (nvar + nconI, 1);
-        pReal Diagx = Diag.get_doublex();
         if (scale) { 
-          scale_x (Diag);
           for (Int k = 0; k < *nnzj; k++) {
             Int j = Jj[k];
-            Jx[k] *= Diagx[j];
+            Jx[k] *= Lambda[j];
           }
         }
         Int numI = 0, j = nvar;
@@ -686,7 +683,7 @@ namespace DCI {
             Real si = sx[numI];
             cx[i] -= si;
             if (scale)
-              Jx[*nnzj] = -Diagx[j];
+              Jx[*nnzj] = -Lambda[j];
             else
               Jx[*nnzj] = -1;
             Jj[*nnzj] = j;
@@ -755,15 +752,10 @@ namespace DCI {
       }
 
       if (Running) {
-        Vector Diag(*env);
-        Diag.reset (nvar + nconI, 1);
-        pReal Diagx = Diag.get_doublex();
         if (scale) {
-          scale_xc (Diag);
-
           for (Int k = 0; k < *nnzj; k++) {
             Int j = Jj[k];
-            Jx[k] *= Diagx[j];
+            Jx[k] *= Lambda[j];
           }
         }
         Int numI = 0, j = nvar;
@@ -772,7 +764,7 @@ namespace DCI {
             Real si = scx[numI];
             cx[i] -= si;
             if (scale)
-              Jx[*nnzj] = -Diagx[j];
+              Jx[*nnzj] = -Lambda[j];
             else
               Jx[*nnzj] = -1;
             Jj[*nnzj] = j;
@@ -832,21 +824,7 @@ namespace DCI {
   void Interface::call_prod (Bool gotder, pReal px, pReal ux) {
     Real ppx[nvar];
     for (Int i = 0; i < nvar; i++) {
-      Real xi = xx[i], bli = blx[i], bui = bux[i], pxi = px[i];
-      if ( (bli > -dciInf) && (bui < dciInf) ) {
-        if (PartialPenal) {
-          if ( (xi - bli) < (bui - xi) )
-            ppx[i] = (xi - bli) * pxi;
-          else
-            ppx[i] = (bui - xi) * pxi;
-        } else
-          ppx[i] = (xi - bli) * (bui - xi) * pxi;
-      } else if ( (bli <= -dciInf) && (bui < dciInf) )
-        ppx[i] = (bui - xi) * pxi;
-      else if ( (bli > -dciInf) && (bui >= dciInf) )
-        ppx[i] = (xi - bli) * pxi;
-      else
-        ppx[i] = pxi;
+      ppx[i] = Lambda[i] * px[i];
     }
     if (objfun_scale != 1) {
       for (Int i = 0; i < ncon; i++)
@@ -863,58 +841,21 @@ namespace DCI {
         yx[i] /= objfun_scale;
     }
     for (Int i = 0; i < nvar; i++) {
-      Real xi = xx[i], bli = blx[i], bui = bux[i], pxi = px[i], uxi = ux[i];
-      if ( (bli > -dciInf) && (bui < dciInf) ) {
-        if (PartialPenal) {
-          if ( (xi - bli) < (bui - xi) )
-            ux[i] = (xi - bli) * uxi + mu * pxi;
-          else
-            ux[i] = (bui - xi) * uxi + mu * pxi;
-        } else
-          ux[i] = (xi - bli) * (bui - xi) * uxi + mu * ( (xi - bli)*(xi - bli) + (xi - bui)*(xi - bui) ) * pxi;
-      } else if ( (bli <= -dciInf) && (bui < dciInf) )
-        ux[i] = (bui - xi) * uxi + mu * pxi;
-      else if ( (bli > -dciInf) && (bui >= dciInf) )
-        ux[i] = (xi - bli) * uxi + mu * pxi;
+      ux[i] *= Lambda[i];
+      Real li = blx[i], ui = bux[i], pxi = px[i];
+      if (li > -dciInf || ui < dciInf)
+        ux[i] += mu * pxi;
     }
     for (Int i = 0; i < nconI; i++) {
       Int j = nvar + i;
-      Real si = sx[i], cli = clx[ineqIdx[i]], cui = cux[ineqIdx[i]], pxi = px[j];
-      if ( (cli > -dciInf) && (cui < dciInf) ) {
-        if (PartialPenal) {
-          if ( (si - cli) < (cui - si) )
-            ux[j] = Max(mu, minBk) * pxi;
-          else
-            ux[j] = Max(mu, minBk) * pxi;
-        } else
-          ux[j] = Max(mu,minBk) * ( (si - cli)*(si - cli) + (si - cui)*(si - cui) ) * pxi;
-      } else if ( (cli <= -dciInf) && (cui < dciInf) )
-        ux[j] = Max(mu,minBk) * pxi;
-      else if ( (cli > -dciInf) && (cui >= dciInf) )
-        ux[j] = Max(mu,minBk) * pxi;
-      else
-        ux[j] = minBk;
+      ux[j] = Max(mu, minBk) * px[j];
     }
   }
 
   void Interface::call_prod_xc (Bool gotder, pReal px, pReal ux) {
     Real ppx[nvar];
     for (Int i = 0; i < nvar; i++) {
-      Real xi = xcx[i], bli = blx[i], bui = bux[i], pxi = px[i];
-      if ( (bli > -dciInf) && (bui < dciInf) ) {
-        if (PartialPenal) {
-          if ( (xi - bli) < (bui - xi) )
-            ppx[i] = (xi - bli) * pxi;
-          else
-            ppx[i] = (bui - xi) * pxi;
-        } else
-          ppx[i] = (xi - bli) * (bui - xi) * pxi;
-      } else if ( (bli <= -dciInf) && (bui < dciInf) )
-        ppx[i] = (bui - xi) * pxi;
-      else if ( (bli > -dciInf) && (bui >= dciInf) )
-        ppx[i] = (xi - bli) * pxi;
-      else
-        ppx[i] = pxi;
+      ppx[i] = Lambda[i] * px[i];
     }
     if (objfun_scale != 1) {
       for (Int i = 0; i < ncon; i++)
@@ -931,34 +872,14 @@ namespace DCI {
         yx[i] /= objfun_scale;
     }
     for (Int i = 0; i < nvar; i++) {
-      Real xi = xcx[i], bli = blx[i], bui = bux[i], pxi = px[i], uxi = ux[i];
-      if ( (bli > -dciInf) && (bui < dciInf) ) {
-        if (PartialPenal) {
-          if ( (xi - bli) < (bui - xi) )
-            ux[i] = (xi - bli) * uxi + mu * pxi;
-          else
-            ux[i] = (bui - xi) * uxi + mu * pxi;
-        } else
-          ux[i] = (xi - bli) * (bui - xi) * uxi + mu * ( (xi - bli)*(xi - bli) + (xi - bui)*(xi - bui) ) * pxi;
-      } else if ( (bli <= -dciInf) && (bui < dciInf) )
-        ux[i] = (bui - xi) * uxi + mu * pxi;
-      else if ( (bli > -dciInf) && (bui >= dciInf) )
-        ux[i] = (xi - bli) * uxi + mu * pxi;
+      ux[i] *= Lambda[i];
+      Real li = blx[i], ui = bux[i], pxi = px[i];
+      if (li > -dciInf || ui < dciInf)
+        ux[i] += mu * pxi;
     }
     for (Int i = 0; i < nconI; i++) {
       Int j = nvar + i;
-      Real si = scx[i], cli = clx[ineqIdx[i]], cui = cux[ineqIdx[i]], pxi = px[j];
-      if ( (cli > -dciInf) && (cui < dciInf) ) {
-        if (PartialPenal)
-          ux[j] = Max(mu, minBk) * pxi;
-        else
-          ux[j] = Max(mu,minBk) * ( (si - cli)*(si - cli) + (si - cui)*(si - cui) ) * pxi;
-      } else if ( (cli <= -dciInf) && (cui < dciInf) )
-        ux[j] = Max(mu,minBk) * pxi;
-      else if ( (cli > -dciInf) && (cui >= dciInf) )
-        ux[j] = Max(mu,minBk) * pxi;
-      else
-        ux[j] = minBk;
+      ux[j] = Max(mu, minBk) * px[j];
     }
   }
 

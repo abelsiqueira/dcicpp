@@ -293,7 +293,7 @@ namespace DCI {
           cholCorrection *= 100;
         if (cholCorrection > 1e6)
           break;
-        call_ccfsg_xc (dciTrue, ScaleVertical);
+        call_ccfsg_xc (dciTrue, dciFalse);
         dmumps_c(&id);
         if (id.info[0] != -10)
           FailedMumps = dciFalse;;
@@ -363,7 +363,7 @@ namespace DCI {
           cholCorrection *= 100;
         if (cholCorrection > 1e6)
           break;
-        call_ccfsg_xc (dciTrue, ScaleVertical);
+        call_ccfsg_xc (dciTrue, dciFalse);
         dmumps_c(&id);
         if (id.info[0] != -10)
           FailedMumps = dciFalse;;
@@ -381,72 +381,88 @@ namespace DCI {
     return 0;
   }
 
-  void Interface::scale_x (Vector & V) {
-    pReal Vx = V.get_doublex ();
+  void Interface::UpdateScaling_x () {
+    if (Lambda == 0)
+      Lambda = new Real[nvar + nconI];
 
     for (Int i = 0; i < nvar; i++) {
       Real zi = xx[i], Li = blx[i], Ui = bux[i];
-      if ( (PartialPenal) && (Li > -dciInf) && (Ui < dciInf) ) {
-        if ( (zi - Li) < (Ui - zi) )
-          Vx[i] *= Min(MaxDiag, Max(MinDiag, zi - Li));
+      if ( Li > -dciInf && Ui < dciInf ) {
+        if ( zi < (Li + Ui)/2 )
+          Lambda[i] = Min(MaxDiag, Max(MinDiag, zi - Li));
         else
-          Vx[i] *= Min(MaxDiag, Max(MinDiag, Ui - zi));
-        continue;
-      }
-      if (Li > -dciInf)
-        Vx[i] *= Min(MaxDiag, Max(MinDiag, zi - Li));
-      if (Ui < dciInf)
-        Vx[i] *= Min(MaxDiag, Max(MinDiag, Ui - zi));
+          Lambda[i] = Min(MaxDiag, Max(MinDiag, Ui - zi));
+      } else if (Li > -dciInf)
+        Lambda[i] = Min(MaxDiag, Max(MinDiag, zi - Li));
+      else if (Ui < dciInf)
+        Lambda[i] = Min(MaxDiag, Max(MinDiag, Ui - zi));
+      else
+        Lambda[i] = 1.0;
     }
     for (Int i = 0; i < nconI; i++) {
       Real zi = sx[i], Li = clx[ineqIdx[i]], Ui = cux[ineqIdx[i]];
       Int j = nvar + i;
-      if ( (PartialPenal) && (Li > -dciInf) && (Ui < dciInf) ) {
-        if ( (zi - Li) < (Ui - zi) )
-          Vx[j] *= Min(MaxDiag, Max(MinDiag, zi - Li));
+      if ( Li > -dciInf && Ui < dciInf ) {
+        if ( zi < (Li + Ui)/2 )
+          Lambda[j] = Min(MaxDiag, Max(MinDiag, zi - Li));
         else
-          Vx[j] *= Min(MaxDiag, Max(MinDiag, Ui - zi));
-        continue;
-      }
-      if (Li > -dciInf)
-        Vx[j] *= Min(MaxDiag, Max(MinDiag, zi - Li));
-      if (Ui < dciInf)
-        Vx[j] *= Min(MaxDiag, Max(MinDiag, Ui - zi));
+          Lambda[j] = Min(MaxDiag, Max(MinDiag, Ui - zi));
+      } else if (Li > -dciInf)
+        Lambda[j] = Min(MaxDiag, Max(MinDiag, zi - Li));
+      else if (Ui < dciInf)
+        Lambda[j] = Min(MaxDiag, Max(MinDiag, Ui - zi));
+      else
+        Lambda[j] = 1.0;
+    }
+  }
+
+  void Interface::scale_x (Vector & V) {
+    pReal Vx = V.get_doublex ();
+
+    for (Int i = 0; i < nvar + nconI; i++)
+      Vx[i] *= Lambda[i];
+  }
+
+  void Interface::UpdateScaling_xc () {
+    if (Lambda == 0)
+      Lambda = new Real[nvar + nconI];
+
+    for (Int i = 0; i < nvar; i++) {
+      Real zi = xcx[i], Li = blx[i], Ui = bux[i];
+      if ( Li > -dciInf && Ui < dciInf ) {
+        if ( zi < (Li + Ui)/2 )
+          Lambda[i] = Min(MaxDiag, Max(MinDiag, zi - Li));
+        else
+          Lambda[i] = Min(MaxDiag, Max(MinDiag, Ui - zi));
+      } else if (Li > -dciInf)
+        Lambda[i] = Min(MaxDiag, Max(MinDiag, zi - Li));
+      else if (Ui < dciInf)
+        Lambda[i] = Min(MaxDiag, Max(MinDiag, Ui - zi));
+      else
+        Lambda[i] = 1.0;
+    }
+    for (Int i = 0; i < nconI; i++) {
+      Real zi = scx[i], Li = clx[ineqIdx[i]], Ui = cux[ineqIdx[i]];
+      Int j = nvar + i;
+      if ( Li > -dciInf && Ui < dciInf ) {
+        if ( zi < (Li + Ui)/2 )
+          Lambda[j] = Min(MaxDiag, Max(MinDiag, zi - Li));
+        else
+          Lambda[j] = Min(MaxDiag, Max(MinDiag, Ui - zi));
+      } else if (Li > -dciInf)
+        Lambda[j] = Min(MaxDiag, Max(MinDiag, zi - Li));
+      else if (Ui < dciInf)
+        Lambda[j] = Min(MaxDiag, Max(MinDiag, Ui - zi));
+      else
+        Lambda[j] = 1.0;
     }
   }
 
   void Interface::scale_xc (Vector & V) {
     pReal Vx = V.get_doublex ();
 
-    for (Int i = 0; i < nvar; i++) {
-      Real zi = xcx[i], Li = blx[i], Ui = bux[i];
-      if ( (PartialPenal) && (Li > -dciInf) && (Ui < dciInf) ) {
-        if ( (zi - Li) < (Ui - zi) )
-          Vx[i] *= Min(MaxDiag, Max(MinDiag, zi - Li));
-        else
-          Vx[i] *= Min(MaxDiag, Max(MinDiag, Ui - zi));
-        continue;
-      }
-      if (Li > -dciInf)
-        Vx[i] *= Min(MaxDiag, Max(MinDiag, zi - Li));
-      if (Ui < dciInf)
-        Vx[i] *= Min(MaxDiag, Max(MinDiag, Ui - zi));
-    }
-    for (Int i = 0; i < nconI; i++) {
-      Real zi = scx[i], Li = clx[ineqIdx[i]], Ui = cux[ineqIdx[i]];
-      Int j = nvar + i;
-      if ( (PartialPenal) && (Li > -dciInf) && (Ui < dciInf) ) {
-        if ( (zi - Li) < (Ui - zi) )
-          Vx[j] *= Min(MaxDiag, Max(MinDiag, zi - Li));
-        else
-          Vx[j] *= Min(MaxDiag, Max(MinDiag, Ui - zi));
-        continue;
-      }
-      if (Li > -dciInf)
-        Vx[j] *= Min(MaxDiag, Max(MinDiag, zi - Li));
-      if (Ui < dciInf)
-        Vx[j] *= Min(MaxDiag, Max(MinDiag, Ui - zi));
-    }
+    for (Int i = 0; i < nvar + nconI; i++)
+      Vx[i] *= Lambda[i];
   }
 
   void Interface::updyineq () { //This is -mu*Penalization on obj fun

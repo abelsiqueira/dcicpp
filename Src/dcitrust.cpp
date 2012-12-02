@@ -113,16 +113,12 @@ namespace DCI {
         assert (alpha > 0);
       } 
     } else {
-      Vector Diag(*env);
-      Diag.reset(nvar + nconI, 1.0);
-      scale_xc(Diag);
-      pReal Diagx = Diag.get_doublex();
       for (Int i = 0; i < nvar + nconI; i++) {
         Real gtmpi = gtmpx[i];
         if (gtmpi > 0)
-          alpha = Min (alpha, upper[i]/(Diagx[i]*gtmpi));
+          alpha = Min (alpha, upper[i]/(Lambda[i]*gtmpi));
         else if (gtmpi < 0)
-          alpha = Min (alpha, lower[i]/(Diagx[i]*gtmpi));
+          alpha = Min (alpha, lower[i]/(Lambda[i]*gtmpi));
         assert (alpha > 0);
       } 
     }

@@ -39,21 +39,16 @@ namespace DCI {
     gtd = 0;
     nSteih = 0;
 
-    std::vector<Real> tmpDiag (nvar + nconI, 1);
-    Vector Diag(*env, tmpDiag);
-    pReal Diagx = Diag.get_doublex();
-    scale_xc (Diag);
-
     for (Int i = 0; i < nvar; i++) {
       Real xi = xcx[i], bli = blx[i], bui = bux[i];
-      lower[i] = Max( (bli - xi) * (1 - epsmu)/Diagx[i], -DeltaH/Diagx[i] );
-      upper[i] = Min( (bui - xi) * (1 - epsmu)/Diagx[i], DeltaH/Diagx[i] );
+      lower[i] = Max( (bli - xi) * (1 - epsmu)/Lambda[i], -DeltaH/Lambda[i] );
+      upper[i] = Min( (bui - xi) * (1 - epsmu)/Lambda[i], DeltaH/Lambda[i] );
     }
     for (Int i = 0; i < nconI; i++) {
       Real si = scx[i], cli = clx[ineqIdx[i]], cui = cux[ineqIdx[i]];
       Int j = nvar + i;
-      lower[j] = Max( (cli - si) * (1 - epsmu)/Diagx[j], -DeltaH/Diagx[j] );
-      upper[j] = Min( (cui - si) * (1 - epsmu)/Diagx[j], DeltaH/Diagx[j] );
+      lower[j] = Max( (cli - si) * (1 - epsmu)/Lambda[j], -DeltaH/Lambda[j] );
+      upper[j] = Min( (cui - si) * (1 - epsmu)/Lambda[j], DeltaH/Lambda[j] );
     }
 
 
@@ -67,7 +62,7 @@ namespace DCI {
       ptp = p.dot (p);
       ptp = 0.0;
       for (Int i = 0; i < nvar + nconI; i++) {
-        ptp += pow(px[i]*Diagx[i], 2);
+        ptp += pow(px[i]*Lambda[i], 2);
       }
 
       if (gamma <= eps3*ptp) {
@@ -109,7 +104,7 @@ namespace DCI {
       dtdnew = 0.0;
       pReal dnewx = dnew.get_doublex();
       for (Int i = 0; i < nvar + nconI; i++) {
-        dtdnew += pow(dnewx[i]*Diagx[i], 2);
+        dtdnew += pow(dnewx[i]*Lambda[i], 2);
       }
       bool outsideRegion = false;
       for (Int i = 0; i < nvar + nconI; i++)  {

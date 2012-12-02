@@ -165,7 +165,7 @@ namespace DCI {
 //          std::cout << "Entering fail at dcivert" << std::endl;
 #endif
         
-          call_ccfsg_xc (dciTrue, ScaleVertical);
+          call_ccfsg_xc (dciTrue, dciFalse);
           if (normc > 0 && infeasible_gradient/normc < 1e-6)
             VertFlag = 2;
 
@@ -178,7 +178,7 @@ namespace DCI {
           // dcivert failed. Recompute A
 
           if (!Linear) {
-            call_ccfsg_xc (dciTrue, ScaleVertical); //CuterJacob
+            call_ccfsg_xc (dciTrue, dciFalse); //CuterJacob
           }
           Aavail = dciTrue;
           oldAcnt = 0;

@@ -289,6 +289,7 @@ namespace DCI {
     murho = 1;
     mugap = 1;
     LimLbd = dciTrue;
+    Lambda = 0;
 
     //Strategy choices
     UseCG = dciFalse;
@@ -353,6 +354,7 @@ namespace DCI {
         sx[i] = Max ( Min ( cxi, cui - smldelta ), cli + smldelta );
         scx[i] = sx[i];
       }
+      UpdateScaling_x();
 
       Running = dciTrue;
       // Now, adding s.
@@ -375,6 +377,7 @@ namespace DCI {
       Ln = *f + y->dot (*c);
     } else { //No constraints, may have bounds on the variables
       Running = dciTrue; //If there are bounds, this will get them.
+      UpdateScaling_x();
       call_ofg ();
       normc = 0;
       Ln = *f;

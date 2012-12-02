@@ -105,7 +105,9 @@ namespace DCI {
       if (DeltaH < DeltaMin) DeltaH = DeltaMin;
       if (DeltaV < DeltaMin) DeltaV = DeltaMin;
 
+      UpdateScaling_x();
       vertstep (); //Recalculates f, g and c
+      UpdateScaling_xc();
 
 #ifdef LOCALTEST
       ngpzck = gp->norm();
@@ -208,6 +210,7 @@ namespace DCI {
            (!Unlimited) && 
            (CurrentTime < MaxTime) ) {
 
+        UpdateScaling_xc();
         horzstep (norms); 
 #ifndef NDEBUG
         checkInfactibility();
@@ -236,7 +239,7 @@ namespace DCI {
         if (Ineq)
           *s = *sc;
         *f = *fxc;
-      } 
+      }
       updyineq ();
       gap = calc_gap ();
 
