@@ -660,6 +660,7 @@ namespace DCI {
   }
 
   void Interface::call_ccfsg (Bool grad, Bool scale) {
+    UpdateScaling_x();
     pInt nnzj = new Int(0);
     (*ccfsg) (&nvar, &ncon, xx, &mmax, cx, nnzj, &amax, Jx, Jj, Ji, &grad);
     if (grad == dciTrue) {
@@ -741,6 +742,7 @@ namespace DCI {
   }
   
   void Interface::call_ccfsg_xc (Bool grad, Bool scale) {
+    UpdateScaling_xc();
     pInt nnzj = new Int(0);
     (*ccfsg) (&nvar, &ncon, xcx, &mmax, cx, nnzj, &amax, Jx, Jj, Ji, &grad);
     if (grad == dciTrue) {
@@ -822,6 +824,7 @@ namespace DCI {
   }
 
   void Interface::call_prod (Bool gotder, pReal px, pReal ux) {
+    UpdateScaling_x();
     Real ppx[nvar];
     for (Int i = 0; i < nvar; i++) {
       ppx[i] = Lambda[i] * px[i];
@@ -853,6 +856,7 @@ namespace DCI {
   }
 
   void Interface::call_prod_xc (Bool gotder, pReal px, pReal ux) {
+    UpdateScaling_xc();
     Real ppx[nvar];
     for (Int i = 0; i < nvar; i++) {
       ppx[i] = Lambda[i] * px[i];
