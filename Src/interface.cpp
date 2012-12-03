@@ -74,6 +74,7 @@ namespace DCI {
     delpointer (LJ);
     delpointer (env); 
     delpointer (Lambda);
+    delpointer (initial_x);
   }
 
   int Interface::start () {
@@ -391,6 +392,11 @@ namespace DCI {
     xx = x->get_doublex();
     xc = new Vector (*env, n, V);
     xcx = xc->get_doublex();
+    initial_x = new Real[n];
+    for (Int i = 0; i < n; i++) {
+      initial_x[i] = Max(1.0, AbsValue(xx[i]));
+    }
+
   }
 
   void Interface::set_sol (size_t n, Real * V) {

@@ -180,6 +180,7 @@ namespace DCI {
 
       Int * ineqIdx;
       Real * Lambda; // Scaling matrix
+      Real * initial_x;
 
       Real Lref, Lprev, Lc, Ln, Lnew;
       Real DLV, DLH;

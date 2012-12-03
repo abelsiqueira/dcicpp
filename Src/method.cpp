@@ -398,6 +398,8 @@ namespace DCI {
         Lambda[i] = Min(MaxDiag, Max(MinDiag, Ui - zi));
       else
         Lambda[i] = 1.0;
+
+      Lambda[i] *= initial_x[i];
     }
     for (Int i = 0; i < nconI; i++) {
       Real zi = sx[i], Li = clx[ineqIdx[i]], Ui = cux[ineqIdx[i]];
@@ -440,6 +442,8 @@ namespace DCI {
         Lambda[i] = Min(MaxDiag, Max(MinDiag, Ui - zi));
       else
         Lambda[i] = 1.0;
+
+      Lambda[i] *= initial_x[i];
     }
     for (Int i = 0; i < nconI; i++) {
       Real zi = scx[i], Li = clx[ineqIdx[i]], Ui = cux[ineqIdx[i]];
