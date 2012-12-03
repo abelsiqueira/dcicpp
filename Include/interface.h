@@ -243,7 +243,7 @@ namespace DCI {
       //Interior Point Variables
 
       Real objfun_scale;
-      Bool UseObjfunScale;
+      Bool UseObjfunScale, UseVariableScaling;
   };
 }
 

@@ -394,7 +394,10 @@ namespace DCI {
     xcx = xc->get_doublex();
     initial_x = new Real[n];
     for (Int i = 0; i < n; i++) {
-      initial_x[i] = Max(1.0, AbsValue(xx[i]));
+      if (UseVariableScaling)
+        initial_x[i] = Max(1.0, AbsValue(xx[i]));
+      else
+        initial_x[i] = 1.0;
     }
 
   }
@@ -566,6 +569,7 @@ namespace DCI {
           gx[i] -= mu;
           val += log (xi - bli);
         }
+        gx[i] *= initial_x[i];
       }
       for (Int i = 0; i < nconI; i++) {
         Int j = nvar + i;
@@ -636,6 +640,7 @@ namespace DCI {
           gx[i] -= mu;
           val += log (xi - bli);
         }
+        gx[i] *= initial_x[i];
       }
       for (Int i = 0; i < nconI; i++) {
         Int j = nvar + i;
