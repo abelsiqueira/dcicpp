@@ -42,6 +42,7 @@ namespace DCI {
       void set_linear (size_t n, Bool *V);
 
       Real * get_x () const { return xx; }
+      Real   get_f () const { return *f; }
 
       // Internal set nvar, ncon, nmax, mmax
       void set_nvar (Int n) { nvar = n; };
