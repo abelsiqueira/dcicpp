@@ -4,7 +4,7 @@
 
 using namespace DCI;
 
-/* Let's make the problem HS34
+/* Loosened HS34
  * min -x1
  * s.t. cI(x) => 0
  *      l <= x <= u
@@ -23,6 +23,9 @@ using namespace DCI;
  *
  * Expected solution: 
  *
+ * sol = [log(log(10)), log(10), 10]
+ *     ~ [0.83403, 2.3026, 10]
+ * fsol = -log(log(10))
  *
  */
 

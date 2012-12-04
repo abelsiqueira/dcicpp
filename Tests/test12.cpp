@@ -23,6 +23,10 @@ using namespace DCI;
  *
  * Expected solution: 
  *
+ * sol = [log(log(10)), log(10), 10]
+ *     ~ [0.83403, 2.3026, 10]
+ * fsol = -log(log(10))
+ *
  *
  */
 

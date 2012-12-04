@@ -19,8 +19,9 @@ using namespace DCI;
  *
  * Expected solution:
  *
- * x = -r*sqrt( (1 - r^2) / (1 - r^4) ) * e;
- * lambda = 
+ * s = r/sqrt(r^2 + 1)
+ * x = [+- s; +- s] (4 solutions)
+ * f = -s^2 = -r^2/(r^2 + 1)
  *
  */
 
@@ -117,7 +118,7 @@ int main () {
 
   for (Int i = 0; i < n; i++) {
     x[i] = 1;
-    sol[i] = - r * sqrt( (1 - pow(r,2))/(1 - pow(r,4)) );
+    sol[i] = - r/sqrt(r*r+1);
     bl[i] = -dciInf;
     bu[i] = dciInf;
   }

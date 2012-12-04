@@ -15,6 +15,13 @@ using namespace DCI;
  *
  * cI(x) = x(2) - x(1)^3 + x(1)
  *
+ * One Solution:
+ * sol = [0;0]
+ * fsol = 1
+ *
+ * Global Solution:
+ * sol ~= [1.30697; 0.92556]
+ * fsol ~= 0.049989
  *
  */
 

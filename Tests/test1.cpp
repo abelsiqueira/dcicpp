@@ -1,4 +1,5 @@
 #include "dci.h"
+#include <cmath>
 
 using namespace DCI;
 
@@ -13,6 +14,7 @@ using namespace DCI;
  *
  * x = (1/n, ... , 1/n)
  * lambda = 2*(n-1)/n;
+ * f = (n-1)^2/n
  *
  */
 
@@ -80,6 +82,12 @@ int main () {
   Real y[m], cl[m], cu[m];
   Bool equatn[m];
 
+  Real sol[n], fsol;
+
+  for (Int i = 0; i < n; i++)
+    sol[i] = 1.0/n;
+  fsol = (n-1)*(n-1)/(1.0*n);
+
   dci.set_cofg (COFG);
   dci.set_cprod (CPROD);
   dci.set_cfn (CFN);
@@ -109,5 +117,13 @@ int main () {
   dci.start ();
   dci.solve ();
   dci.show();
+
+  pReal px = dci.get_x();
+  Real difnorm = 0.0;
+  for (Int i = 0; i < n; i++)
+    difnorm += pow(px[i] - sol[i], 2);
+  std::cout << "|x* - sol|^2 = " << difnorm << std::endl;
+  std::cout << "|f* - f| = " << DCI::AbsValue(dci.get_f() - fsol)
+    << std::endl;
 
 }

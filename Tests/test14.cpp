@@ -15,6 +15,16 @@ using namespace DCI;
  *      x >= 0
  *      x1 <= 1, x4 <= 1
  *
+ * Expected solution:
+ *
+ * sol = [0; 4/3; 5/3; 1; 2/3; 1/3]
+ * fsol = 19/3
+ *
+ * Alternative local solution
+ *
+ * sol = [1;5/3;1/3;0;1/3;5/3]
+ * fsol = 20/3
+ *
  */
 
 void COFG (Int * n, Real * x, Real * f, Real * g, Bool * grad) {

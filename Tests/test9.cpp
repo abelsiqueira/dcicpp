@@ -21,6 +21,9 @@ using namespace DCI;
  * l = [  0,   0,  2,  0]
  * u = [inf, inf, 50, 50]
  *
+ * x = [sqrt(10)*5, sqrt(10)/2] ~ [15.811, 1.5811]
+ * f(x) = 5
+ *
  */
 
 void COFG (Int * n, Real * x, Real * f, Real * g, Bool * grad) {

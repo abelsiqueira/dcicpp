@@ -6,6 +6,7 @@ using namespace DCI;
 /* Let's make the problem
  * min f(x)
  * s.t. cI(x) <= 0
+ *      cE(x)  = 0
  *
  * where
  *
@@ -13,12 +14,12 @@ using namespace DCI;
  *
  * and
  *
- * cI(x) = sum(x) - 1
+ * cE(x) = |x| - 1
+ * cI(x) = x1^2 + ... + x_{N-1}^2 - x_N
  *
  * Expected solution:
  *
- * x = [1/n, ... , 1/n]
- * lambda = 2*(n-1)/n;
+ * Don't know
  *
  */
 

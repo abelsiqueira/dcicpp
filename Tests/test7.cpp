@@ -19,8 +19,8 @@ using namespace DCI;
  *
  * Expected solution:
  *
- * x = [1/n, ... , 1/n]
- * lambda = 2*(n-1)/n;
+ * x = [sqrt(10)*5, sqrt(10)/2] ~ [15.811, 1.5811]
+ * f(x) = 5
  *
  */
 

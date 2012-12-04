@@ -17,7 +17,8 @@ using namespace DCI;
  *
  * Expected solution:
  *
- * x = [0, 0, 0, ..., 0]
+ * sol = [0, 0, 0, ..., 0]
+ * fsol = 0
  * lambda = any
  *
  */

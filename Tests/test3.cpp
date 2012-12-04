@@ -18,10 +18,16 @@ using namespace DCI;
  *
  * where D = diag(1,2,3,...,n).
  *
- * Expected solution:
+ * Global solution:
  *
+ * f = 0.5*r^2/n
  * x = [0, 0, 0, ..., r/sqrt(n)]
  * lambda = r/(n*sqrt(n))
+ *
+ * All local solutions:
+ *
+ * x = +- r * k^{-1/2} * e_k, k = 1, ..., n
+ * f = r^2/(2*k)
  *
  */
 

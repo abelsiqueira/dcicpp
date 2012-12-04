@@ -7,6 +7,8 @@ using namespace DCI;
 /* Let's make the problem
  * min f(x)
  * s.t. cI(x) => 0
+ *      2 <= x1 <= 50
+ *      0 <= x2
  *
  * where
  *
@@ -15,6 +17,9 @@ using namespace DCI;
  * and
  *
  * cI(x) = x(1) * x(2) - 25
+ *
+ * sol = [sqrt(10)*5, sqrt(10)/2] ~ [15.8114, 1.58114]
+ * fsol = 5
  *
  *
  */
@@ -93,10 +98,10 @@ int main () {
   x[0] = 2;
   x[1] = 2;
   y[0] = 1;
-  bu[1] = dciInf;
   bl[0] = 2;
   bl[1] = 0;
   bu[0] = 50;
+  bu[1] = dciInf;
   
   cl[0] = 0;
   cu[0] = dciInf;

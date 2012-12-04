@@ -5,7 +5,9 @@ using namespace DCI;
 
 /* Let's make the problem
  * min f(x)
- * s.t. cI(x) = 0
+ * s.t. cE(x) = 0
+ *      x1 >= 2
+ *      x2 >= 0
  *
  * where
  *
@@ -17,6 +19,8 @@ using namespace DCI;
  *
  * Expected solution:
  *
+ * x = [sqrt(10)*5, sqrt(10)/2] ~ [15.811, 1.5811]
+ * f(x) = 5
  *
  */
 
