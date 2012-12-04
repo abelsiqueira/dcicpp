@@ -28,3 +28,4 @@ alphaR 0.75
 alphaI 2.5 
 alphaS 0.0625
 UseObjfunScale 0
+UseVariableScaling 0

@@ -393,13 +393,8 @@ namespace DCI {
     xc = new Vector (*env, n, V);
     xcx = xc->get_doublex();
     initial_x = new Real[n];
-    for (Int i = 0; i < n; i++) {
-      if (UseVariableScaling)
-        initial_x[i] = Max(1.0, AbsValue(xx[i]));
-      else
-        initial_x[i] = 1.0;
-    }
-
+    for (Int i = 0; i < (Int)n; i++)
+      initial_x[i] = 1.0;
   }
 
   void Interface::set_sol (size_t n, Real * V) {

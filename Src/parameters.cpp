@@ -348,6 +348,8 @@ namespace DCI {
       xcx[i] = xx[i];
       assert (xx[i] > bli);
       assert (xx[i] < bui);
+      if (UseVariableScaling && bli <= -dciInf && bui >= dciInf)
+        initial_x[i] = Min(1.0, 1.0/Max(AbsValue(xx[i]), 1e-6));
     }
 
     if (ncon > 0) {
