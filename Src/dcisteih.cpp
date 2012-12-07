@@ -23,6 +23,11 @@ namespace DCI {
     pReal Hpx = Hp.get_doublex (), px = p.get_doublex ();
     pReal dx = d.get_doublex();
 
+#ifdef VERBOSE
+    if (VerboseLevel > 2) {
+      std::cout << "DeltaH = " << DeltaH << std::endl;
+    }
+#endif
     for (Int i = 0; i < nvar + nconI; i++)
       dx[i] = 0;
 

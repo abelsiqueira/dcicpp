@@ -542,29 +542,40 @@ namespace DCI {
         if ( (bli > -dciInf) && (bui < dciInf) ) {
           if (PartialPenal) {
             if ( (xi - bli) < (bui - xi) ) {
-              gx[i] *= (xi - bli);
-              gx[i] -= mu;
+              if (grad) {
+                gx[i] *= (xi - bli);
+                gx[i] -= mu;
+              }
               val += log (xi - bli);
             } else {
-              gx[i] *= (bui - xi);
-              gx[i] += mu;
+              if (grad) {
+                gx[i] *= (bui - xi);
+                gx[i] += mu;
+              }
               val += log (bui - xi);
             }
           } else {
-            gx[i] *= (xi - bli) * (bui - xi);
-            gx[i] += mu * (2*xi - bli - bui);
+            if (grad) {
+              gx[i] *= (xi - bli) * (bui - xi);
+              gx[i] += mu * (2*xi - bli - bui);
+            }
             val += log (xi - bli) + log (bui - xi);
           }
         } else if ( (bli <= -dciInf) && (bui < dciInf) ) {
-          gx[i] *= (bui - xi);
-          gx[i] += mu;
+          if (grad) {
+            gx[i] *= (bui - xi);
+            gx[i] += mu;
+          }
           val += log (bui - xi);
         } else if ( (bli > -dciInf) && (bui >= dciInf) ) {
-          gx[i] *= (xi - bli);
-          gx[i] -= mu;
+          if (grad) {
+            gx[i] *= (xi - bli);
+            gx[i] -= mu;
+          }
           val += log (xi - bli);
         }
-        gx[i] *= initial_x[i];
+        if (grad)
+          gx[i] *= initial_x[i];
       }
       for (Int i = 0; i < nconI; i++) {
         Int j = nvar + i;
@@ -572,21 +583,26 @@ namespace DCI {
         if ( (cli > -dciInf) && (cui < dciInf) ) {
           if (PartialPenal) {
             if ( (si - cli) < (cui - si) ) {
-              gx[j] = -mu;
+              if (grad)
+                gx[j] = -mu;
               val += log (si - cli);
             } else {
-              gx[j] = mu;
+              if (grad)
+                gx[j] = mu;
               val += log (cui - si);
             }
           } else {
-            gx[j] = mu * (2*si - cli - cui);
+            if (grad)
+              gx[j] = mu * (2*si - cli - cui);
             val += log (si - cli) + log (cui - si);
           }
         } else if ( (cli <= -dciInf) && (cui < dciInf) ) {
-          gx[j] = mu;
+          if (grad)
+            gx[j] = mu;
           val += log (cui - si);
         } else if ( (cli > -dciInf) && (cui >= dciInf) ) {
-          gx[j] = -mu;
+          if (grad)
+            gx[j] = -mu;
           val += log (si - cli);
         }
       }
@@ -613,29 +629,40 @@ namespace DCI {
         if ( (bli > -dciInf) && (bui < dciInf) ) {
           if (PartialPenal) {
             if ( (xi - bli) < (bui - xi) ) {
-              gx[i] *= (xi - bli);
-              gx[i] -= mu;
+              if (grad) {
+                gx[i] *= (xi - bli);
+                gx[i] -= mu;
+              }
               val += log (xi - bli);
             } else {
-              gx[i] *= (bui - xi);
-              gx[i] += mu;
+              if (grad) {
+                gx[i] *= (bui - xi);
+                gx[i] += mu;
+              }
               val += log (bui - xi);
             }
           } else {
-            gx[i] *= (xi - bli) * (bui - xi);
-            gx[i] += mu * (2*xi - bli - bui);
+            if (grad) {
+              gx[i] *= (xi - bli) * (bui - xi);
+              gx[i] += mu * (2*xi - bli - bui);
+            }
             val += log (xi - bli) + log (bui - xi);
           }
         } else if ( (bli <= -dciInf) && (bui < dciInf) ) {
-          gx[i] *= (bui - xi);
-          gx[i] += mu;
+          if (grad) {
+            gx[i] *= (bui - xi);
+            gx[i] += mu;
+          }
           val += log (bui - xi);
         } else if ( (bli > -dciInf) && (bui >= dciInf) ) {
-          gx[i] *= (xi - bli);
-          gx[i] -= mu;
+          if (grad) {
+            gx[i] *= (xi - bli);
+            gx[i] -= mu;
+          }
           val += log (xi - bli);
         }
-        gx[i] *= initial_x[i];
+        if (grad)
+          gx[i] *= initial_x[i];
       }
       for (Int i = 0; i < nconI; i++) {
         Int j = nvar + i;
@@ -643,21 +670,26 @@ namespace DCI {
         if ( (cli > -dciInf) && (cui < dciInf) ) {
           if (PartialPenal) {
             if ( (si - cli) < (cui - si) ) {
-              gx[j] = -mu;
+              if (grad)
+                gx[j] = -mu;
               val += log (si - cli);
             } else {
-              gx[j] = mu;
+              if (grad)
+                gx[j] = mu;
               val += log (cui - si);
             }
           } else {
-            gx[j] = mu * (2*si - cli - cui);
+            if (grad)
+              gx[j] = mu * (2*si - cli - cui);
             val += log (si - cli) + log (cui - si);
           }
         } else if ( (cli <= -dciInf) && (cui < dciInf) ) {
-          gx[j] = mu;
+          if (grad)
+            gx[j] = mu;
           val += log (cui - si);
         } else if ( (cli > -dciInf) && (cui >= dciInf) ) {
-          gx[j] = -mu;
+          if (grad)
+            gx[j] = -mu;
           val += log (si - cli);
         }
       }
