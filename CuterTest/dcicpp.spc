@@ -14,6 +14,7 @@ MaxDiag 1e3
 MinDiag 0
 VerboseLevel 0
 DisplayLevel 2
+TableLevel 1
 UseVertInteriorPoint 1
 ScaleVertical 0
 UseVertSafeguard 0

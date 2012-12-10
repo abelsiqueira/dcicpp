@@ -52,6 +52,7 @@ namespace DCI {
     minBk = 1e-12;
     DisplayLevel = 1;
     VerboseLevel = 0;
+    TableLevel = 0;
     MaxDiag = 1e20;
     MinDiag = 0;
 
@@ -74,7 +75,7 @@ namespace DCI {
       en_penal_bfgs, en_UseMUMPS, en_ScaleVertical, en_DisplayLevel,
       en_VerboseLevel, en_MaxDiag, en_MinDiag, en_UseVertInteriorPoint,
       en_UseVertSafeguard, en_UsePorcelli, en_UseObjfunScale, 
-      en_UseVariableScaling
+      en_UseVariableScaling, en_TableLevel
     };
     std::map<std::string, int> paramMap;
 
@@ -84,6 +85,7 @@ namespace DCI {
     paramMap["MinDiag"] = en_MinDiag;
     paramMap["VerboseLevel"] = en_VerboseLevel;
     paramMap["DisplayLevel"] = en_DisplayLevel;
+    paramMap["TableLevel"] = en_TableLevel;
     paramMap["ScaleVertical"] = en_ScaleVertical;
     paramMap["UseMUMPS"] = en_UseMUMPS;
     paramMap["UseCG"] = en_UseCG;
@@ -152,6 +154,7 @@ namespace DCI {
         case en_MinDiag: aux >> MinDiag; break;
         case en_VerboseLevel: aux >> VerboseLevel; break;
         case en_DisplayLevel: aux >> DisplayLevel; break;
+        case en_TableLevel: aux >> TableLevel; break;
         case en_DeltaMax: aux >> DeltaMax; break;
         case en_maxrest: aux >> maxrest; break;
         case en_maxit: aux >> maxit; break;

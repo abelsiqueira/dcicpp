@@ -332,7 +332,12 @@ namespace DCI {
 
   }
 
-  // Problem name & nvar & ncon & iters & time & converged
+  /* 
+   * If (TableLevel == 0)
+   * Problem name & nvar & ncon & iters & time & converged
+   * If (TableLevel == 1)
+   * Problem name & nvar & ncon & fvalue & normgp & normh & iters & time & converged
+   */
   void Interface::printLatex (char * filename) const {
     std::ofstream file;
     if (filename == 0) {
@@ -375,10 +380,16 @@ namespace DCI {
       }
     } else
       file.open (filename, std::ios_base::app);
+    
     file << problemName << " & "
          << nvar << " & "
-         << ncon << " & "
-         << iter << " & "
+         << ncon << " & ";
+    if (TableLevel > 0) {
+      file << *f << " & "
+           << normgp << " & "
+           << normc << " & ";
+    }
+    file << iter << " & "
          << (CurrentTime > 0 ? CurrentTime : 0) << " & "
          << ((ncon > 0) ? "con" : "unc") << " & "
          << ((tbfgs > 0) ? "bfgs" : "") << "\\\\ \\hline\n";

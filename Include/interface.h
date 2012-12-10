@@ -204,7 +204,7 @@ namespace DCI {
       Bool Solved;
       Bool Ineq, Linear, Bounded;
       Bool Unlimited;
-      Int DisplayLevel, VerboseLevel;
+      Int DisplayLevel, VerboseLevel, TableLevel;
       Int ExitFlag;
       Real MaxTime, CurrentTime, StartTime;
 
