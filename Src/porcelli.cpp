@@ -97,7 +97,7 @@ namespace DCI {
 
       bool outsideRegion = false;
       for (Int i = 0; i < nvar + nconI; i++) {
-        if ( (dx[i] >= upper[i]) || (dx[i] <= lower[i]) ) {
+        if ( (dnewx[i] >= upper[i]) || (dnewx[i] <= lower[i]) ) {
           outsideRegion = true;
           break;
         }
@@ -347,17 +347,17 @@ namespace DCI {
 
       for (Int i = 0; i < nvar; i++) {
         xcx[i] += (factor*dnx[i] + (1 - factor)*dcpx[i]);
-        if (xcx[i] == bux[i])
+        if (xcx[i] >= bux[i])
           xcx[i] = bux[i] - dciEps;
-        else if (xcx[i] == blx[i])
+        else if (xcx[i] <= blx[i])
           xcx[i] = blx[i] + dciEps;
       }
       for (Int i = 0; i < nconI; i++) {
         Int j = nvar + i;
         scx[i] += (factor*dnx[j] + (1 - factor)*dcpx[j]);
-        if (scx[i] == cux[ineqIdx[i]])
+        if (scx[i] >= cux[ineqIdx[i]])
           scx[i] = cux[ineqIdx[i]] - dciEps;
-        else if (scx[i] == clx[ineqIdx[i]])
+        else if (scx[i] <= clx[ineqIdx[i]])
           scx[i] = clx[ineqIdx[i]] + dciEps;
       }
       
