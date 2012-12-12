@@ -74,7 +74,7 @@ namespace DCI {
     delpointer (LJ);
     delpointer (env); 
     delpointer (Lambda);
-    delpointer (initial_x);
+    delpointer (VariableScaling);
   }
 
   int Interface::start () {
@@ -403,9 +403,9 @@ namespace DCI {
     xx = x->get_doublex();
     xc = new Vector (*env, n, V);
     xcx = xc->get_doublex();
-    initial_x = new Real[n];
+    VariableScaling = new Real[n];
     for (Int i = 0; i < (Int)n; i++)
-      initial_x[i] = 1.0;
+      VariableScaling[i] = 1.0;
   }
 
   void Interface::set_sol (size_t n, Real * V) {
@@ -586,7 +586,7 @@ namespace DCI {
           val += log (xi - bli);
         }
         if (grad)
-          gx[i] *= initial_x[i];
+          gx[i] *= VariableScaling[i];
       }
       for (Int i = 0; i < nconI; i++) {
         Int j = nvar + i;
@@ -673,7 +673,7 @@ namespace DCI {
           val += log (xi - bli);
         }
         if (grad)
-          gx[i] *= initial_x[i];
+          gx[i] *= VariableScaling[i];
       }
       for (Int i = 0; i < nconI; i++) {
         Int j = nvar + i;
@@ -710,6 +710,7 @@ namespace DCI {
 
   void Interface::call_ccfsg (Bool grad, Bool scale) {
     UpdateScaling_x();
+    static bool createdVariableScaling = false;
     pInt nnzj = new Int(0);
     (*ccfsg) (&nvar, &ncon, xx, &mmax, cx, nnzj, &amax, Jx, Jj, Ji, &grad);
     if (grad == dciTrue) {
@@ -743,6 +744,19 @@ namespace DCI {
             j++;
           }
         }
+      }
+
+      if (!createdVariableScaling) {
+        createdVariableScaling = true;
+        if (UseVariableScaling) {
+          for (Int k = 0; k < *nnzj; k++){
+            Int i = Jj[k];
+            VariableScaling[i] = Max(VariableScaling[i], Jx[k]);
+          }
+          UpdateScaling_x();
+        }
+        for (Int i = 0; i < nvar; i++)
+          VariableScaling[i] = 1.0/VariableScaling[i];
       }
 
       *(Jtrip->get_pnnz()) = *nnzj;

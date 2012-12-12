@@ -399,7 +399,7 @@ namespace DCI {
       else
         Lambda[i] = 1.0;
 
-      Lambda[i] *= initial_x[i];
+      Lambda[i] *= VariableScaling[i];
     }
     for (Int i = 0; i < nconI; i++) {
       Real zi = sx[i], Li = clx[ineqIdx[i]], Ui = cux[ineqIdx[i]];
@@ -443,7 +443,7 @@ namespace DCI {
       else
         Lambda[i] = 1.0;
 
-      Lambda[i] *= initial_x[i];
+      Lambda[i] *= VariableScaling[i];
     }
     for (Int i = 0; i < nconI; i++) {
       Real zi = scx[i], Li = clx[ineqIdx[i]], Ui = cux[ineqIdx[i]];

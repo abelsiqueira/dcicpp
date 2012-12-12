@@ -1,6 +1,6 @@
 maxit 200000
 maxrest 200000
-MaxTime 60
+MaxTime 6000
 PartialPenal 1
 UsePorcelli 1
 UseMUMPS 0
@@ -29,4 +29,4 @@ alphaR 0.75
 alphaI 2.5 
 alphaS 0.0625
 UseObjfunScale 1
-UseVariableScaling 0
+UseVariableScaling 1

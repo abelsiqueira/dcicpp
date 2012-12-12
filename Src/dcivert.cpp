@@ -1,5 +1,7 @@
 #include "interface.h"
 #include <cmath>
+#include <fstream>
+#include <algorithm>
 //#include <cassert>
 
 namespace DCI {
@@ -59,6 +61,16 @@ namespace DCI {
       Aavail = dciFalse;
       gavail = dciFalse;
     }
+
+#ifdef ITER_MATLAB
+    std::string iter_filename("iter_matlab");
+    iter_filename += problemName;
+    iter_filename += ".m";
+    iter_filename.erase(remove_if(iter_filename.begin(),
+          iter_filename.end(), isspace), iter_filename.end());
+    std::ofstream iter_file(iter_filename.c_str());
+    iter_file << "X = [" << xcx[0] << ";" << xcx[1] << "];" << std::endl;
+#endif
 
     Real one[2] = {1,0}, zero[2] = {0,0};
     Vector gradLeastSquare(*env);
@@ -139,6 +151,9 @@ namespace DCI {
             dcitrust (oldnormc);
         else
           InteriorPointRestoration ();
+#ifdef ITER_MATLAB
+    iter_file << "X(:,size(X,2)+1) = [" << xcx[0] << ";" << xcx[1] << "];" << std::endl;
+#endif
 
 #ifndef NDEBUG
         checkInfactibility();
