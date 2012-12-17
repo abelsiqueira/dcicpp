@@ -41,7 +41,6 @@ namespace DCI {
     Real normGrad = normGrad0;
     
     while ( (theta > eps2) && (theta > eps1*theta0) && 
-            (normGrad > 0.1*normGrad0) &&
             (nLstSqrs <= maxLstSqrs) && (CurrentTime < MaxTime) ) {
       q.sdmult(*J, 0, one, zero, p);
       q.sdmult(*J, 1, one, zero, q);
@@ -165,9 +164,6 @@ namespace DCI {
     if (Ineq)
       stmp = *sc;
 
-    //Remove later if needed
-//    call_ccfsg_xc (dciTrue, dciFalse);
-    call_ccfsg_xc (dciTrue, dciFalse);
     Aavail = dciFalse;
 
     //This method uses the Porcelli scale matrix
@@ -279,8 +275,8 @@ namespace DCI {
       // sc + dcps >= epsmu*sc
       dnavail = dciFalse;
       if (!dnavail) {
-        naflag = LeastSquareTrustRegion (dn, scalingMatrix, lower, upper);
-//        naflag = NAstep (*c, dn);
+//        naflag = LeastSquareTrustRegion (dn, scalingMatrix, lower, upper);
+        naflag = NAstep (*c, dn);
 #ifdef VERBOSE
         if (VerboseLevel > 1) {
           std::cout << "Porcelli - LSTR - naflag = " << naflag << std::endl;

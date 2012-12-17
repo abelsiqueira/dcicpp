@@ -143,6 +143,8 @@ namespace DCI {
 #endif
         nRest++;
 
+        call_ccfsg_xc(dciTrue, dciFalse);
+        cholesky_J();
         infeasible_gradient = 1.0;
 
         if (UsePorcelli) {
