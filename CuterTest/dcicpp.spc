@@ -1,6 +1,6 @@
 maxit 200000
 maxrest 200000
-MaxTime 6000
+MaxTime 600
 PartialPenal 1
 UsePorcelli 1
 UseMUMPS 0
