@@ -239,6 +239,7 @@ namespace DCI {
       Bool PorcelliPenal;
       Bool trustWorstdn, trustConvexBox, penal_trust, penal_bfgs;
       Real cholCorrection;
+      Bool cholFailed;
       Real MaxDiag, MinDiag;
       Real infeasible_gradient;
       //Interior Point Variables

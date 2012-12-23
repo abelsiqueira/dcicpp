@@ -39,8 +39,6 @@ namespace DCI {
       dmumps_c(&id);
     }
 
-//    cholCorrection = 1e-4;
-    cholCorrection = 0;
     env = new Environment;
     env->set_error_handler (&error);
   }
@@ -340,37 +338,41 @@ namespace DCI {
    */
   void Interface::printLatex (char * filename) const {
     std::ofstream file;
+    std::string latex_name("latex_");
     if (filename == 0) {
       switch (ExitFlag) {
         case -1:
-          file.open ("latex_assert", std::ios_base::app);
+          latex_name += "assert";
           break;
         case 0:
-          file.open ("latex_convergence", std::ios_base::app);
+          latex_name += "convergence";
           break;
         case 1:
-          file.open ("latex_rhomax", std::ios_base::app);
+          latex_name += "rhomax";
           break;
         case 2:
-          file.open ("latex_maxiter", std::ios_base::app);
+          latex_name += "maxiter";
           break;
         case 3:
-          file.open ("latex_maxrest", std::ios_base::app);
+          latex_name += "maxrest";
           break;
         case 4:
-          file.open ("latex_restfail", std::ios_base::app);
+          latex_name += "restfali";
           break;
         case 5:
-          file.open ("latex_shortstep", std::ios_base::app);
+          latex_name += "shortstep";
           break;
         case 6:
-          file.open ("latex_unlimited", std::ios_base::app);
+          latex_name += "unlimited";
           break;
         case 7:
-          file.open ("latex_timelimit", std::ios_base::app);
+          latex_name += "timelimit";
           break;
         case 8:
-          file.open ("latex_infeasible", std::ios_base::app);
+          latex_name += "infeasible";
+          break;
+        case 9:
+          latex_name += "nan";
           break;
         default:
           std::stringstream aux;
@@ -378,8 +380,11 @@ namespace DCI {
           throw(aux.str());
           break;
       }
+      if (cholFailed)
+        latex_name += "_cholfail";
     } else
-      file.open (filename, std::ios_base::app);
+      latex_name = filename;
+    file.open (latex_name.c_str(), std::ios_base::app);
     
     file << problemName << " & "
          << nvar << " & "
@@ -982,6 +987,7 @@ namespace DCI {
     LJ->factorize (*J, cholCorrection);
     cholFacs++;
     if (!env->IsPosDef()) {
+      cholFailed = dciTrue;
       cholCorrection = 1e-12;
       LJ->factorize (*J, cholCorrection);
       cholFacs++;

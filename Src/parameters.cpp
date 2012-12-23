@@ -296,6 +296,8 @@ namespace DCI {
     mugap = 1;
     LimLbd = dciTrue;
     Lambda = 0;
+    cholCorrection = 0;
+    cholFailed = dciFalse;
 
     //Strategy choices
     UseCG = dciFalse;

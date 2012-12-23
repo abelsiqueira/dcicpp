@@ -74,7 +74,7 @@ for test in out:
   for line in f:
     line = line.strip().split()
     for i in range(7):
-      if line[1] == exits[i]:
+      if exits[i] in line[1]:
         table[thistype][i] += int(line[0]);
         break;
 
