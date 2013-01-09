@@ -75,11 +75,12 @@ namespace DCI {
       en_penal_bfgs, en_UseMUMPS, en_ScaleVertical, en_DisplayLevel,
       en_VerboseLevel, en_MaxDiag, en_MinDiag, en_UseVertInteriorPoint,
       en_UseVertSafeguard, en_UsePorcelli, en_UseObjfunScale, 
-      en_UseVariableScaling, en_TableLevel
+      en_UseVariableScaling, en_TableLevel, en_RebootOnVertFail
     };
     std::map<std::string, int> paramMap;
 
     paramMap["UseVertSafeguard"] = en_UseVertSafeguard;
+    paramMap["RebootOnVertFail"] = en_RebootOnVertFail;
     paramMap["UseVertInteriorPoint"] = en_UseVertInteriorPoint;
     paramMap["MaxDiag"] = en_MaxDiag;
     paramMap["MinDiag"] = en_MinDiag;
@@ -149,6 +150,7 @@ namespace DCI {
       aux << value;
       switch (paramMap[param]) {
         case en_UseVertSafeguard: aux >> UseVertSafeguard; break;
+        case en_RebootOnVertFail: aux >> RebootOnVertFail; break;
         case en_UseVertInteriorPoint: aux >> UseVertInteriorPoint; break;
         case en_MaxDiag: aux >> MaxDiag; break;
         case en_MinDiag: aux >> MinDiag; break;
@@ -316,6 +318,7 @@ namespace DCI {
     ScaleVertical = dciTrue;
     UseVertInteriorPoint = dciTrue;
     UseVertSafeguard = dciFalse;
+    RebootOnVertFail = dciTrue;
 
     //Program properties
     Ineq = dciFalse; //Has some inequalities

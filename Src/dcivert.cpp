@@ -186,6 +186,73 @@ namespace DCI {
           if (normc > 0 && infeasible_gradient/normc < 1e-6)
             VertFlag = 2;
 
+          Vector ssoc(*env, nvar + nconI);
+          Real asoc;
+          call_ccfsg_xc(dciTrue, dciTrue);
+          cholesky_J();
+          StepFlag = NAstep (*c, ssoc);
+          scale_xc (ssoc);
+
+          // Arrumar tamanho do ssoc a partir do x
+          Real alphassoc = 1;
+          pReal ssocx = ssoc.get_doublex();
+          for (Int i = 0; i < nvar; i++) {
+            Real xi = xcx[i], bli = blx[i], bui = bux[i], di = ssocx[i];
+            if (di == 0)
+              continue;
+            if (di < 0) {
+              Real val = (bli - xi)*(1 - epsmu)/di;
+                alphassoc = Min (alphassoc, val);
+            } else {
+              Real val = (bui - xi)*(1 - epsmu)/di;
+                alphassoc = Min (alphassoc, val);
+            }
+          }
+          for (Int i = 0; i < nconI; i++) {
+            Real si = scx[i], cli = clx[ineqIdx[i]], cui = cux[ineqIdx[i]], di = ssocx[nvar + i];
+            if (di == 0)
+              continue;
+            if (di < 0) {
+              Real val = (cli - si)*(1 - epsmu)/di;
+                alphassoc = Min (alphassoc, val);
+            } else {
+              Real val = (cui - si)*(1 - epsmu)/di;
+                alphassoc = Min (alphassoc, val);
+            }
+          }
+          if (alphassoc < 1)
+            ssoc.scale (alphassoc);
+
+          asoc = ssoc.norm (0);
+          if (asoc > DeltaV)
+            ssoc.scale (DeltaV/asoc);
+          for (Int i = 0; i < nvar; i++)
+            xcx[i] += ssocx[i];
+          for (Int i = 0; i < nconI; i++) {
+            scx[i] += ssocx[nvar + i];
+          }
+          call_fn ();
+          normc = c->norm ();
+          fail = 0;
+
+
+          if (RebootOnVertFail && VertFlag == 0) {
+            // Has failed but is not infeasible
+            Real constr[ncon], funval;
+            (*cfn) (&nvar, &ncon, xcx, &funval, &mmax, constr);
+            Int numI = 0;
+            for (Int i = 0; i < ncon; i++) {
+              if (equatn[i] == dciFalse) {
+                if (constr[i] > clx[i] && constr[i] < cux[i])
+                  scx[numI] = constr[i];
+                numI++;
+              }
+            }
+            normc = c->norm();
+          }
+
+
+
 //          if (!UseMUMPS)
 //            this->cholesky_J();
 //          if (UseVertSafeguard)

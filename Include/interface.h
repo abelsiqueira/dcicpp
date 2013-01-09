@@ -234,7 +234,7 @@ namespace DCI {
       Real minBk;
       Bool UseCG, UsePorcelli;
       Bool UseMUMPS, ScaleVertical;
-      Bool UseVertInteriorPoint, UseVertSafeguard;
+      Bool UseVertInteriorPoint, UseVertSafeguard, RebootOnVertFail;
       Bool PartialPenal, project_dcp, project_dn, project_bfgs;
       Bool PorcelliPenal;
       Bool trustWorstdn, trustConvexBox, penal_trust, penal_bfgs;

@@ -30,3 +30,4 @@ alphaI 2.5
 alphaS 0.0625
 UseObjfunScale 1
 UseVariableScaling 0
+RebootOnVertFail 1

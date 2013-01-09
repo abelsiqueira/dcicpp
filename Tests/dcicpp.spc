@@ -57,4 +57,4 @@ minBk 1e-12
 DisplayLevel 0
 VerboseLevel 0
 UseObjfunScale 1
-UseVariableScaling 1
+UseVariableScaling 0
