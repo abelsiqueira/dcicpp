@@ -75,6 +75,7 @@ namespace DCI {
       en_penal_bfgs, en_UseMUMPS, en_ScaleVertical, en_DisplayLevel,
       en_VerboseLevel, en_MaxDiag, en_MinDiag, en_UseVertInteriorPoint,
       en_UseVertSafeguard, en_UsePorcelli, en_UseObjfunScale, 
+      en_objfun_count,
       en_UseVariableScaling, en_TableLevel, en_RebootOnVertFail
     };
     std::map<std::string, int> paramMap;
@@ -92,6 +93,7 @@ namespace DCI {
     paramMap["UseCG"] = en_UseCG;
     paramMap["UsePorcelli"] = en_UsePorcelli;
     paramMap["UseObjfunScale"] = en_UseObjfunScale;
+    paramMap["objfun_count"] = en_objfun_count;
     paramMap["UseVariableScaling"] = en_UseVariableScaling;
     paramMap["PartialPenal"] = en_PartialPenal;
     paramMap["project_dcp"] = en_project_dcp;
@@ -202,6 +204,7 @@ namespace DCI {
         case en_UseCG: aux >> UseCG; break;
         case en_UsePorcelli: aux >> UsePorcelli; break;
         case en_UseObjfunScale: aux >> UseObjfunScale; break;
+        case en_objfun_count: aux >> objfun_count; break;
         case en_UseVariableScaling: aux >> UseVariableScaling; break;
         case en_UseMUMPS: aux >> UseMUMPS; break;
         case en_PartialPenal: aux >> PartialPenal; break;
@@ -300,6 +303,7 @@ namespace DCI {
     Lambda = 0;
     cholCorrection = 0;
     cholFailed = dciFalse;
+    objfun_count = 0;
 
     //Strategy choices
     UseCG = dciFalse;

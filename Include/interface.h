@@ -246,6 +246,7 @@ namespace DCI {
 
       Real objfun_scale;
       Bool UseObjfunScale, UseVariableScaling;
+      Int objfun_count;
   };
 }
 

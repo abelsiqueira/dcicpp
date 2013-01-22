@@ -108,6 +108,10 @@ namespace DCI {
       UpdateScaling_x();
       vertstep (); //Recalculates f, g and c
       UpdateScaling_xc();
+      if (UseObjfunScale && (objfun_count > 0)) {
+        objfun_scale = Max(Max(objfun_scale, g->norm()), AbsValue(*f));
+        objfun_count--;
+      }
 
 #ifdef LOCALTEST
       ngpzck = gp->norm();

@@ -7,10 +7,11 @@
 
 namespace DCI {
   void error (int status, const char *file, int line, const char *message) {
-    std::cerr << message << std::endl
-              << "Status = " << status << std::endl
-              << "File   = " << file << std::endl
-              << "Line   = " << line << std::endl;
+/*     std::cerr << message << std::endl
+ *               << "Status = " << status << std::endl
+ *               << "File   = " << file << std::endl
+ *               << "Line   = " << line << std::endl;
+ */
   }
 
   void Interface::assert (Bool v) {
@@ -265,6 +266,9 @@ namespace DCI {
         out << "The problem reached the time limit" << std::endl;
       else if (ExitFlag == 8)
         out << "Stopped at a stationary for the infeasibility" << std::endl;
+
+      if (cholFailed)
+        out << "Cholesky failed" << std::endl;
 
       if (DisplayLevel > 0) {
         out << "f(x) = " << *f << std::endl

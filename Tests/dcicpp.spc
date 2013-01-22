@@ -1,6 +1,6 @@
 UseVertSafeguard 0
 ScaleVertical 0
-MaxDiag 1e3
+MaxDiag 1e9
 MinDiag 0
 UseVertInteriorPoint 1
 UseCG 0
@@ -35,7 +35,7 @@ zeta3 5
 alphaR 0.25
 alphaI 2.5
 alphaS 6.25e-2
-eta1 1e-4
+eta1 1e-12
 eta2 0.7
 eta3 0.1
 DeltaMin 1e-4

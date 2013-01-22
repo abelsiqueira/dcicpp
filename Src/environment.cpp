@@ -12,13 +12,16 @@ namespace DCI {
   Environment::Environment () : base_common () {
 //    useSupernodal();
     useSimplicial();
+    common->quick_return_if_not_posdef = 1;
+    common->dbound = 1e-6;
+    common->print = 0;
   }
 
   Environment::~Environment () {
   }
 
   Bool Environment::IsPosDef () {
-    if (common->status == CHOLMOD_NOT_POSDEF)
+    if (common->status > 0)
       return dciFalse;
     else
       return dciTrue;
