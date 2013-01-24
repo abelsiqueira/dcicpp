@@ -13,7 +13,7 @@ namespace DCI {
 //    useSupernodal();
     useSimplicial();
     common->quick_return_if_not_posdef = 1;
-    common->dbound = 1e-6;
+    common->dbound = 1e-12;
     common->print = 0;
   }
 

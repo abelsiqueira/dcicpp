@@ -18,7 +18,7 @@ TableLevel 1
 UseVertInteriorPoint 1
 ScaleVertical 0
 UseVertSafeguard 0
-eta1 1e-4
+eta1 1e-12
 eta2 0.2 
 eta3 0.6 
 thetaR 0.9 
