@@ -242,6 +242,7 @@ namespace DCI {
       Bool cholFailed;
       Real MaxDiag, MinDiag;
       Real infeasible_gradient;
+      Real choleskyCorrection;
       //Interior Point Variables
 
       Real objfun_scale;
