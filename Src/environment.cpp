@@ -12,7 +12,7 @@ namespace DCI {
   Environment::Environment () : base_common () {
 //    useSupernodal();
     useSimplicial();
-    common->quick_return_if_not_posdef = 1;
+    common->quick_return_if_not_posdef = 0;
     common->dbound = 1e-12;
     common->print = 0;
   }

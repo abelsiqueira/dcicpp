@@ -2,10 +2,23 @@
 
 # EDIT dcicpp.spc manually
 
-test_list="$(ls TestLists/small/class*)"
-target_dir=all.small.2013.02.22
+target_dir=all.small.2013.02.19.saving
 
-mkdir -p $target_dir
+for line in $(grep Skipping $target_dir/*.out | sed 's/ /:/g')
+do
+  outname=$(echo $line | awk -F ':' '{print $1}' | sed 's/.out//g')
+  problem_name=$(echo $line | awk -F ':' '{print $3}')
+  runcppcuter -p dcicpp -D $problem_name >> $outname.out
+  wc -l latex* >> $outname.extra.wc
+  for lfile in $(ls latex_*)
+  do
+    cat $lfile >> $target_dir/$lfile.extra
+  done
+  ./executables/clatex.sh
+done
+
+
+exit
 for list in $test_list
 do 
   outname=$(echo $list | sed "s:TestLists/small/classification.:$target_dir/all.small.:g")
