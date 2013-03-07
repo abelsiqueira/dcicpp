@@ -51,10 +51,11 @@ print 't = sort(t);'
 print 'dci_f = sort(dci_f);'
 print 'ipopt_f = sort(ipopt_f);'
 print 'hold off'
-print "semilogx(t,dci_f,'-b')"
+print "semilogx(t,dci_f,'-xb')"
 print 'hold on'
-print "semilogx(t,ipopt_f,'-r')"
+print "semilogx(t,ipopt_f,'-or')"
 print "legend('dcicpp','ipopt','location','southeast')"
 print ''.join(str(x) for x in ["xl = xlim; xlim([1, ", out, "]);"])
 print "set(gca, 'YTick', [0:0.1:1])"
+print "ylim([0,1]);"
 print ''.join(str(x) for x in ["print('",sys.argv[1],".png','-color')"])

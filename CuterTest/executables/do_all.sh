@@ -9,7 +9,7 @@ function color_echo () {
 }
 
 color_echo "Calculating ratio"
-./calc_performance_ratio.py $1
+./calc_performance_ratio.py $1 $2
 
 color_echo "Generating list of values for t"
 ./gen_t_list.sh $1.ratio
