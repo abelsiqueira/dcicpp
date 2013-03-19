@@ -57,6 +57,15 @@ namespace DCI {
     MinDiag = 0;
 
     ReadParameters();
+    //Mumps
+    if (UseMUMPS) {
+      MPI_Comm_rank(MPI_COMM_WORLD, &myid);
+      id.job=JOB_INIT;
+      id.par=1;
+      id.sym=2;
+      id.comm_fortran=USE_COMM_WORLD;
+      dmumps_c(&id);
+    }
   }
 
   void Interface::ReadParameters () {
@@ -321,7 +330,7 @@ namespace DCI {
     trustConvexBox = dciFalse;
     penal_trust = dciTrue;
     penal_bfgs = dciTrue;
-    UseMUMPS = dciTrue;
+    UseMUMPS = dciFalse;
     ScaleVertical = dciTrue;
     UseVertInteriorPoint = dciTrue;
     UseVertSafeguard = dciFalse;

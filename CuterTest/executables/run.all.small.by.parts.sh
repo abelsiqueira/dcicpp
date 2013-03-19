@@ -3,7 +3,7 @@
 # EDIT dcicpp.spc manually
 
 test_list="$(ls TestLists/small/class*)"
-target_dir=all.small.2013.02.22
+target_dir=all.small.2013.03.12
 
 mkdir -p $target_dir
 for list in $test_list

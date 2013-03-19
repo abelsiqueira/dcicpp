@@ -30,15 +30,6 @@ namespace DCI {
   Interface::Interface () {
     //Parameters
     Initialization ();
-    //Mumps
-    if (UseMUMPS) {
-      MPI_Comm_rank(MPI_COMM_WORLD, &myid);
-      id.job=JOB_INIT;
-      id.par=1;
-      id.sym=2;
-      id.comm_fortran=USE_COMM_WORLD;
-      dmumps_c(&id);
-    }
 
     env = new Environment;
     env->set_error_handler (&error);
