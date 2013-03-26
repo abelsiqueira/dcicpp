@@ -72,11 +72,16 @@ namespace DCI {
           sx[i] = clx[i] + 1e-12;
       }
 
+      call_fn ();
 #ifndef NDEBUG
-      checkInfactibility ();
+      try {
+        checkInfactibility ();
+      } catch (const char * ex) {
+        DeltaH *= 0.1;
+        continue;
+      }
 #endif
 
-      call_fn ();
       if (ncon > 0)
         newnormc = c->norm ();
       else

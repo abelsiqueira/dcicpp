@@ -76,7 +76,7 @@ namespace DCI {
     Vector gradLeastSquare(*env);
     if (ncon) {
       gradLeastSquare.sdmult(*J, 1, one, zero, *c);
-      DeltaV = gradLeastSquare.norm();
+//      DeltaV = gradLeastSquare.norm();
     }
 
 

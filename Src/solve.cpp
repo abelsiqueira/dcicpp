@@ -109,7 +109,7 @@ namespace DCI {
       vertstep (); //Recalculates f, g and c
       UpdateScaling_xc();
       if (UseObjfunScale && (objfun_count > 0)) {
-        objfun_scale = Max(Max(objfun_scale, g->norm()), AbsValue(*f));
+        objfun_scale = Min( Max(Max(objfun_scale, g->norm()), AbsValue(*f)), max_objfun_scale );
         objfun_count--;
       }
 

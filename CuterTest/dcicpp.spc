@@ -33,4 +33,4 @@ UseVariableScaling 0
 RebootOnVertFail 1
 objfun_count 10
 choleskyCorrection 1e-6
-Delta0 1e3
+Delta0 1e6

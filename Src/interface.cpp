@@ -501,7 +501,17 @@ namespace DCI {
       (*ufn) (&nvar, xx, f);
     } else {
       (*cfn) (&nvar, &ncon, xx, f, &mmax, cx);
+      for (Int i = 0; i < ncon; i++) {
+        if (cx[i] > dciInf)
+          cx[i] = dciInf;
+        else if (cx[i] < -dciInf)
+          cx[i] = -dciInf;
+      }
     }
+    if (*f > dciInf)
+      *f = dciInf;
+    else if (*f < -dciInf)
+      *f = -dciInf;
     if (Running) {
       *f /= objfun_scale;
       *f -= mu*calc_pen ();
@@ -517,10 +527,20 @@ namespace DCI {
 
   void Interface::call_fn_xc () {
     if (ncon == 0) {
-      (*ufn) (&nvar, xcx, f);
+      (*ufn) (&nvar, xcx, fxc);
     } else {
       (*cfn) (&nvar, &ncon, xcx, fxc, &mmax, cx);
+      for (Int i = 0; i < ncon; i++) {
+        if (cx[i] > dciInf)
+          cx[i] = dciInf;
+        else if (cx[i] < -dciInf)
+          cx[i] = -dciInf;
+      }
     }
+    if (*fxc > dciInf)
+      *fxc = dciInf;
+    else if (*fxc < -dciInf)
+      *fxc = -dciInf;
     if (Running) {
       *fxc /= objfun_scale;
       *fxc -= mu*calc_pen_xc ();
@@ -539,6 +559,10 @@ namespace DCI {
       (*uofg) (&nvar, xx, f, gx, &grad);
     else
       (*cofg) (&nvar, xx, f, gx, &grad);
+    if (*f > dciInf)
+      *f = dciInf;
+    else if (*f < -dciInf)
+      *f = -dciInf;
     if (Running) {
       Real val = 0.0;
       if (objfun_scale != 1) {
@@ -626,6 +650,10 @@ namespace DCI {
       (*uofg) (&nvar, xcx, fxc, gx, &grad);
     else
       (*cofg) (&nvar, xcx, fxc, gx, &grad);
+    if (*fxc > dciInf)
+      *fxc = dciInf;
+    else if (*fxc < -dciInf)
+      *fxc = -dciInf;
     if (Running) {
       Real val = 0.0;
       if (objfun_scale != 1) {
@@ -713,6 +741,12 @@ namespace DCI {
     static bool createdVariableScaling = false;
     pInt nnzj = new Int(0);
     (*ccfsg) (&nvar, &ncon, xx, &mmax, cx, nnzj, &amax, Jx, Jj, Ji, &grad);
+    for (Int i = 0; i < ncon; i++) {
+      if (cx[i] > dciInf)
+        cx[i] = dciInf;
+      else if (cx[i] < -dciInf)
+        cx[i] = -dciInf;
+    }
     if (grad == dciTrue) {
       if (StartAtOne) {
         for (Int i = 0; i < *nnzj; i++) {
@@ -808,6 +842,12 @@ namespace DCI {
     UpdateScaling_xc();
     pInt nnzj = new Int(0);
     (*ccfsg) (&nvar, &ncon, xcx, &mmax, cx, nnzj, &amax, Jx, Jj, Ji, &grad);
+    for (Int i = 0; i < ncon; i++) {
+      if (cx[i] > dciInf)
+        cx[i] = dciInf;
+      else if (cx[i] < -dciInf)
+        cx[i] = -dciInf;
+    }
     if (grad == dciTrue) {
       if (StartAtOne) {
         for (Int i = 0; i < *nnzj; i++) {
@@ -999,14 +1039,24 @@ namespace DCI {
 
 #ifndef NDEBUG
   void Interface::checkInfactibility () {
-    if (std::isnan(*f)) {
-      throw ("f is nan");
-    }
-    if (std::isnan(normc)) {
-      throw ("|c| is nan");
-    }
-    if (std::isnan(normgp)) {
-      throw ("|gp| is nan");
+    try {
+      if (std::isnan(*f)) {
+        throw ("f is nan");
+      }
+      if (std::isnan(normc)) {
+        throw ("|c| is nan");
+      }
+      if (std::isnan(normgp)) {
+        throw ("|gp| is nan");
+      }
+      if (std::isnan(x->norm())) {
+        throw ("|x| is nan");
+      }
+      if (std::isnan(xc->norm())) {
+        throw ("|xc| is nan");
+      }
+    } catch (const char * ex) {
+      throw(ex);
     }
     for (Int i = 0; i < nvar; i++) {
       if ( (xx[i] > 1e10) || (xx[i] < -1e10) || (xcx[i] > 1e10) || (xcx[i] < -1e10) ) {

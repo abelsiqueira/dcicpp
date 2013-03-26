@@ -55,6 +55,7 @@ namespace DCI {
     TableLevel = 0;
     MaxDiag = 1e20;
     MinDiag = 0;
+    max_objfun_scale = 1e6;
 
     ReadParameters();
     //Mumps
@@ -84,7 +85,7 @@ namespace DCI {
       en_penal_bfgs, en_UseMUMPS, en_ScaleVertical, en_DisplayLevel,
       en_VerboseLevel, en_MaxDiag, en_MinDiag, en_UseVertInteriorPoint,
       en_UseVertSafeguard, en_UsePorcelli, en_UseObjfunScale, 
-      en_objfun_count, en_choleskyCorrection,
+      en_objfun_count, en_choleskyCorrection, en_max_objfun_scale,
       en_UseVariableScaling, en_TableLevel, en_RebootOnVertFail
     };
     std::map<std::string, int> paramMap;
@@ -104,6 +105,7 @@ namespace DCI {
     paramMap["UsePorcelli"] = en_UsePorcelli;
     paramMap["UseObjfunScale"] = en_UseObjfunScale;
     paramMap["objfun_count"] = en_objfun_count;
+    paramMap["max_objfun_scale"] = en_max_objfun_scale;
     paramMap["UseVariableScaling"] = en_UseVariableScaling;
     paramMap["PartialPenal"] = en_PartialPenal;
     paramMap["project_dcp"] = en_project_dcp;
@@ -216,6 +218,7 @@ namespace DCI {
         case en_UsePorcelli: aux >> UsePorcelli; break;
         case en_UseObjfunScale: aux >> UseObjfunScale; break;
         case en_objfun_count: aux >> objfun_count; break;
+        case en_max_objfun_scale: aux >> max_objfun_scale; break;
         case en_UseVariableScaling: aux >> UseVariableScaling; break;
         case en_UseMUMPS: aux >> UseMUMPS; break;
         case en_PartialPenal: aux >> PartialPenal; break;
@@ -352,7 +355,7 @@ namespace DCI {
     call_fn ();
     call_ofg (dciTrue);
     if (UseObjfunScale)
-      objfun_scale = Max(Max(1.0, g->norm()), AbsValue(*f));
+      objfun_scale = Min( Max(Max(1.0, g->norm()), AbsValue(*f)), max_objfun_scale );
 
     for (Int i = 0; i < nvar; i++) {
       Real bli = blx[i], bui = bux[i];

@@ -245,7 +245,7 @@ namespace DCI {
       Real choleskyCorrection;
       //Interior Point Variables
 
-      Real objfun_scale;
+      Real objfun_scale, max_objfun_scale;
       Bool UseObjfunScale, UseVariableScaling;
       Int objfun_count;
   };
