@@ -747,6 +747,12 @@ namespace DCI {
       else if (cx[i] < -dciInf)
         cx[i] = -dciInf;
     }
+    for (Int i = 0; i < *nnzj; i++) {
+      if (Jx[i] > dciInf)
+        Jx[i] = dciInf;
+      else if (Jx[i] < -dciInf)
+        Jx[i] = -dciInf;
+    }
     if (grad == dciTrue) {
       if (StartAtOne) {
         for (Int i = 0; i < *nnzj; i++) {
@@ -847,6 +853,12 @@ namespace DCI {
         cx[i] = dciInf;
       else if (cx[i] < -dciInf)
         cx[i] = -dciInf;
+    }
+    for (Int i = 0; i < *nnzj; i++) {
+      if (Jx[i] > dciInf)
+        Jx[i] = dciInf;
+      else if (Jx[i] < -dciInf)
+        Jx[i] = -dciInf;
     }
     if (grad == dciTrue) {
       if (StartAtOne) {

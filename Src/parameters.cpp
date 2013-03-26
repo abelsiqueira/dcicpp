@@ -349,13 +349,6 @@ namespace DCI {
 
     maxitSteih = Max (minitSteih, Min(maxitSteih, Int(nvar*relitSteih+5) ) );
     minstep *= Min (csig, csic);
-    objfun_scale = 1.0;
-    
-    // Calculating the function value and c without the barrier.
-    call_fn ();
-    call_ofg (dciTrue);
-    if (UseObjfunScale)
-      objfun_scale = Min( Max(Max(1.0, g->norm()), AbsValue(*f)), max_objfun_scale );
 
     for (Int i = 0; i < nvar; i++) {
       Real bli = blx[i], bui = bux[i];
@@ -366,6 +359,7 @@ namespace DCI {
       }
       // Fixed variables WORKAROUND:
       if (bli == bui) {
+        throw("Fixed variables unhandled");
         blx[i] -= 1e-12;
         bux[i] += 1e-12;
         bli = blx[i];
@@ -377,6 +371,13 @@ namespace DCI {
       assert (xx[i] > bli);
       assert (xx[i] < bui);
     }
+
+    // Calculating the function value and c without the barrier.
+    objfun_scale = 1.0;
+    call_fn ();
+    call_ofg (dciTrue);
+    if (UseObjfunScale)
+      objfun_scale = Min( Max(Max(1.0, g->norm()), AbsValue(*f)), max_objfun_scale );
 
     if (ncon > 0) {
       for (Int i = 0; i < nconI; i++) {
