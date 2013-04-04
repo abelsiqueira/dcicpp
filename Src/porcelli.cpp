@@ -337,6 +337,10 @@ namespace DCI {
         // Line search among from newton to cauchy
         factor *= 0.9;
         newtonReduction = cauchyReduction - factor*dotAdcphAdif - pow(factor,2)*halfSqrNormAdif;
+        if (factor < 1e-8) {
+          factor = 0;
+          break;
+        }
       }
 
       Vector xtemp(*xc), stemp((nconI ? *sc : *env));
