@@ -9,12 +9,13 @@ GDB = gdb
 
 LOCALTEST = localtest.tst
 INTESTS = test1.tst test2.tst test3.tst test4.tst test5.tst test6.tst test7.tst test8.tst test9.tst test10.tst test11.tst test12.tst test13.tst test14.tst
+FIXEDTESTS = fixedtest1.tst fixedtest2.tst
 EQTESTS = eqtest1.tst eqtest2.tst eqtest3.tst eqtest4.tst eqtest5.tst test3eq.tst
 UNCTESTS = unctest1.tst unctest2.tst
 INFEASTESTS = infeastest1.tst infeastest2.tst infeastest3.tst infeastest3e.tst infeastest4.tst infeastest5.tst infeastest6.tst
 ARGLINTESTS = arglinb.tst
 PIS = points_in_space1.tst points_in_space2.tst
-ALLTESTS = $(INTESTS) $(EQTESTS) $(UNCTESTS) $(LOCALTEST) $(INFEASTESTS) $(ARGLINTESTS) $(PIS)
+ALLTESTS = $(INTESTS) $(EQTESTS) $(UNCTESTS) $(LOCALTEST) $(INFEASTESTS) $(ARGLINTESTS) $(PIS) $(FIXEDTESTS)
 
 all: library $(INTESTS) 
 	$(VALGRIND) $(VALGRINDFLAGS) ./test1.tst
@@ -34,6 +35,10 @@ all: library $(INTESTS)
 
 arglin: library $(ARGLINTESTS)
 	$(VALGRIND) $(VALGRINDFLAGS) ./arglinb.tst
+
+fixedtests: $(FIXEDTESTS)
+	$(VALGRIND) $(VALGRINDFLAGS) ./fixedtest1.tst 
+	$(VALGRIND) $(VALGRINDFLAGS) ./fixedtest2.tst 
 
 eqtests: $(EQTESTS)
 	$(VALGRIND) $(VALGRINDFLAGS) ./eqtest1.tst 

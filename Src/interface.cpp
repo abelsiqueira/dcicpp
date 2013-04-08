@@ -125,12 +125,12 @@ namespace DCI {
       }
       Jtrip = new Triplet (*env, mmax, nmax + nconI, amax, 0); //0 is for unsymmetric
       Jx = Jtrip->get_doublex();
-      Ji = static_cast < Int * > (Jtrip->triplet->i);
-      Jj = static_cast < Int * > (Jtrip->triplet->j);
+      Jfun = static_cast < Int * > (Jtrip->triplet->i);
+      Jvar = static_cast < Int * > (Jtrip->triplet->j);
       for (Int i = 0; i < amax; i++) {
         Jx[i] = 0;
-        Ji[i] = 0;
-        Jj[i] = 0;
+        Jfun[i] = 0;
+        Jvar[i] = 0;
       }
       LJ = new Factor (*env);
     }
@@ -155,11 +155,6 @@ namespace DCI {
     DefineParameters ();
     InitialValues ();
     Initialized = dciTrue;
-
-    for (Int i = 0; i < nvar; i++) {
-      assert (blx[i] < xx[i]);
-      assert (xx[i] < bux[i]);
-    }
 
     return 0;
   }
@@ -574,7 +569,9 @@ namespace DCI {
       }
       for (Int i = 0; i < nvar; i++) {
         Real xi = xx[i], bli = blx[i], bui = bux[i];
-        if ( (bli > -dciInf) && (bui < dciInf) ) {
+        if (bli - bui > - dciTiny) 
+          gx[i] = 0;
+        else if ( (bli > -dciInf) && (bui < dciInf) ) {
           if (PartialPenal) {
             if ( (xi - bli) < (bui - xi) ) {
               if (grad) {
@@ -665,7 +662,9 @@ namespace DCI {
       }
       for (Int i = 0; i < nvar; i++) {
         Real xi = xcx[i], bli = blx[i], bui = bux[i];
-        if ( (bli > -dciInf) && (bui < dciInf) ) {
+        if (bli - bui > - dciTiny) 
+          gx[i] = 0;
+        else if ( (bli > -dciInf) && (bui < dciInf) ) {
           if (PartialPenal) {
             if ( (xi - bli) < (bui - xi) ) {
               if (grad) {
@@ -740,7 +739,7 @@ namespace DCI {
     UpdateScaling_x();
     static bool createdVariableScaling = false;
     pInt nnzj = new Int(0);
-    (*ccfsg) (&nvar, &ncon, xx, &mmax, cx, nnzj, &amax, Jx, Jj, Ji, &grad);
+    (*ccfsg) (&nvar, &ncon, xx, &mmax, cx, nnzj, &amax, Jx, Jvar, Jfun, &grad);
     for (Int i = 0; i < ncon; i++) {
       if (cx[i] > dciInf)
         cx[i] = dciInf;
@@ -756,15 +755,25 @@ namespace DCI {
     if (grad == dciTrue) {
       if (StartAtOne) {
         for (Int i = 0; i < *nnzj; i++) {
-          Jj[i]--;
-          Ji[i]--;
+          Jvar[i]--;
+          Jfun[i]--;
+        }
+      }
+      // Fixed variables fix
+      for (Int k = 0; k < *nnzj; k++) {
+        Real bli = blx[Jvar[k]], bui = bux[Jvar[k]];
+        if (bli - bui > - dciTiny) {
+          Jx[k]   = Jx[*nnzj-1];
+          Jvar[k] = Jvar[*nnzj-1];
+          Jfun[k] = Jfun[*nnzj-1];
+          (*nnzj)--;
         }
       }
 
       if (Running) {
         if (scale) { 
           for (Int k = 0; k < *nnzj; k++) {
-            Int j = Jj[k];
+            Int j = Jvar[k];
             Jx[k] *= Lambda[j];
           }
         }
@@ -777,8 +786,8 @@ namespace DCI {
               Jx[*nnzj] = -Lambda[j];
             else
               Jx[*nnzj] = -1;
-            Jj[*nnzj] = j;
-            Ji[*nnzj] = i;
+            Jvar[*nnzj] = j;
+            Jfun[*nnzj] = i;
             (*nnzj)++;
             numI++;
             j++;
@@ -790,7 +799,7 @@ namespace DCI {
         createdVariableScaling = true;
         if (UseVariableScaling) {
           for (Int k = 0; k < *nnzj; k++){
-            Int i = Jj[k];
+            Int i = Jvar[k];
             VariableScaling[i] = Max(VariableScaling[i], Jx[k]);
           }
           UpdateScaling_x();
@@ -806,23 +815,23 @@ namespace DCI {
       //Mumps
       if (UseMUMPS) {
         for (Int i = 0; i < *nnzj; i++) {
-          Ji[i] += nvar + nconI + 1;
-          Jj[i]++;
+          Jfun[i] += nvar + nconI + 1;
+          Jvar[i]++;
         }
         for (Int i = 0; i < nvar + nconI; i++) {
-          Ji[*nnzj + i] = i + 1;
-          Jj[*nnzj + i] = i + 1;
+          Jfun[*nnzj + i] = i + 1;
+          Jvar[*nnzj + i] = i + 1;
           Jx[*nnzj + i] = 1;
         }
         if (cholCorrection > 0) {
           for (Int i = 0; i < ncon; i++) {
-            Ji[*nnzj + nvar + nconI + i] = nvar + nconI + i + 1;
-            Jj[*nnzj + nvar + nconI + i] = nvar + nconI + i + 1;
+            Jfun[*nnzj + nvar + nconI + i] = nvar + nconI + i + 1;
+            Jvar[*nnzj + nvar + nconI + i] = nvar + nconI + i + 1;
             Jx[*nnzj + nvar + nconI + i] = cholCorrection;
           }
         }
-        id.irn = reinterpret_cast<int*>(Ji);
-        id.jcn = reinterpret_cast<int*>(Jj);
+        id.irn = reinterpret_cast<int*>(Jfun);
+        id.jcn = reinterpret_cast<int*>(Jvar);
         id.a = reinterpret_cast<double*>(Jx);
         if (cholCorrection > 0)
           id.nz = (int)(*nnzj) + nvar + nconI + ncon;
@@ -847,7 +856,7 @@ namespace DCI {
   void Interface::call_ccfsg_xc (Bool grad, Bool scale) {
     UpdateScaling_xc();
     pInt nnzj = new Int(0);
-    (*ccfsg) (&nvar, &ncon, xcx, &mmax, cx, nnzj, &amax, Jx, Jj, Ji, &grad);
+    (*ccfsg) (&nvar, &ncon, xcx, &mmax, cx, nnzj, &amax, Jx, Jvar, Jfun, &grad);
     for (Int i = 0; i < ncon; i++) {
       if (cx[i] > dciInf)
         cx[i] = dciInf;
@@ -863,15 +872,25 @@ namespace DCI {
     if (grad == dciTrue) {
       if (StartAtOne) {
         for (Int i = 0; i < *nnzj; i++) {
-          Jj[i]--;
-          Ji[i]--;
+          Jvar[i]--;
+          Jfun[i]--;
+        }
+      }
+      // Fixed variables fix
+      for (Int k = 0; k < *nnzj; k++) {
+        Real bli = blx[Jvar[k]], bui = bux[Jvar[k]];
+        if (bli - bui > - dciTiny) {
+          Jx[k]   = Jx[*nnzj-1];
+          Jvar[k] = Jvar[*nnzj-1];
+          Jfun[k] = Jfun[*nnzj-1];
+          (*nnzj)--;
         }
       }
 
       if (Running) {
         if (scale) {
           for (Int k = 0; k < *nnzj; k++) {
-            Int j = Jj[k];
+            Int j = Jvar[k];
             Jx[k] *= Lambda[j];
           }
         }
@@ -884,8 +903,8 @@ namespace DCI {
               Jx[*nnzj] = -Lambda[j];
             else
               Jx[*nnzj] = -1;
-            Jj[*nnzj] = j;
-            Ji[*nnzj] = i;
+            Jvar[*nnzj] = j;
+            Jfun[*nnzj] = i;
             (*nnzj)++;
             numI++;
             j++;
@@ -900,23 +919,23 @@ namespace DCI {
       //Mumps
       if (UseMUMPS) {
         for (Int i = 0; i < *nnzj; i++) {
-          Ji[i] += nvar + nconI + 1;
-          Jj[i]++;
+          Jfun[i] += nvar + nconI + 1;
+          Jvar[i]++;
         }
         for (Int i = 0; i < nvar + nconI; i++) {
-          Ji[*nnzj + i] = i + 1;
-          Jj[*nnzj + i] = i + 1;
+          Jfun[*nnzj + i] = i + 1;
+          Jvar[*nnzj + i] = i + 1;
           Jx[*nnzj + i] = 1;
         }
         if (cholCorrection > 0) {
           for (Int i = 0; i < ncon; i++) {
-            Ji[*nnzj + nvar + nconI + i] = nvar + nconI + i + 1;
-            Jj[*nnzj + nvar + nconI + i] = nvar + nconI + i + 1;
+            Jfun[*nnzj + nvar + nconI + i] = nvar + nconI + i + 1;
+            Jvar[*nnzj + nvar + nconI + i] = nvar + nconI + i + 1;
             Jx[*nnzj + nvar + nconI + i] = cholCorrection;
           }
         }
-        id.irn = reinterpret_cast<int*>(Ji);
-        id.jcn = reinterpret_cast<int*>(Jj);
+        id.irn = reinterpret_cast<int*>(Jfun);
+        id.jcn = reinterpret_cast<int*>(Jvar);
         id.a = reinterpret_cast<double*>(Jx);
         if (cholCorrection > 0)
           id.nz = (int)(*nnzj) + nvar + nconI + ncon;
@@ -942,7 +961,10 @@ namespace DCI {
     UpdateScaling_x();
     Real ppx[nvar];
     for (Int i = 0; i < nvar; i++) {
-      ppx[i] = Lambda[i] * px[i];
+      if (blx[i] > bux[i] - dciTiny)
+        ppx[i] = 0.0;
+      else
+        ppx[i] = Lambda[i] * px[i];
     }
     if (objfun_scale != 1) {
       for (Int i = 0; i < ncon; i++)
@@ -959,10 +981,14 @@ namespace DCI {
         yx[i] /= objfun_scale;
     }
     for (Int i = 0; i < nvar; i++) {
-      ux[i] *= Lambda[i];
-      Real li = blx[i], ui = bux[i], pxi = px[i];
-      if (li > -dciInf || ui < dciInf)
-        ux[i] += mu * pxi;
+      if (blx[i] > bux[i] - dciTiny) {
+        ux[i] = 0;
+      } else {
+        ux[i] *= Lambda[i];
+        Real li = blx[i], ui = bux[i], pxi = px[i];
+        if (li > -dciInf || ui < dciInf)
+          ux[i] += mu * pxi;
+      }
     }
     for (Int i = 0; i < nconI; i++) {
       Int j = nvar + i;
@@ -974,7 +1000,10 @@ namespace DCI {
     UpdateScaling_xc();
     Real ppx[nvar];
     for (Int i = 0; i < nvar; i++) {
-      ppx[i] = Lambda[i] * px[i];
+      if (blx[i] > bux[i] - dciTiny)
+        ppx[i] = 0;
+      else
+        ppx[i] = Lambda[i] * px[i];
     }
     if (objfun_scale != 1) {
       for (Int i = 0; i < ncon; i++)
@@ -991,10 +1020,14 @@ namespace DCI {
         yx[i] /= objfun_scale;
     }
     for (Int i = 0; i < nvar; i++) {
-      ux[i] *= Lambda[i];
-      Real li = blx[i], ui = bux[i], pxi = px[i];
-      if (li > -dciInf || ui < dciInf)
-        ux[i] += mu * pxi;
+      if (blx[i] > bux[i] - dciTiny) {
+        ux[i] = 0;
+      } else {
+          ux[i] *= Lambda[i];
+        Real li = blx[i], ui = bux[i], pxi = px[i];
+        if (li > -dciInf || ui < dciInf)
+          ux[i] += mu * pxi;
+      }
     }
     for (Int i = 0; i < nconI; i++) {
       Int j = nvar + i;
@@ -1075,6 +1108,9 @@ namespace DCI {
         Unlimited = dciTrue;
         break;
       }
+      if (blx[i] - bux[i] > - dciTiny)
+        continue;
+
       if (xx[i] >= bux[i]) {
         std::cout << "ERROR" << std::endl;
         GDBSTOP ();

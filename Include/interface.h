@@ -175,7 +175,7 @@ namespace DCI {
       pReal sx;
       pReal gx, cx;
       pReal Jx;
-      pInt Ji, Jj;
+      pInt Jfun, Jvar;
       pReal xcx, scx;
       pReal yineqx;
 
@@ -248,6 +248,8 @@ namespace DCI {
       Real objfun_scale, max_objfun_scale;
       Bool UseObjfunScale, UseVariableScaling;
       Int objfun_count;
+
+      Int nfix, *fixed_index;
   };
 }
 

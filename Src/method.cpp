@@ -387,6 +387,11 @@ namespace DCI {
 
     for (Int i = 0; i < nvar; i++) {
       Real zi = xx[i], Li = blx[i], Ui = bux[i];
+      if (Li > Ui - dciTiny) {
+        Lambda[i] = 1.0;
+        continue;
+      }
+
       if ( Li > -dciInf && Ui < dciInf ) {
         if ( zi < (Li + Ui)/2 )
           Lambda[i] = Min(MaxDiag, Max(MinDiag, zi - Li));
@@ -431,6 +436,10 @@ namespace DCI {
 
     for (Int i = 0; i < nvar; i++) {
       Real zi = xcx[i], Li = blx[i], Ui = bux[i];
+      if (Li > Ui - dciTiny) {
+        Lambda[i] = 1.0;
+        continue;
+      }
       if ( Li > -dciInf && Ui < dciInf ) {
         if ( zi < (Li + Ui)/2 )
           Lambda[i] = Min(MaxDiag, Max(MinDiag, zi - Li));
@@ -473,6 +482,8 @@ namespace DCI {
     for (Int i = 0; i < nvar; i++) {
       Real bli = blx[i], bui = bux[i], xi = xx[i];
       yineqx[i] = 0;
+      if (bli - bui > - dciTiny)
+        continue;
       if ( (PartialPenal) && (bli > -dciInf) && (bui < dciInf) ) {
         if ( (xi - bli) < (bui - xi) )
           yineqx[i] -= mu/(xi - bli);
@@ -507,6 +518,8 @@ namespace DCI {
     for (Int i = 0; i < nvar; i++) {
       Real bli = blx[i], bui = bux[i], xi = xcx[i];
       yineqx[i] = 0;
+      if (bli - bui > - dciTiny)
+        continue;
       if ( (PartialPenal) && (bli > -dciInf) && (bui < dciInf) ) {
         if ( (xi - bli) < (bui - xi) )
           yineqx[i] -= mu/(xi - bli);
@@ -582,6 +595,8 @@ namespace DCI {
   Real Interface::calc_pen () {
     Real val = 0.0;
     for (Int i = 0; i < nvar; i++) {
+      if (blx[i] - bux[i] > - dciTiny)
+        continue;
       if ( (PartialPenal) && (blx[i] > -dciInf) && (bux[i] < dciInf) ) {
         if ( (xx[i] - blx[i]) < (bux[i] - xx[i]) )
           val += log (xx[i] - blx[i]);
@@ -613,6 +628,8 @@ namespace DCI {
   Real Interface::calc_pen_xc () {
     Real val = 0.0;
     for (Int i = 0; i < nvar; i++) {
+      if (blx[i] - bux[i] > - dciTiny)
+        continue;
       if ( (PartialPenal) && (blx[i] > -dciInf) && (bux[i] < dciInf) ) {
         if ( (xcx[i] - blx[i]) < (bux[i] - xcx[i]) )
           val += log (xcx[i] - blx[i]);

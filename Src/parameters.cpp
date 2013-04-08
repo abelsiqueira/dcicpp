@@ -350,6 +350,7 @@ namespace DCI {
     maxitSteih = Max (minitSteih, Min(maxitSteih, Int(nvar*relitSteih+5) ) );
     minstep *= Min (csig, csic);
 
+    std::vector<Int> fixed_vector;
     for (Int i = 0; i < nvar; i++) {
       Real bli = blx[i], bui = bux[i];
       VariableScaling[i] = 1.0;
@@ -357,19 +358,27 @@ namespace DCI {
         xcx[i] = xx[i];
         continue;
       }
-      // Fixed variables WORKAROUND:
-      if (bli == bui) {
-        throw("Fixed variables unhandled");
-        blx[i] -= 1e-12;
-        bux[i] += 1e-12;
-        bli = blx[i];
-        bui = bux[i];
+      if (bli - bui > dciTiny) {
+        throw("Infeasible bounds");
+      } else if (bli - bui > - dciTiny) {
+        fixed_vector.push_back(i);
+        xx[i] = (bli + bui)/2;
+        xcx[i] = xx[i];
+      } else {
+        Real smldelta = Min ( 1e-2, (bui - bli)/100.0);
+        xx[i] = Max ( Min ( xx[i], bui - smldelta ), bli + smldelta );
+        xcx[i] = xx[i];
+        assert (xx[i] > bli);
+        assert (xx[i] < bui);
       }
-      Real smldelta = Min ( 1e-2, (bui - bli)/100.0);
-      xx[i] = Max ( Min ( xx[i], bui - smldelta ), bli + smldelta );
-      xcx[i] = xx[i];
-      assert (xx[i] > bli);
-      assert (xx[i] < bui);
+    }
+
+    nfix = fixed_vector.size();
+    if (nfix > 0) {
+      fixed_index = new Int[nfix];
+      for (Int i = 0; i < nfix; i++) {
+        fixed_index[i] = fixed_vector[i];
+      }
     }
 
     // Calculating the function value and c without the barrier.

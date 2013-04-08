@@ -32,6 +32,9 @@ cuter: library
 test: library
 	(cd Tests; make )
 
+fixedtests: library
+	(cd Tests; make fixedtests)
+
 eqtests: library
 	(cd Tests; make eqtests)
 
