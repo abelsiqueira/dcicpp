@@ -237,6 +237,10 @@ namespace DCI {
     alpha = 1.0;
     for (int i = 0; i < nvar + nconI; i++) {
       Real di = dcpx[i], ui = upper[i], li = lower[i];
+      if (li - ui > -dciEps) {
+        dcpx[i] = 0;
+        continue;
+      }
       if (di > dciEps) {
         alpha = Min(alpha, ui/(di));
       } else if (di < -dciEps) {
@@ -295,6 +299,10 @@ namespace DCI {
         alpha = 1.0;
         for (Int i = 0; i < nvar + nconI; i++) {
           Real di = dnx[i], ui = upper[i], li = lower[i];
+          if (li - ui > -dciEps) {
+            dnx[i] = 0;
+            continue;
+          }
           if (di > dciEps) {
             alpha = Min(alpha, ui/di);
           } else if (di < -dciEps) {
@@ -346,6 +354,8 @@ namespace DCI {
       Vector xtemp(*xc), stemp((nconI ? *sc : *env));
 
       for (Int i = 0; i < nvar; i++) {
+        if (blx[i] - bux[i] > -dciEps)
+          continue;
         xcx[i] += (factor*dnx[i] + (1 - factor)*dcpx[i]);
         if (xcx[i] >= bux[i])
           xcx[i] = bux[i] - dciEps;

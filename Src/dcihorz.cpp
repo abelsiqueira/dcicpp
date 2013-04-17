@@ -58,6 +58,10 @@ namespace DCI {
       pReal dx = d.get_doublex();
       scale_xc (d);
       for (Int i = 0; i < nvar; i++) {
+        if (blx[i] - bux[i] > -dciEps) {
+          dx[i] = 0;
+          continue;
+        }
         xx[i] = xcx[i] + dx[i];
         if (xx[i] == bux[i])
           xx[i] = bux[i] - 1e-12;
