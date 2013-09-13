@@ -16,7 +16,7 @@ export PACK_PRECISION="double"
 # ${MYCUTER}/(precision)/bin
 export PACKOBJS=""
 
-export PACKLIBS="-ldcicpp -lbasematrices -lcholmod -lamd -lcolamd -lccolamd -lcamd -lsuitesparseconfig -lmetis -ldmumps -lmumps_common -lpord -lmpiseq -lgoto2 -lgfortran -lgfortranbegin -lpthread -pg -lrt"
+export PACKLIBS="-ldcicpp -lbasematrices -lcholmod -lamd -lcolamd -lccolamd -lcamd -lsuitesparseconfig -lmetis -lopenblas -lgfortran -lgfortranbegin -lpthread -pg -lrt"
 
 # Define the name of the package specification file if any. This possibly
 # precision-dependent file must either lie in the current directory or in

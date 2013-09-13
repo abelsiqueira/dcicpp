@@ -59,14 +59,14 @@ namespace DCI {
 
     ReadParameters();
     //Mumps
-    if (UseMUMPS) {
-      MPI_Comm_rank(MPI_COMM_WORLD, &myid);
-      id.job=JOB_INIT;
-      id.par=1;
-      id.sym=2;
-      id.comm_fortran=USE_COMM_WORLD;
-      dmumps_c(&id);
-    }
+//    if (UseMUMPS) {
+//      MPI_Comm_rank(MPI_COMM_WORLD, &myid);
+//      id.job=JOB_INIT;
+//      id.par=1;
+//      id.sym=2;
+//      id.comm_fortran=USE_COMM_WORLD;
+//      dmumps_c(&id);
+//    }
   }
 
   void Interface::ReadParameters () {

@@ -2,11 +2,11 @@
 #define dci_interface_h
 
 #include "triplet.h"
-#include "mpi.h"
-#include "dmumps_c.h"
-#define JOB_INIT -1
-#define JOB_END -2
-#define USE_COMM_WORLD -987654
+//#include "mpi.h"
+//#include "dmumps_c.h"
+//#define JOB_INIT -1
+//#define JOB_END -2
+//#define USE_COMM_WORLD -987654
 
 namespace DCI {
   using namespace base_matrices;
@@ -67,9 +67,9 @@ namespace DCI {
 
     protected:
       //MUMPS Section
-      DMUMPS_STRUC_C id;
-      Real *mumps_matrix, *mumps_rhs;
-      int *mumps_irn, *mumps_jcn, myid;
+//      DMUMPS_STRUC_C id;
+//      Real *mumps_matrix, *mumps_rhs;
+//      int *mumps_irn, *mumps_jcn, myid;
       void GDBSTOP ();
       // These are the pointer to the functions
       // Unconstrained
@@ -108,7 +108,7 @@ namespace DCI {
       Int dcitrust (Real);
       Int Porcelli (Real &);
       Int LeastSquareTrustRegion (Vector &, pReal, pReal, pReal);
-      Int InteriorPointRestoration ();
+//      Int InteriorPointRestoration ();
       Real InteriorPointObjFun (Real, Real, Int, Int, pReal, pReal, pReal, pReal,
           pReal, pReal, pReal, pReal, pInt, pInt);
       void NAproj (Vector &, Vector &, Vector &);

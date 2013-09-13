@@ -151,8 +151,8 @@ namespace DCI {
           Porcelli(infeasible_gradient);
         } else if ((!Bounded) || (!UseVertInteriorPoint) )
             dcitrust (oldnormc);
-        else
-          InteriorPointRestoration ();
+//        else
+//          InteriorPointRestoration ();
 #ifdef ITER_MATLAB
     iter_file << "X(:,size(X,2)+1) = [" << xcx[0] << ";" << xcx[1] << "];" << std::endl;
 #endif

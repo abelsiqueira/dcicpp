@@ -2,8 +2,9 @@
 
 # EDIT dcicpp.spc manually
 
-test_list="$(ls TestLists/small/class*)"
-target_dir=all.small.2013.04.17
+test_list="$(ls TestLists/small/class* | grep -v fixed)"
+target_dir=all.small.2013.09.13.old
+cat $test_list | wc -l
 
 mkdir -p $target_dir
 for list in $test_list
@@ -22,7 +23,7 @@ do
   echo "error solving:" >> $outname.list.of.problems
   for problem in $(cat $list)
   do
-    grep_output="$(grep $problem latex_*)"
+    grep_output="$(grep -w $problem latex_*)"
     if [ -z "$grep_output" ]
     then
       echo $problem
