@@ -183,13 +183,26 @@ namespace DCI {
   }
 
   void Interface::update_mu () {
+    if (nconI == 0) {
+      mu = 0;
+      return;
+    }
     Real mufactor = 1.0;
     Real minmuthisiter = Max (0.1*mu, 1e-24);
     Real minother = 100*Min (rho, rho*rho); 
-    minother = Min (minother, calc_ydif() + lagrgap + infacgap);
+//    minother = Min (minother, calc_ydif() + lagrgap + infacgap);
     minother = Min (minother, mufactor * mu);
     minother = Min (minother, 100*normck);
-
+    Real dotls = 0.0;
+    for (Int i = 0; i < nconI; i++) {
+      Real si = scx[i], cli = clx[ineqIdx[i]], cui = cux[ineqIdx[i]];
+      if (cli > -dciInf)
+        dotls += Max(0.0, -yx[i]) * (si - cli);
+      if (cui < dciInf)
+        dotls += Max(0.0,  yx[i]) * (cui - si);
+    }
+    dotls /= nconI;
+    minother = Min (minother, dotls);
     mu = Max (minother, minmuthisiter);
     mu = minother;
   }

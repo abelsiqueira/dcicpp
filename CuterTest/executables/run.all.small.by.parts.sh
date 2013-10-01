@@ -3,7 +3,7 @@
 # EDIT dcicpp.spc manually
 
 test_list="$(ls TestLists/small/class* | grep -v fixed)"
-target_dir=all.small.2013.09.13.old
+target_dir=all.small.2013.09.26.old.dotls
 cat $test_list | wc -l
 
 mkdir -p $target_dir
