@@ -148,8 +148,6 @@ namespace DCI {
         infeasible_gradient = 1.0;
 
         dcitrust(infeasible_gradient);
-//        else
-//          InteriorPointRestoration ();
 #ifdef ITER_MATLAB
     iter_file << "X(:,size(X,2)+1) = [" << xcx[0] << ";" << xcx[1] << "];" << std::endl;
 #endif

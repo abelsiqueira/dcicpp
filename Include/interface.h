@@ -97,8 +97,7 @@ namespace DCI {
       void horzstep (Real &);
       Int dcisteih (Vector &, Real &, Real &);
       Int dcitrust (Real &);
-      Int LeastSquareTrustRegion (Vector &, pReal, pReal, pReal);
-//      Int InteriorPointRestoration ();
+      Int least_square_tr (Vector &, pReal, pReal, pReal);
       Real InteriorPointObjFun (Real, Real, Int, Int, pReal, pReal, pReal, pReal,
           pReal, pReal, pReal, pReal, pInt, pInt);
       void NAproj (Vector &, Vector &, Vector &);

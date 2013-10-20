@@ -19,7 +19,7 @@
 namespace DCI {
   /* This function must (approximately) solve
    * min m(d) = 0.5*norm */
-  Int Interface::LeastSquareTrustRegion (Vector & d, pReal scalingMatrix,
+  Int Interface::least_square_tr (Vector & d, pReal scalingMatrix,
       Real *lower, Real *upper) {
     d.reset(nvar + nconI, 0.0);
     Int nLstSqrs = 0, maxLstSqrs = nvar + nconI;
@@ -268,7 +268,7 @@ namespace DCI {
       // sc + dcps >= epsmu*sc
       dnavail = dciFalse;
       if (!dnavail) {
-//        naflag = LeastSquareTrustRegion (dn, scalingMatrix, lower, upper);
+//        naflag = least_square_tr (dn, scalingMatrix, lower, upper);
         naflag = NAstep (*c, dn);
 /*         naflag = NAstep (ctmp, dn); 
  *         if (dn.norm() > DeltaV) {
