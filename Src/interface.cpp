@@ -69,8 +69,8 @@ namespace DCI {
     delpointer (Jtrip);
     delpointer (LJ);
     delpointer (env); 
-    delpointer (Lambda);
-    delpointer (VariableScaling);
+    delpointer (scaling_matrix);
+    delpointer (variable_scaling);
   }
 
   int Interface::start () {
@@ -399,9 +399,9 @@ namespace DCI {
     xx = x->get_doublex();
     xc = new Vector (*env, n, V);
     xcx = xc->get_doublex();
-    VariableScaling = new Real[n];
+    variable_scaling = new Real[n];
     for (Int i = 0; i < (Int)n; i++)
-      VariableScaling[i] = 1.0;
+      variable_scaling[i] = 1.0;
   }
 
   void Interface::set_sol (size_t n, Real * V) {
@@ -608,7 +608,7 @@ namespace DCI {
           val += log (xi - bli);
         }
         if (grad)
-          gx[i] *= VariableScaling[i];
+          gx[i] *= variable_scaling[i];
       }
       for (Int i = 0; i < nconI; i++) {
         Int j = nvar + i;
@@ -701,7 +701,7 @@ namespace DCI {
           val += log (xi - bli);
         }
         if (grad)
-          gx[i] *= VariableScaling[i];
+          gx[i] *= variable_scaling[i];
       }
       for (Int i = 0; i < nconI; i++) {
         Int j = nvar + i;
@@ -738,7 +738,7 @@ namespace DCI {
 
   void Interface::call_ccfsg (Bool grad, Bool scale) {
     updateScaling_x();
-    static bool createdVariableScaling = false;
+    static bool createdvariable_scaling = false;
     pInt nnzj = new Int(0);
     (*ccfsg) (&nvar, &ncon, xx, &mmax, cx, nnzj, &amax, Jx, Jvar, Jfun, &grad);
     for (Int i = 0; i < ncon; i++) {
@@ -775,7 +775,7 @@ namespace DCI {
         if (scale) { 
           for (Int k = 0; k < *nnzj; k++) {
             Int j = Jvar[k];
-            Jx[k] *= Lambda[j];
+            Jx[k] *= scaling_matrix[j];
           }
         }
         Int numI = 0, j = nvar;
@@ -784,7 +784,7 @@ namespace DCI {
             Real si = sx[numI];
             cx[i] -= si;
             if (scale)
-              Jx[*nnzj] = -Lambda[j];
+              Jx[*nnzj] = -scaling_matrix[j];
             else
               Jx[*nnzj] = -1;
             Jvar[*nnzj] = j;
@@ -796,17 +796,17 @@ namespace DCI {
         }
       }
 
-      if (!createdVariableScaling) {
-        createdVariableScaling = true;
-        if (UseVariableScaling) {
+      if (!createdvariable_scaling) {
+        createdvariable_scaling = true;
+        if (use_variable_scaling) {
           for (Int k = 0; k < *nnzj; k++){
             Int i = Jvar[k];
-            VariableScaling[i] = Max(VariableScaling[i], Jx[k]);
+            variable_scaling[i] = Max(variable_scaling[i], Jx[k]);
           }
           updateScaling_x();
         }
         for (Int i = 0; i < nvar; i++)
-          VariableScaling[i] = 1.0/VariableScaling[i];
+          variable_scaling[i] = 1.0/variable_scaling[i];
       }
 
       *(Jtrip->get_pnnz()) = *nnzj;
@@ -866,7 +866,7 @@ namespace DCI {
         if (scale) {
           for (Int k = 0; k < *nnzj; k++) {
             Int j = Jvar[k];
-            Jx[k] *= Lambda[j];
+            Jx[k] *= scaling_matrix[j];
           }
         }
         Int numI = 0, j = nvar;
@@ -875,7 +875,7 @@ namespace DCI {
             Real si = scx[numI];
             cx[i] -= si;
             if (scale)
-              Jx[*nnzj] = -Lambda[j];
+              Jx[*nnzj] = -scaling_matrix[j];
             else
               Jx[*nnzj] = -1;
             Jvar[*nnzj] = j;
@@ -913,7 +913,7 @@ namespace DCI {
       if (blx[i] > bux[i] - dciTiny)
         ppx[i] = 0.0;
       else
-        ppx[i] = Lambda[i] * px[i];
+        ppx[i] = scaling_matrix[i] * px[i];
     }
     if (objfun_scale != 1) {
       for (Int i = 0; i < ncon; i++)
@@ -933,7 +933,7 @@ namespace DCI {
       if (blx[i] > bux[i] - dciTiny) {
         ux[i] = 0;
       } else {
-        ux[i] *= Lambda[i];
+        ux[i] *= scaling_matrix[i];
         Real li = blx[i], ui = bux[i], pxi = px[i];
         if (li > -dciInf || ui < dciInf)
           ux[i] += mu * pxi;
@@ -952,7 +952,7 @@ namespace DCI {
       if (blx[i] > bux[i] - dciTiny)
         ppx[i] = 0;
       else
-        ppx[i] = Lambda[i] * px[i];
+        ppx[i] = scaling_matrix[i] * px[i];
     }
     if (objfun_scale != 1) {
       for (Int i = 0; i < ncon; i++)
@@ -972,7 +972,7 @@ namespace DCI {
       if (blx[i] > bux[i] - dciTiny) {
         ux[i] = 0;
       } else {
-          ux[i] *= Lambda[i];
+          ux[i] *= scaling_matrix[i];
         Real li = blx[i], ui = bux[i], pxi = px[i];
         if (li > -dciInf || ui < dciInf)
           ux[i] += mu * pxi;

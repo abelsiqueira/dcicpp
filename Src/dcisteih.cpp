@@ -43,14 +43,14 @@ namespace DCI {
 
     for (Int i = 0; i < nvar; i++) {
       Real xi = xcx[i], bli = blx[i], bui = bux[i];
-      lower[i] = Max( (bli - xi) * (1 - epsmu)/Lambda[i], -DeltaH/Lambda[i] );
-      upper[i] = Min( (bui - xi) * (1 - epsmu)/Lambda[i], DeltaH/Lambda[i] );
+      lower[i] = Max( (bli - xi) * (1 - epsmu)/scaling_matrix[i], -DeltaH/scaling_matrix[i] );
+      upper[i] = Min( (bui - xi) * (1 - epsmu)/scaling_matrix[i], DeltaH/scaling_matrix[i] );
     }
     for (Int i = 0; i < nconI; i++) {
       Real si = scx[i], cli = clx[ineq_index[i]], cui = cux[ineq_index[i]];
       Int j = nvar + i;
-      lower[j] = Max( (cli - si) * (1 - epsmu)/Lambda[j], -DeltaH/Lambda[j] );
-      upper[j] = Min( (cui - si) * (1 - epsmu)/Lambda[j], DeltaH/Lambda[j] );
+      lower[j] = Max( (cli - si) * (1 - epsmu)/scaling_matrix[j], -DeltaH/scaling_matrix[j] );
+      upper[j] = Min( (cui - si) * (1 - epsmu)/scaling_matrix[j], DeltaH/scaling_matrix[j] );
     }
 
 
@@ -64,7 +64,7 @@ namespace DCI {
       ptp = p.dot (p);
       ptp = 0.0;
       for (Int i = 0; i < nvar + nconI; i++) {
-        ptp += pow(px[i]*Lambda[i], 2);
+        ptp += pow(px[i]*scaling_matrix[i], 2);
       }
 
       if (gamma <= eps3*ptp) {

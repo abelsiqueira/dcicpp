@@ -79,7 +79,7 @@ namespace DCI {
     return (feasOpt->norm () < 1e-6);
   }
 
-  void Interface::updateLambda () {
+  void Interface::updateMultipliers () {
     if (ncon == 0) {
       *gp = *g;
       return;
@@ -273,19 +273,7 @@ namespace DCI {
     Real one[2] = {1,0};
 
     Pr.sdmult (*J, 0, mone, zero, r); // Pr = -A*r
-    if (UseMUMPS) {
-      Real rhs[nvar + nconI + Pr.size()];
-      for (Int i = 0; i < nvar + nconI; i++)
-        rhs[i] = 0;
-      for (Int i = 0; i < (Int) Pr.size(); i++)
-        rhs[nvar + nconI + i] = Pr.get_doublex()[i];
-      tmp.reset(Pr.size());
-      for (Int i = 0; i < (Int) tmp.size(); i++)
-        tmp.get_doublex()[i] = rhs[nvar + nconI + i];
-      tmp.scale(-1);
-    } else {
-      tmp.solve (CHOLMOD_A, *LJ, Pr); // A * A' * tmp = Pr
-    }
+    tmp.solve (CHOLMOD_A, *LJ, Pr); // A * A' * tmp = Pr
     if (LimLbd) {
       pReal tmpx = tmp.get_doublex();
       for (Int i = 0; i < ncon; i++) {
@@ -296,23 +284,13 @@ namespace DCI {
     }
     Pr = r;
     Pr.sdmult (*J, 1, one, one, tmp); //Pr = Pr + J'*tmp => Pr = r - A'*inv(A*A')*A*r
-
   }
 
   Int Interface::naStep (Vector & r, Vector & dr) { //dr = -A'*inv(AA')*r
     Real mone[2] = {-1,0}, zero[2] = {0,0};
-    if (UseCG) {
+    if (use_conjugate_gradient) {
       linearSystemCG (0, r, dr);
       dr.sdmult (*J, 1, mone, zero, dr);
-    } else if (UseMUMPS) {
-      Real rhs[nvar + nconI + r.size()];
-      for (Int i = 0; i < nvar + nconI; i++)
-        rhs[i] = 0;
-      for (Int i = 0; i < (Int) r.size(); i++)
-        rhs[nvar + nconI + i] = -r.get_doublex()[i];
-      dr.reset(nvar + nconI);
-      for (Int i = 0; i < nvar + nconI; i++)
-        dr.get_doublex()[i] = rhs[i];
     } else {
       dr.solve (CHOLMOD_A, *LJ, r); // dr = inv(AA')r;
       dr.sdmult (*J, 1, mone, zero, dr);
@@ -322,44 +300,44 @@ namespace DCI {
   }
 
   void Interface::updateScaling_x () {
-    if (Lambda == 0)
-      Lambda = new Real[nvar + nconI];
+    if (scaling_matrix == 0)
+      scaling_matrix = new Real[nvar + nconI];
 
     for (Int i = 0; i < nvar; i++) {
       Real zi = xx[i], Li = blx[i], Ui = bux[i];
       if (Li > Ui - dciTiny) {
-        Lambda[i] = 1.0;
+        scaling_matrix[i] = 1.0;
         continue;
       }
 
       if ( Li > -dciInf && Ui < dciInf ) {
         if ( zi < (Li + Ui)/2 )
-          Lambda[i] = Min(MaxDiag, Max(MinDiag, zi - Li));
+          scaling_matrix[i] = Min(MaxDiag, Max(MinDiag, zi - Li));
         else
-          Lambda[i] = Min(MaxDiag, Max(MinDiag, Ui - zi));
+          scaling_matrix[i] = Min(MaxDiag, Max(MinDiag, Ui - zi));
       } else if (Li > -dciInf)
-        Lambda[i] = Min(MaxDiag, Max(MinDiag, zi - Li));
+        scaling_matrix[i] = Min(MaxDiag, Max(MinDiag, zi - Li));
       else if (Ui < dciInf)
-        Lambda[i] = Min(MaxDiag, Max(MinDiag, Ui - zi));
+        scaling_matrix[i] = Min(MaxDiag, Max(MinDiag, Ui - zi));
       else
-        Lambda[i] = 1.0;
+        scaling_matrix[i] = 1.0;
 
-      Lambda[i] *= VariableScaling[i];
+      scaling_matrix[i] *= variable_scaling[i];
     }
     for (Int i = 0; i < nconI; i++) {
       Real zi = sx[i], Li = clx[ineq_index[i]], Ui = cux[ineq_index[i]];
       Int j = nvar + i;
       if ( Li > -dciInf && Ui < dciInf ) {
         if ( zi < (Li + Ui)/2 )
-          Lambda[j] = Min(MaxDiag, Max(MinDiag, zi - Li));
+          scaling_matrix[j] = Min(MaxDiag, Max(MinDiag, zi - Li));
         else
-          Lambda[j] = Min(MaxDiag, Max(MinDiag, Ui - zi));
+          scaling_matrix[j] = Min(MaxDiag, Max(MinDiag, Ui - zi));
       } else if (Li > -dciInf)
-        Lambda[j] = Min(MaxDiag, Max(MinDiag, zi - Li));
+        scaling_matrix[j] = Min(MaxDiag, Max(MinDiag, zi - Li));
       else if (Ui < dciInf)
-        Lambda[j] = Min(MaxDiag, Max(MinDiag, Ui - zi));
+        scaling_matrix[j] = Min(MaxDiag, Max(MinDiag, Ui - zi));
       else
-        Lambda[j] = 1.0;
+        scaling_matrix[j] = 1.0;
     }
   }
 
@@ -367,47 +345,47 @@ namespace DCI {
     pReal Vx = V.get_doublex ();
 
     for (Int i = 0; i < nvar + nconI; i++)
-      Vx[i] *= Lambda[i];
+      Vx[i] *= scaling_matrix[i];
   }
 
   void Interface::updateScaling_xc () {
-    if (Lambda == 0)
-      Lambda = new Real[nvar + nconI];
+    if (scaling_matrix == 0)
+      scaling_matrix = new Real[nvar + nconI];
 
     for (Int i = 0; i < nvar; i++) {
       Real zi = xcx[i], Li = blx[i], Ui = bux[i];
       if (Li > Ui - dciTiny) {
-        Lambda[i] = 1.0;
+        scaling_matrix[i] = 1.0;
         continue;
       }
       if ( Li > -dciInf && Ui < dciInf ) {
         if ( zi < (Li + Ui)/2 )
-          Lambda[i] = Min(MaxDiag, Max(MinDiag, zi - Li));
+          scaling_matrix[i] = Min(MaxDiag, Max(MinDiag, zi - Li));
         else
-          Lambda[i] = Min(MaxDiag, Max(MinDiag, Ui - zi));
+          scaling_matrix[i] = Min(MaxDiag, Max(MinDiag, Ui - zi));
       } else if (Li > -dciInf)
-        Lambda[i] = Min(MaxDiag, Max(MinDiag, zi - Li));
+        scaling_matrix[i] = Min(MaxDiag, Max(MinDiag, zi - Li));
       else if (Ui < dciInf)
-        Lambda[i] = Min(MaxDiag, Max(MinDiag, Ui - zi));
+        scaling_matrix[i] = Min(MaxDiag, Max(MinDiag, Ui - zi));
       else
-        Lambda[i] = 1.0;
+        scaling_matrix[i] = 1.0;
 
-      Lambda[i] *= VariableScaling[i];
+      scaling_matrix[i] *= variable_scaling[i];
     }
     for (Int i = 0; i < nconI; i++) {
       Real zi = scx[i], Li = clx[ineq_index[i]], Ui = cux[ineq_index[i]];
       Int j = nvar + i;
       if ( Li > -dciInf && Ui < dciInf ) {
         if ( zi < (Li + Ui)/2 )
-          Lambda[j] = Min(MaxDiag, Max(MinDiag, zi - Li));
+          scaling_matrix[j] = Min(MaxDiag, Max(MinDiag, zi - Li));
         else
-          Lambda[j] = Min(MaxDiag, Max(MinDiag, Ui - zi));
+          scaling_matrix[j] = Min(MaxDiag, Max(MinDiag, Ui - zi));
       } else if (Li > -dciInf)
-        Lambda[j] = Min(MaxDiag, Max(MinDiag, zi - Li));
+        scaling_matrix[j] = Min(MaxDiag, Max(MinDiag, zi - Li));
       else if (Ui < dciInf)
-        Lambda[j] = Min(MaxDiag, Max(MinDiag, Ui - zi));
+        scaling_matrix[j] = Min(MaxDiag, Max(MinDiag, Ui - zi));
       else
-        Lambda[j] = 1.0;
+        scaling_matrix[j] = 1.0;
     }
   }
 
@@ -415,7 +393,7 @@ namespace DCI {
     pReal Vx = V.get_doublex ();
 
     for (Int i = 0; i < nvar + nconI; i++)
-      Vx[i] *= Lambda[i];
+      Vx[i] *= scaling_matrix[i];
   }
 
   void Interface::update_yineq () { //This is -mu*Penalization on obj fun

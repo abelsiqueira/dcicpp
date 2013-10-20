@@ -90,13 +90,13 @@ namespace DCI {
 
         gavail = dciTrue;
 
-        if (!Linear && !UseMUMPS) {
+        if (!Linear) {
           analyzeJacobian ();
           cholesky ();
         }
 
         LimLbd = dciTrue;
-        updateLambda ();
+        updateMultipliers ();
         update_yineq ();
       } else {
         call_ofg_xc ();
@@ -254,7 +254,7 @@ namespace DCI {
           Aavail = dciTrue;
           oldAcnt = 0;
 
-          if (!Linear && !UseMUMPS) {
+          if (!Linear) {
             this->cholesky ();
           }
 
@@ -282,7 +282,7 @@ namespace DCI {
         call_ofg_xc (); //Just g
 
         LimLbd = dciTrue;
-        updateLambda ();
+        updateMultipliers ();
         update_yineq ();
 
         normgp = gp->norm ();

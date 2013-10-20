@@ -120,7 +120,7 @@ namespace DCI {
       void projectBounds_x (Vector &);
       void projectBounds_xc (Vector &);
       void update_yineq ();
-      void updateLambda ();
+      void updateMultipliers ();
       void updateMu ();
       Real calcGap ();
       Real calcYdif ();
@@ -167,8 +167,8 @@ namespace DCI {
       pReal yineqx;
 
       Int * ineq_index;
-      Real * Lambda; // Scaling matrix
-      Real * VariableScaling;
+      Real * scaling_matrix; // Scaling matrix
+      Real * variable_scaling;
 
       Real Lref, Lprev, Lc, Ln, Lnew;
       Real DLV, DLH;
@@ -219,9 +219,9 @@ namespace DCI {
       Int cholFacs;
       Bool Aavail, gavail, LimLbd, FreshA;
       Real minBk;
-      Bool UseCG;
-      Bool UseMUMPS, ScaleVertical;
-      Bool UseVertInteriorPoint, UseVertSafeguard, RebootOnVertFail;
+      Bool use_conjugate_gradient;
+      Bool ScaleVertical;
+      Bool RebootOnVertFail;
       Bool PartialPenal, project_dcp, project_dn, project_bfgs;
       Bool trustWorstdn, trustConvexBox, penal_trust, penal_bfgs;
       Real cholCorrection;
@@ -232,7 +232,7 @@ namespace DCI {
       //Interior Point Variables
 
       Real objfun_scale, max_objfun_scale;
-      Bool UseObjfunScale, UseVariableScaling;
+      Bool use_objective_scaling, use_variable_scaling;
       Int objfun_count;
 
       Int nfix, *fixed_index;

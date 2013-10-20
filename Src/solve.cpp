@@ -108,7 +108,7 @@ namespace DCI {
       updateScaling_x();
       verticalStep (); //Recalculates f, g and c
       updateScaling_xc();
-      if (UseObjfunScale && (objfun_count > 0)) {
+      if (use_objective_scaling && (objfun_count > 0)) {
         objfun_scale = Min( Max(Max(objfun_scale, g->norm()), AbsValue(*f)), max_objfun_scale );
         objfun_count--;
       }
@@ -250,7 +250,7 @@ namespace DCI {
 #ifdef LOCALTEST
       Vector ytmp (*y);
       call_ofg(dciTrue);
-      updateLambda ();
+      updateMultipliers ();
       ngpzk = gp->norm();
       *y = ytmp;
       if (solx != 0) {

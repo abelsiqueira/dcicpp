@@ -71,17 +71,16 @@ namespace DCI {
       en_zeta3, en_alphaR, en_alphaI, en_alphaS, en_eta1, en_eta2, en_eta3,
       en_DeltaMin, en_DeltaTiny, en_minstep, en_Delta0, en_thetaR, en_LbdMax,
       en_eps1, en_eps2, en_eps3, en_epsmu, en_epsgap, en_bfgsupd, en_c1, en_c2,
-      en_MaxTime, en_minBk, en_UseCG, en_PartialPenal, en_project_dcp,
+      en_MaxTime, en_minBk, en_use_conjugate_gradient, en_PartialPenal, en_project_dcp,
       en_project_bfgs, en_trustWorstdn, en_trustConvexBox, en_penal_trust,
-      en_penal_bfgs, en_UseMUMPS, en_ScaleVertical, en_DisplayLevel,
-      en_VerboseLevel, en_MaxDiag, en_MinDiag, en_UseVertSafeguard,
-      en_UseObjfunScale, en_objfun_count, en_choleskyCorrection,
-      en_max_objfun_scale, en_UseVariableScaling, en_TableLevel,
+      en_penal_bfgs, en_ScaleVertical, en_DisplayLevel,
+      en_VerboseLevel, en_MaxDiag, en_MinDiag, 
+      en_use_objective_scaling, en_objfun_count, en_choleskyCorrection,
+      en_max_objfun_scale, en_use_variable_scaling, en_TableLevel,
       en_RebootOnVertFail
     };
     std::map<std::string, int> paramMap;
 
-    paramMap["UseVertSafeguard"] = en_UseVertSafeguard;
     paramMap["choleskyCorrection"] = en_choleskyCorrection;
     paramMap["RebootOnVertFail"] = en_RebootOnVertFail;
     paramMap["MaxDiag"] = en_MaxDiag;
@@ -90,12 +89,11 @@ namespace DCI {
     paramMap["DisplayLevel"] = en_DisplayLevel;
     paramMap["TableLevel"] = en_TableLevel;
     paramMap["ScaleVertical"] = en_ScaleVertical;
-    paramMap["UseMUMPS"] = en_UseMUMPS;
-    paramMap["UseCG"] = en_UseCG;
-    paramMap["UseObjfunScale"] = en_UseObjfunScale;
+    paramMap["use_conjugate_gradient"] = en_use_conjugate_gradient;
+    paramMap["use_objective_scaling"] = en_use_objective_scaling;
     paramMap["objfun_count"] = en_objfun_count;
     paramMap["max_objfun_scale"] = en_max_objfun_scale;
-    paramMap["UseVariableScaling"] = en_UseVariableScaling;
+    paramMap["use_variable_scaling"] = en_use_variable_scaling;
     paramMap["PartialPenal"] = en_PartialPenal;
     paramMap["project_dcp"] = en_project_dcp;
     paramMap["project_bfgs"] = en_project_bfgs;
@@ -152,7 +150,6 @@ namespace DCI {
       std::stringstream aux;
       aux << value;
       switch (paramMap[param]) {
-        case en_UseVertSafeguard: aux >> UseVertSafeguard; break;
         case en_RebootOnVertFail: aux >> RebootOnVertFail; break;
         case en_choleskyCorrection: aux >> choleskyCorrection; break;
         case en_MaxDiag: aux >> MaxDiag; break;
@@ -202,12 +199,11 @@ namespace DCI {
         case en_c2: aux >> c2; break;
         case en_MaxTime: aux >> MaxTime; break;
         case en_minBk: aux >> minBk; break;
-        case en_UseCG: aux >> UseCG; break;
-        case en_UseObjfunScale: aux >> UseObjfunScale; break;
+        case en_use_conjugate_gradient: aux >> use_conjugate_gradient; break;
+        case en_use_objective_scaling: aux >> use_objective_scaling; break;
         case en_objfun_count: aux >> objfun_count; break;
         case en_max_objfun_scale: aux >> max_objfun_scale; break;
-        case en_UseVariableScaling: aux >> UseVariableScaling; break;
-        case en_UseMUMPS: aux >> UseMUMPS; break;
+        case en_use_variable_scaling: aux >> use_variable_scaling; break;
         case en_PartialPenal: aux >> PartialPenal; break;
         case en_project_dcp: aux >> project_dcp; break;
         case en_project_bfgs: aux >> project_bfgs; break;
@@ -301,16 +297,16 @@ namespace DCI {
     murho = 1;
     mugap = 1;
     LimLbd = dciTrue;
-    Lambda = 0;
+    scaling_matrix = 0;
     cholCorrection = 0;
     choleskyCorrection = 1e-6;
     cholFailed = dciFalse;
     objfun_count = 0;
 
     //Strategy choices
-    UseCG = dciFalse;
-    UseObjfunScale = dciTrue;
-    UseVariableScaling = dciTrue;
+    use_conjugate_gradient = dciFalse;
+    use_objective_scaling = dciTrue;
+    use_variable_scaling = dciTrue;
     PartialPenal = dciTrue;
     project_dcp = dciFalse;
     project_dn = dciTrue;
@@ -319,9 +315,7 @@ namespace DCI {
     trustConvexBox = dciFalse;
     penal_trust = dciTrue;
     penal_bfgs = dciTrue;
-    UseMUMPS = dciFalse;
     ScaleVertical = dciTrue;
-    UseVertSafeguard = dciFalse;
     RebootOnVertFail = dciTrue;
 
     //Program properties
@@ -338,7 +332,7 @@ namespace DCI {
     std::vector<Int> fixed_vector;
     for (Int i = 0; i < nvar; i++) {
       Real bli = blx[i], bui = bux[i];
-      VariableScaling[i] = 1.0;
+      variable_scaling[i] = 1.0;
       if ( (xx[i] > bli) && (xx[i] < bui) ) {
         xcx[i] = xx[i];
         continue;
@@ -370,7 +364,7 @@ namespace DCI {
     objfun_scale = 1.0;
     call_fn ();
     call_ofg (dciTrue);
-    if (UseObjfunScale)
+    if (use_objective_scaling)
       objfun_scale = Min( Max(Max(1.0, g->norm()), AbsValue(*f)), max_objfun_scale );
 
     if (ncon > 0) {
@@ -398,7 +392,7 @@ namespace DCI {
         for (Int i = 0; i < ncon; i++)
           yx[i] = 0;
       }
-      updateLambda ();
+      updateMultipliers ();
 //      gp->scale (*g, 1);
 //      gp->sdmult (*J, 1, one, one, *y);
       Ln = *f + y->dot (*c);
