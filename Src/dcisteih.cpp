@@ -13,9 +13,8 @@
 
 namespace DCI {
   Int Interface::dcisteih (Vector & d, Real & qd, Real & gtd) {
-    Real delta2, dtd, theta0, theta, thetanew, alpha, beta, gamma;
-    Real dtHp, gtp, ptp, root1, root2, dtdnew, qdnew;
-//    Real dtHp, gtp, dtp, ptp, root1, root2, dtdnew, qdnew;
+    Real theta0, theta, thetanew, alpha, beta, gamma;
+    Real dtHp, gtp, ptp, root1, root2, qdnew;
     Int SteihFlag;
     Vector r(*env), p(d), Hp(d), dnew(*env), v(*env), tmp(*env);
     Real lower[nvar + nconI], upper[nvar + nconI];
@@ -33,9 +32,7 @@ namespace DCI {
 
     if (DeltaH < 1e-12)
       return -1;
-    delta2 = DeltaH*DeltaH;
     qd = 0;
-    dtd = 0;
 
     r.scale (*gp, -1);
     theta0 = r.dot (r);
@@ -105,12 +102,7 @@ namespace DCI {
       alpha = theta/gamma;
       dnew = d;
       dnew.saxpy (p, alpha);
-      dtdnew = dnew.dot (dnew);
-      dtdnew = 0.0;
       pReal dnewx = dnew.get_doublex();
-      for (Int i = 0; i < nvar + nconI; i++) {
-        dtdnew += pow(dnewx[i]*Lambda[i], 2);
-      }
       bool outsideRegion = false;
       for (Int i = 0; i < nvar + nconI; i++)  {
         if ( (dnewx[i] > upper[i]) || (dnewx[i] < lower[i]) ) {
@@ -156,7 +148,6 @@ namespace DCI {
       p.saxpy (r, 1);
       d = dnew;
       gtd = gtd + alpha*gtp;
-      dtd = dtdnew;
       theta = thetanew;
 
       CurrentTime = getTime() - StartTime;

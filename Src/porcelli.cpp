@@ -27,9 +27,7 @@ namespace DCI {
     Vector lsGrad(*env);
     Real one[2] = {1,0}, zero[2] = {0,0};
     Vector r(*env), p(*env), q(*env), dnew(*env), t(*env);
-    Real gtd = 0, dtq = 0, gtp = 0, ptp = 0, dtd = 0, dtdnew = 0, delta2, dtp = 0, qd = 0;
-
-    delta2 = DeltaV*DeltaV;
+    Real gtd = 0, dtq = 0, gtp = 0, ptp = 0, qd = 0;
 
     lsGrad.sdmult(*J, 1, one, zero, *c);
     r.scale(lsGrad, -1);
@@ -37,8 +35,6 @@ namespace DCI {
     p = r;
     theta = theta0;
     gtd = 0;
-    Real normGrad0 = lsGrad.norm();
-    Real normGrad = normGrad0;
     
     while ( (theta > eps2) && (theta > eps1*theta0) && 
             (nLstSqrs <= maxLstSqrs) && (CurrentTime < MaxTime) ) {
@@ -88,11 +84,7 @@ namespace DCI {
       alpha = theta/gamma;
       dnew = d;
       dnew.saxpy (p, alpha);
-      dtdnew = dnew.dot(dnew);
-      dtdnew = 0.0;
       pReal dnewx = dnew.get_doublex();
-      for (Int i = 0; i < nvar + nconI; i++)
-        dtdnew += pow(dnewx[i]*scalingMatrix[i], 2);
 
       bool outsideRegion = false;
       for (Int i = 0; i < nvar + nconI; i++) {
@@ -133,13 +125,11 @@ namespace DCI {
       p.saxpy(r,1);
       d = dnew;
       gtd += alpha*gtp;
-      dtd = dtdnew;
       theta = thetanew;
 
       lsGrad = *c;
       lsGrad.sdmult(*J, 0, one, one, d);
       lsGrad.sdmult(*J, 1, one, zero, lsGrad);
-      normGrad = lsGrad.norm();
 
       CurrentTime = getTime() - StartTime;
     }

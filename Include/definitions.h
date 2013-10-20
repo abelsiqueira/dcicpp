@@ -3,6 +3,8 @@
 
 #include "extra.h"
 
+#define UNUSED(x) (void)(x)
+
 namespace DCI {
   
   typedef int      Int;

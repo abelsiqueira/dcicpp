@@ -7,11 +7,17 @@
 
 namespace DCI {
   void error (int status, const char *file, int line, const char *message) {
-/*     std::cerr << message << std::endl
- *               << "Status = " << status << std::endl
- *               << "File   = " << file << std::endl
- *               << "Line   = " << line << std::endl;
- */
+#ifdef VERBOSE
+     std::cerr << message << std::endl
+               << "Status = " << status << std::endl
+               << "File   = " << file << std::endl
+               << "Line   = " << line << std::endl;
+#else
+     UNUSED(status);
+     UNUSED(file);
+     UNUSED(line);
+     UNUSED(message);
+#endif
   }
 
   void Interface::assert (Bool v) {
