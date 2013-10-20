@@ -147,10 +147,7 @@ namespace DCI {
         cholesky_J();
         infeasible_gradient = 1.0;
 
-        if (UsePorcelli) {
-          Porcelli(infeasible_gradient);
-        } else if ((!Bounded) || (!UseVertInteriorPoint) )
-            dcitrust (oldnormc);
+        dcitrust(infeasible_gradient);
 //        else
 //          InteriorPointRestoration ();
 #ifdef ITER_MATLAB

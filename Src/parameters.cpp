@@ -75,7 +75,7 @@ namespace DCI {
       en_project_bfgs, en_trustWorstdn, en_trustConvexBox, en_penal_trust,
       en_penal_bfgs, en_UseMUMPS, en_ScaleVertical, en_DisplayLevel,
       en_VerboseLevel, en_MaxDiag, en_MinDiag, en_UseVertInteriorPoint,
-      en_UseVertSafeguard, en_UsePorcelli, en_UseObjfunScale, 
+      en_UseVertSafeguard, en_UseObjfunScale, 
       en_objfun_count, en_choleskyCorrection, en_max_objfun_scale,
       en_UseVariableScaling, en_TableLevel, en_RebootOnVertFail
     };
@@ -93,7 +93,6 @@ namespace DCI {
     paramMap["ScaleVertical"] = en_ScaleVertical;
     paramMap["UseMUMPS"] = en_UseMUMPS;
     paramMap["UseCG"] = en_UseCG;
-    paramMap["UsePorcelli"] = en_UsePorcelli;
     paramMap["UseObjfunScale"] = en_UseObjfunScale;
     paramMap["objfun_count"] = en_objfun_count;
     paramMap["max_objfun_scale"] = en_max_objfun_scale;
@@ -206,7 +205,6 @@ namespace DCI {
         case en_MaxTime: aux >> MaxTime; break;
         case en_minBk: aux >> minBk; break;
         case en_UseCG: aux >> UseCG; break;
-        case en_UsePorcelli: aux >> UsePorcelli; break;
         case en_UseObjfunScale: aux >> UseObjfunScale; break;
         case en_objfun_count: aux >> objfun_count; break;
         case en_max_objfun_scale: aux >> max_objfun_scale; break;
@@ -313,7 +311,6 @@ namespace DCI {
 
     //Strategy choices
     UseCG = dciFalse;
-    UsePorcelli = dciTrue;
     UseObjfunScale = dciTrue;
     UseVariableScaling = dciTrue;
     PartialPenal = dciTrue;

@@ -2,7 +2,6 @@ maxit 200000
 maxrest 200000
 MaxTime 7200
 PartialPenal 1
-UsePorcelli 1
 UseMUMPS 0
 project_dcp 0
 project_bfgs 1

@@ -96,8 +96,7 @@ namespace DCI {
       Int vertSafeguard ();
       void horzstep (Real &);
       Int dcisteih (Vector &, Real &, Real &);
-      Int dcitrust (Real);
-      Int Porcelli (Real &);
+      Int dcitrust (Real &);
       Int LeastSquareTrustRegion (Vector &, pReal, pReal, pReal);
 //      Int InteriorPointRestoration ();
       Real InteriorPointObjFun (Real, Real, Int, Int, pReal, pReal, pReal, pReal,
@@ -223,11 +222,10 @@ namespace DCI {
       Int cholFacs;
       Bool Aavail, gavail, LimLbd, FreshA;
       Real minBk;
-      Bool UseCG, UsePorcelli;
+      Bool UseCG;
       Bool UseMUMPS, ScaleVertical;
       Bool UseVertInteriorPoint, UseVertSafeguard, RebootOnVertFail;
       Bool PartialPenal, project_dcp, project_dn, project_bfgs;
-      Bool PorcelliPenal;
       Bool trustWorstdn, trustConvexBox, penal_trust, penal_bfgs;
       Real cholCorrection;
       Bool cholFailed;
