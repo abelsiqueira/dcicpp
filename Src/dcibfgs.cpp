@@ -19,7 +19,7 @@ namespace DCI {
     Real alpha[bfgsupd], csi[bfgsupd];
     Int iout;
 
-    if (Ineq) {
+    if (has_ineq) {
       sold = *s;
       soldx = sold.get_doublex();
     }
@@ -35,7 +35,7 @@ namespace DCI {
       for (Int i = 0; i < nvar; i++) {
         Real val = 0;
         if ( (bux[i] < dciInf) && (blx[i] > -dciInf) ) {
-          if (PartialPenal) {
+          if (partial_penalization) {
             if ( (xcx[i] - blx[i]) < (bux[i] - xcx[i]) ) {
               val = 1;
             } else {
@@ -54,7 +54,7 @@ namespace DCI {
       for (Int i = 0; i < nconI; i++) {
         Real val = 0;
         if ( (cux[ineq_index[i]] < dciInf) && (clx[ineq_index[i]] > -dciInf) ) {
-          if (PartialPenal) {
+          if (partial_penalization) {
             if ( (scx[i] - clx[ineq_index[i]]) < (cux[ineq_index[i]] - scx[i]) ) {
               val = 1;
             } else {
@@ -100,7 +100,7 @@ namespace DCI {
 
     gtd = d.dot (gtmp);
     xold = *xc;
-    if (Ineq)
+    if (has_ineq)
       sold = *sc;
 
     gold = gtmp;
@@ -117,7 +117,7 @@ namespace DCI {
       Dx[i] = Dxi;
       dnorm += Dxi*Dxi;
     }
-    if (Ineq) {
+    if (has_ineq) {
       for (Int i = 0; i < nconI; i++) {
         Int j = nvar + i;
         Real Dxi;
@@ -129,14 +129,14 @@ namespace DCI {
     }
     dnorm = sqrt(dnorm);
     normc = c->norm ();
-    if (Ineq) {
+    if (has_ineq) {
       Real xnorm = xc->norm (), snorm = sc->norm ();
       znorm = sqrt(xnorm*xnorm + snorm*snorm);
     } else
       znorm = xc->norm ();
 
-    CurrentTime = getTime() - StartTime;
-    while ( (normc > rho) && (ibfgs < bfgsupd) && (iout == 0) && (dnorm >= znorm*1e-17) && (CurrentTime < MaxTime) ) {
+    current_time = getTime() - start_time;
+    while ( (normc > rho) && (ibfgs < bfgsupd) && (iout == 0) && (dnorm >= znorm*1e-17) && (current_time < max_time) ) {
       alpha [ibfgs] = 0;
       for (Int i = 0; i < nvar + nconI; i++)
         alpha [ibfgs] += Yx[ibfgs*(nvar + nconI) + i] * Dx[ibfgs*(nvar + nconI) + i];
@@ -164,7 +164,7 @@ namespace DCI {
       gtd = gtmp.dot(p);
 
       xold = *xc;
-      if (Ineq)
+      if (has_ineq)
         sold = *sc;
       gold = gtmp;
 
@@ -185,7 +185,7 @@ namespace DCI {
         Dx[ibfgs*(nvar + nconI) + i] = Dxi;
         dnorm += Dxi*Dxi;
       }
-      if (Ineq) {
+      if (has_ineq) {
         for (Int i = 0; i < nconI; i++) {
           Int j = nvar + i;
           Yx[ibfgs*(nvar + nconI) + j] = gtmpx[j] - goldx[j];
@@ -196,13 +196,13 @@ namespace DCI {
       }
       dnorm = sqrt (dnorm);
       normc = c->norm ();
-      if (Ineq) {
+      if (has_ineq) {
         Real xnorm = xc->norm (), snorm = sc->norm ();
         znorm = sqrt(xnorm*xnorm + snorm*snorm);
       } else
         znorm = xc->norm ();
 
-      CurrentTime = getTime() - StartTime;
+      current_time = getTime() - start_time;
 
     }
 
@@ -251,13 +251,13 @@ namespace DCI {
     Bool bfgsfirst = dciTrue;
 
     *xc = x0;
-    if (Ineq)
+    if (has_ineq)
       *sc = s0;
 
     Vector Diag(*env);
     Diag.reset (nvar + nconI, 1);
     pReal Diagx = Diag.get_doublex();
-    if (ScaleVertical)
+    if (scale_vertical)
       scale_xc (Diag);
 
     for (Int i = 0; i < nvar; i++) {
@@ -320,7 +320,7 @@ namespace DCI {
 
     while (dciTrue) {
       *xc = x0;
-      if (Ineq)
+      if (has_ineq)
         *sc = s0;
 
       for (Int i = 0; i < nvar; i++) {
@@ -394,14 +394,14 @@ namespace DCI {
     Real one[2] = {1,0}, zero[2] = {0,0};
     Real gtd0 = gtd;
     Bool zoomfirst;
-    if (Ineq)
+    if (has_ineq)
       s0x = s0.get_doublex();
 
 
     Vector Diag(*env);
     Diag.reset (nvar + nconI, 1);
     pReal Diagx = Diag.get_doublex();
-    if (ScaleVertical)
+    if (scale_vertical)
       scale_xc (Diag);
 
     while ( (zoomiter <= itermax) && (!enough) ) {
@@ -444,7 +444,7 @@ namespace DCI {
         ishi = dciTrue;
         zoomiter = zoomiter + 1;
       } else {
-        call_ccfsg_xc (dciTrue, ScaleVertical);
+        call_ccfsg_xc (dciTrue, scale_vertical);
         gtmp.sdmult (*J, 1, one, zero, *c);
         gtd = gtmp.dot(d);
 
@@ -467,7 +467,7 @@ namespace DCI {
     if (zoomiter > itermax) {
 
       if (ishi) {
-        call_ccfsg_xc (dciTrue, ScaleVertical);
+        call_ccfsg_xc (dciTrue, scale_vertical);
         gtmp.sdmult (*J, 1, one, zero, *c);
         gtd = gtmp.dot(d);
       }

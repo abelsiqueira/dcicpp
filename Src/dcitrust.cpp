@@ -37,7 +37,7 @@ namespace DCI {
     gtd = 0;
     
     while ( (theta > eps2) && (theta > eps1*theta0) && 
-            (nLstSqrs <= maxLstSqrs) && (CurrentTime < MaxTime) ) {
+            (nLstSqrs <= maxLstSqrs) && (current_time < max_time) ) {
       q.sdmult(*J, 0, one, zero, p);
       q.sdmult(*J, 1, one, zero, q);
       gamma = p.dot(q);
@@ -131,7 +131,7 @@ namespace DCI {
       lsGrad.sdmult(*J, 0, one, one, d);
       lsGrad.sdmult(*J, 1, one, zero, lsGrad);
 
-      CurrentTime = getTime() - StartTime;
+      current_time = getTime() - start_time;
     }
 
     return 0;
@@ -151,7 +151,7 @@ namespace DCI {
     Real normgtmp = 0;
     Real beta1 = 0.1, beta2 = 0.25;
 
-    if (Ineq)
+    if (has_ineq)
       stmp = *sc;
 
     Aavail = dciFalse;
@@ -257,7 +257,7 @@ namespace DCI {
 
     //Encontrar dn
     //Ver qual eh melhor
-//    while ( (Ared < kappa1*Pred) && (Aavail || (TrustIter < 20) ) && (CurrentTime < MaxTime) ) {
+//    while ( (Ared < kappa1*Pred) && (Aavail || (TrustIter < 20) ) && (current_time < max_time) ) {
 //    while ( (Ared < kappa1*Pred) && (TrustIter < 100000) ) {
 //      TrustIter++;
 
@@ -368,7 +368,7 @@ namespace DCI {
       if (Ared/Pred < beta2) {
         DeltaV /= 4;
         *xc = xtmp;
-        if (Ineq) *sc = stmp;
+        if (has_ineq) *sc = stmp;
         call_ccfsg_xc(dciFalse);
         normc = c->norm();
       } else if (Ared/Pred > 0.75) {
@@ -385,7 +385,7 @@ namespace DCI {
 
 //      iter++;
 
-      CurrentTime = getTime() - StartTime;
+      current_time = getTime() - start_time;
 
 //    }
 

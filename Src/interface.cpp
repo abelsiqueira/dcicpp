@@ -23,7 +23,7 @@ namespace DCI {
   void Interface::assert (Bool v) {
     if (v)
       return;
-    ExitFlag = -1;
+    exit_flag = -1;
     error (-1, "assert", -1, "assert failed");
     GDBSTOP ();
     throw "assert failed";
@@ -79,7 +79,7 @@ namespace DCI {
       return -1;
 
     call_names ();
-    StartTime = getTime();
+    start_time = getTime();
 
     if ( (ncon > 0) && (equatn == 0) ) {
       equatn = new Bool[ncon];
@@ -87,7 +87,7 @@ namespace DCI {
         equatn[i] = dciTrue;
       nconE = ncon;
       nconI = 0;
-      Ineq = dciFalse;
+      has_ineq = dciFalse;
     }
 
     if (linear == 0) {
@@ -96,7 +96,7 @@ namespace DCI {
         linear[i] = dciFalse;
       nconNL = ncon;
       nconL = 0;
-      Linear = dciFalse;
+      is_linear = dciFalse;
     }
 
     if (nmax == 0)
@@ -118,7 +118,7 @@ namespace DCI {
     if (ncon > 0) {
       c = new Vector (*env, mmax);
       cx = c->get_doublex();
-      if (Ineq) {
+      if (has_ineq) {
         s = new Vector (*env, nconI);
         sx = s->get_doublex();
         sc = new Vector (*env, nconI);
@@ -155,13 +155,13 @@ namespace DCI {
 
     defineParameters ();
     initialValues ();
-    Initialized = dciTrue;
+    initialized = dciTrue;
 
     return 0;
   }
 
   void Interface::show (std::ostream & out) {
-    if (!Initialized) {
+    if (!initialized) {
       out << "Problem not initialized" << std::endl;
       return;
     }
@@ -175,14 +175,14 @@ namespace DCI {
         yoff += Max(-yi, 0.0);
     }
 
-    if (DisplayLevel > 0) {
+    if (display_level > 0) {
       out << "**********************************************************" << std::endl;
       out << "Problem name: " << problemName << std::endl
           << std::endl
           << "Number of Variables: " << nvar << std::endl
           << "Number of Constraints: " << ncon << std::endl 
           << "             Equality: " << nconE << std::endl
-          << "           Inequality: " << nconI << std::endl
+          << "           has_inequality: " << nconI << std::endl
           << std::endl;
     }
 
@@ -190,7 +190,7 @@ namespace DCI {
     if (J != 0) {
       std::string matlab_filename("matrix_jacob");
       matlab_filename += problemName;
-      switch (ExitFlag) {
+      switch (exit_flag) {
         case -1:
           matlab_filename += "_assert";
           break;
@@ -231,43 +231,43 @@ namespace DCI {
     }
 #endif
 
-    if (!Solved) {
+    if (!solved) {
       out << "Problem not solved yet" << std::endl;
     } else {
       out << "EXIT: ";
-      if (ExitFlag == 0)
+      if (exit_flag == 0)
         out << "The Algorithm has Converged" << std::endl;
-      else if (ExitFlag == 1)
+      else if (exit_flag == 1)
         out << "rhomax became too short" << std::endl;
-      else if (ExitFlag == 2)
+      else if (exit_flag == 2)
         out << "The maximum number of iterations was reached" << std::endl;
-      else if (ExitFlag == 3)
+      else if (exit_flag == 3)
         out << "The maximum number of restorarions was reached" << std::endl;
-      else if (ExitFlag == 4)
+      else if (exit_flag == 4)
         out << "The restoration has failed" << std::endl;
-      else if (ExitFlag == 5)
+      else if (exit_flag == 5)
         out << "The step became too short" << std::endl;
-      else if (ExitFlag == 6)
+      else if (exit_flag == 6)
         out << "The problem is unlimited" << std::endl;
-      else if (ExitFlag == 7)
+      else if (exit_flag == 7)
         out << "The problem reached the time limit" << std::endl;
-      else if (ExitFlag == 8)
+      else if (exit_flag == 8)
         out << "Stopped at a stationary for the infeasibility" << std::endl;
 
-      if (cholFailed)
+      if (cholesky_failed)
         out << "Cholesky failed" << std::endl;
 
-      if (DisplayLevel > 0) {
+      if (display_level > 0) {
         out << "f(x) = " << *f << std::endl
             << "|c(x)| = " << normc << std::endl
             << "|g(x) + J(x)'*y| = " << normgp << std::endl
             << "y offset = " << yoff << std::endl
             << "BFGS? " << ((tbfgs > 0) ? "yes" : "no") << std::endl
             << "Number of Iterations = " << iter << std::endl
-            << "Elapsed Time = " << (CurrentTime > 0 ? CurrentTime : 0) << " s" << std::endl;
+            << "Elapsed Time = " << (current_time > 0 ? current_time : 0) << " s" << std::endl;
       }
 
-      if (DisplayLevel > 2) {
+      if (display_level > 2) {
         std::cout << std::endl
             << "----------------------" << std::endl
             << "  Iter   = " << iter << std::endl
@@ -294,7 +294,7 @@ namespace DCI {
         if (ncon > 0) {
           std::cout << "lambda = " << std::endl;
           y->print_more();
-          if (Ineq) {
+          if (has_ineq) {
             std::cout << "s = " << std::endl;
             s->print_more();
             std::cout << "sc = " << std::endl;
@@ -302,7 +302,7 @@ namespace DCI {
           }
         }
       }
-      if (DisplayLevel > 1) {
+      if (display_level > 1) {
         if (nvar <= 10) {
           out << "x: " << std::endl;
           x->print_more ();
@@ -322,16 +322,16 @@ namespace DCI {
   }
 
   /* 
-   * If (TableLevel == 0)
+   * If (table_print_level == 0)
    * Problem name & nvar & ncon & iters & time & converged
-   * If (TableLevel == 1)
+   * If (table_print_level == 1)
    * Problem name & nvar & ncon & fvalue & normgp & normh & iters & time & converged
    */
   void Interface::printLatex (char * filename) const {
     std::ofstream file;
     std::string latex_name("latex_");
     if (filename == 0) {
-      switch (ExitFlag) {
+      switch (exit_flag) {
         case -1:
           latex_name += "assert";
           break;
@@ -367,11 +367,11 @@ namespace DCI {
           break;
         default:
           std::stringstream aux;
-          aux << "Exitflag value " << ExitFlag;
+          aux << "Exitflag value " << exit_flag;
           throw(aux.str());
           break;
       }
-      if (cholFailed)
+      if (cholesky_failed)
         latex_name += "_cholfail";
     } else
       latex_name = filename;
@@ -380,13 +380,13 @@ namespace DCI {
     file << problemName << " & "
          << nvar << " & "
          << ncon << " & ";
-    if (TableLevel > 0) {
+    if (table_print_level > 0) {
       file << *f << " & "
            << normgp << " & "
            << normc << " & ";
     }
     file << iter << " & "
-         << (CurrentTime > 0 ? CurrentTime : 0) << " & "
+         << (current_time > 0 ? current_time : 0) << " & "
          << ((ncon > 0) ? "con" : "unc") << " & "
          << ((tbfgs > 0) ? "bfgs" : "") << "\\\\ \\hline\n";
 
@@ -414,7 +414,7 @@ namespace DCI {
     blx = bl->get_doublex();
     for (size_t i = 0; i < n; i++) {
       if (blx[i] > -dciInf) {
-        Bounded = dciTrue;
+        is_bounded = dciTrue;
         break;
       }
     }
@@ -426,7 +426,7 @@ namespace DCI {
     bux = bu->get_doublex();
     for (size_t i = 0; i < n; i++) {
       if (bux[i] < dciInf) {
-        Bounded = dciTrue;
+        is_bounded = dciTrue;
         break;
       }
     }
@@ -463,8 +463,8 @@ namespace DCI {
         nconE++;
     }
     if (nconI > 0) {
-      Ineq = dciTrue;
-      Bounded = dciTrue;
+      has_ineq = dciTrue;
+      is_bounded = dciTrue;
       ineq_index = new Int[nconI];
       Int numI = 0;
       for (size_t i = 0; i < n; i++) {
@@ -489,7 +489,7 @@ namespace DCI {
         nconL++;
     }
     if (nconNL == 0)
-      Linear = dciTrue;
+      is_linear = dciTrue;
   }
 
   void Interface::call_fn () {
@@ -508,8 +508,8 @@ namespace DCI {
       *f = dciInf;
     else if (*f < -dciInf)
       *f = -dciInf;
-    if (Running) {
-      *f /= objfun_scale;
+    if (running) {
+      *f /= objective_scaling;
       *f -= mu*calcPen ();
       Int numI = 0;
       for (Int i = 0; i < ncon; i++) {
@@ -537,8 +537,8 @@ namespace DCI {
       *fxc = dciInf;
     else if (*fxc < -dciInf)
       *fxc = -dciInf;
-    if (Running) {
-      *fxc /= objfun_scale;
+    if (running) {
+      *fxc /= objective_scaling;
       *fxc -= mu*calcPen_xc ();
       Int numI = 0;
       for (Int i = 0; i < ncon; i++) {
@@ -559,13 +559,13 @@ namespace DCI {
       *f = dciInf;
     else if (*f < -dciInf)
       *f = -dciInf;
-    if (Running) {
+    if (running) {
       Real val = 0.0;
-      if (objfun_scale != 1) {
-        *f /= objfun_scale;
+      if (objective_scaling != 1) {
+        *f /= objective_scaling;
         if (grad) {
           for (Int i = 0; i < nvar; i++)
-            gx[i] /= objfun_scale;
+            gx[i] /= objective_scaling;
         }
       }
       for (Int i = 0; i < nvar; i++) {
@@ -573,7 +573,7 @@ namespace DCI {
         if (bli - bui > - dciTiny) 
           gx[i] = 0;
         else if ( (bli > -dciInf) && (bui < dciInf) ) {
-          if (PartialPenal) {
+          if (partial_penalization) {
             if ( (xi - bli) < (bui - xi) ) {
               if (grad) {
                 gx[i] *= (xi - bli);
@@ -614,7 +614,7 @@ namespace DCI {
         Int j = nvar + i;
         Real si = sx[i], cli = clx[ineq_index[i]], cui = cux[ineq_index[i]];
         if ( (cli > -dciInf) && (cui < dciInf) ) {
-          if (PartialPenal) {
+          if (partial_penalization) {
             if ( (si - cli) < (cui - si) ) {
               if (grad)
                 gx[j] = -mu;
@@ -652,13 +652,13 @@ namespace DCI {
       *fxc = dciInf;
     else if (*fxc < -dciInf)
       *fxc = -dciInf;
-    if (Running) {
+    if (running) {
       Real val = 0.0;
-      if (objfun_scale != 1) {
-        *fxc /= objfun_scale;
+      if (objective_scaling != 1) {
+        *fxc /= objective_scaling;
         if (grad) {
           for (Int i = 0; i < nvar; i++)
-            gx[i] /= objfun_scale;
+            gx[i] /= objective_scaling;
         }
       }
       for (Int i = 0; i < nvar; i++) {
@@ -666,7 +666,7 @@ namespace DCI {
         if (bli - bui > - dciTiny) 
           gx[i] = 0;
         else if ( (bli > -dciInf) && (bui < dciInf) ) {
-          if (PartialPenal) {
+          if (partial_penalization) {
             if ( (xi - bli) < (bui - xi) ) {
               if (grad) {
                 gx[i] *= (xi - bli);
@@ -707,7 +707,7 @@ namespace DCI {
         Int j = nvar + i;
         Real si = scx[i], cli = clx[ineq_index[i]], cui = cux[ineq_index[i]];
         if ( (cli > -dciInf) && (cui < dciInf) ) {
-          if (PartialPenal) {
+          if (partial_penalization) {
             if ( (si - cli) < (cui - si) ) {
               if (grad)
                 gx[j] = -mu;
@@ -754,7 +754,7 @@ namespace DCI {
         Jx[i] = -dciInf;
     }
     if (grad == dciTrue) {
-      if (StartAtOne) {
+      if (start_at_one) {
         for (Int i = 0; i < *nnzj; i++) {
           Jvar[i]--;
           Jfun[i]--;
@@ -771,7 +771,7 @@ namespace DCI {
         }
       }
 
-      if (Running) {
+      if (running) {
         if (scale) { 
           for (Int k = 0; k < *nnzj; k++) {
             Int j = Jvar[k];
@@ -814,7 +814,7 @@ namespace DCI {
       J = new Sparse (*env);
       J->triplet_to_sparse (*Jtrip, amax);
     } else {
-      if (Running) {
+      if (running) {
         Int numI = 0;
         for (Int i = 0; i < ncon; i++) {
           if (equatn[i] == dciFalse) {
@@ -845,7 +845,7 @@ namespace DCI {
         Jx[i] = -dciInf;
     }
     if (grad == dciTrue) {
-      if (StartAtOne) {
+      if (start_at_one) {
         for (Int i = 0; i < *nnzj; i++) {
           Jvar[i]--;
           Jfun[i]--;
@@ -862,7 +862,7 @@ namespace DCI {
         }
       }
 
-      if (Running) {
+      if (running) {
         if (scale) {
           for (Int k = 0; k < *nnzj; k++) {
             Int j = Jvar[k];
@@ -892,7 +892,7 @@ namespace DCI {
       J = new Sparse (*env);
       J->triplet_to_sparse (*Jtrip, amax);
     } else {
-      if (Running) {
+      if (running) {
         Int numI = 0;
         for (Int i = 0; i < ncon; i++) {
           if (equatn[i] == dciFalse) {
@@ -915,19 +915,19 @@ namespace DCI {
       else
         ppx[i] = scaling_matrix[i] * px[i];
     }
-    if (objfun_scale != 1) {
+    if (objective_scaling != 1) {
       for (Int i = 0; i < ncon; i++)
-        yx[i] *= objfun_scale;
+        yx[i] *= objective_scaling;
     }
     if (ncon == 0)
       (*uprod) (&nvar, &gotder, xx, ppx, ux);
     else
       (*cprod) (&nvar, &ncon, &gotder, xx, &mmax, yx, ppx, ux);
-    if (objfun_scale != 1) {
+    if (objective_scaling != 1) {
       for (Int i = 0; i < nvar; i++)
-        ux[i] /= objfun_scale;
+        ux[i] /= objective_scaling;
       for (Int i = 0; i < ncon; i++)
-        yx[i] /= objfun_scale;
+        yx[i] /= objective_scaling;
     }
     for (Int i = 0; i < nvar; i++) {
       if (blx[i] > bux[i] - dciTiny) {
@@ -954,19 +954,19 @@ namespace DCI {
       else
         ppx[i] = scaling_matrix[i] * px[i];
     }
-    if (objfun_scale != 1) {
+    if (objective_scaling != 1) {
       for (Int i = 0; i < ncon; i++)
-        yx[i] *= objfun_scale;
+        yx[i] *= objective_scaling;
     }
     if (ncon == 0)
       (*uprod) (&nvar, &gotder, xcx, ppx, ux);
     else
       (*cprod) (&nvar, &ncon, &gotder, xcx, &mmax, yx, ppx, ux);
-    if (objfun_scale != 1) {
+    if (objective_scaling != 1) {
       for (Int i = 0; i < nvar; i++)
-        ux[i] /= objfun_scale;
+        ux[i] /= objective_scaling;
       for (Int i = 0; i < ncon; i++)
-        yx[i] /= objfun_scale;
+        yx[i] /= objective_scaling;
     }
     for (Int i = 0; i < nvar; i++) {
       if (blx[i] > bux[i] - dciTiny) {
@@ -1009,12 +1009,12 @@ namespace DCI {
   void Interface::cholesky () {
     if (LJ == 0)
       std::cerr << "analyze should be called first" << std::endl;
-    LJ->factorize (*J, cholCorrection);
+    LJ->factorize (*J, cholesky_correction);
     cholFacs++;
     if (!env->IsPosDef()) {
-      cholFailed = dciTrue;
-      cholCorrection = 1e-12;
-      LJ->factorize (*J, cholCorrection);
+      cholesky_failed = dciTrue;
+      cholesky_correction = 1e-12;
+      LJ->factorize (*J, cholesky_correction);
       cholFacs++;
     }
   }
@@ -1050,7 +1050,7 @@ namespace DCI {
     }
     for (Int i = 0; i < nvar; i++) {
       if ( (xx[i] > 1e10) || (xx[i] < -1e10) || (xcx[i] > 1e10) || (xcx[i] < -1e10) ) {
-        Unlimited = dciTrue;
+        is_unlimited = dciTrue;
         break;
       }
       if (blx[i] - bux[i] > - dciTiny)
@@ -1080,11 +1080,11 @@ namespace DCI {
       }
       assert (xcx[i] > blx[i]);
     }
-    if (Unlimited)
+    if (is_unlimited)
       return;
     for (Int i = 0; i < nconI; i++) {
       if ( (sx[ineq_index[i]] > 1e10) || (sx[ineq_index[i]] < -1e10) || (scx[ineq_index[i]] > 1e10) || (scx[ineq_index[i]] < -1e10) ) {
-        Unlimited = dciTrue;
+        is_unlimited = dciTrue;
         break;
       }
       assert (sx[i] < cux[ineq_index[i]]);

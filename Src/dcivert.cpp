@@ -51,7 +51,7 @@ namespace DCI {
     nbfgs = 0;
     oldnormc = normc;
     *xc = *x;
-    if (Ineq)
+    if (has_ineq)
       *sc = *s;
     VertFlag = 0;
     if (iter == 1) {
@@ -82,7 +82,7 @@ namespace DCI {
 
     if ( (normc <= rho) && (!Aavail) ) {
       if (ncon > 0) {
-        if (!Linear)
+        if (!is_linear)
           call_ccfsg_xc (dciTrue); //CuterJacob
         Aavail = dciTrue;
 
@@ -90,7 +90,7 @@ namespace DCI {
 
         gavail = dciTrue;
 
-        if (!Linear) {
+        if (!is_linear) {
           analyzeJacobian ();
           cholesky ();
         }
@@ -116,13 +116,13 @@ namespace DCI {
       oldAcnt = 0;
     }
 
-    CurrentTime = getTime() - StartTime;
-    while ( (normc > rho) && (nRest <= maxrest) && (VertFlag == 0) && (CurrentTime < MaxTime) ) {
+    current_time = getTime() - start_time;
+    while ( (normc > rho) && (nRest <= maxrest) && (VertFlag == 0) && (current_time < max_time) ) {
 
-      while ( (normc > rho) && (nRest <= maxrest) && (VertFlag == 0) && (CurrentTime < MaxTime) ) {
+      while ( (normc > rho) && (nRest <= maxrest) && (VertFlag == 0) && (current_time < max_time) ) {
         
 #ifdef VERBOSE
-        if (VerboseLevel > 1) {
+        if (verbosity_level > 1) {
           std::cout << "Going to innerVerticalStep: nRest " << nRest << std::endl
                     << std::endl
                     << "|c| = " << normc << std::endl
@@ -133,7 +133,7 @@ namespace DCI {
             full(*J).print_more ();
             std::cout << "xc = " << std::endl;
             xc->print_more ();
-            if (Ineq) {
+            if (has_ineq) {
               std::cout << "sc = " << std::endl;
               sc->print_more ();
             }
@@ -165,7 +165,7 @@ namespace DCI {
 
         if (fail >= nfailv) {
 #ifdef VERBOSE
-          if (VerboseLevel > 1) {
+          if (verbosity_level > 1) {
             std::cout << "Going to Safe Guard " << std::endl
                       << std::endl;
             if ( (nvar < 10) && (ncon < 10) ) {
@@ -231,7 +231,7 @@ namespace DCI {
           fail = 0;
 
 
-          if (RebootOnVertFail && VertFlag == 0) {
+          if (vertical_fail_reboot && VertFlag == 0) {
             // Has failed but is not infeasible
             Real constr[ncon], funval;
             (*cfn) (&nvar, &ncon, xcx, &funval, &mmax, constr);
@@ -248,13 +248,13 @@ namespace DCI {
         } else if ( ( (normc > thetaR*oldnormc) && (oldAcnt > 0) ) || (oldAcnt > 5) || (iout == 5) ) {
           // dcivert failed. Recompute A
 
-          if (!Linear) {
+          if (!is_linear) {
             call_ccfsg_xc (dciTrue, dciFalse); //CuterJacob
           }
           Aavail = dciTrue;
           oldAcnt = 0;
 
-          if (!Linear) {
+          if (!is_linear) {
             this->cholesky ();
           }
 
@@ -266,12 +266,12 @@ namespace DCI {
         oldnormc = normc;
         DeltaV = Max (DeltaV, DeltaMin);
 
-        CurrentTime = getTime() - StartTime;
+        current_time = getTime() - start_time;
 
       } //Fim do While
 
       if (!Aavail) {
-        if (!Linear) {
+        if (!is_linear) {
           call_ccfsg_xc (dciTrue); //CuterJacob
           this->cholesky ();
         }

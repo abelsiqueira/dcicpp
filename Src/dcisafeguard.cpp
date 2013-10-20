@@ -9,10 +9,10 @@ namespace DCI {
     Vector dn (*env);
 //    Real dnnorm = 0;
     Int iout = 0, ibfgs = 0;
-    Bool scaleJ = ScaleVertical;
+    Bool scaleJ = scale_vertical;
 
     call_ccfsg_xc (dciTrue, scaleJ);
-    if (!Linear)
+    if (!is_linear)
       this->cholesky ();
 
     naStep (*c, dn);

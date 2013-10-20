@@ -6,13 +6,13 @@
 
 namespace DCI {
   int Interface::solve () {
-    if (!Initialized)
+    if (!initialized)
       return -1;
 
-    //Linear problem. Enforce non-linear because the matrix is scaled.
+    //is_linear problem. Enforce non-linear because the matrix is scaled.
     //Hence, we need to refactorize.
-    Linear = dciFalse;
-    Running = dciTrue;
+    is_linear = dciFalse;
+    running = dciTrue;
 
 #ifdef LOCALTEST
     Real ngpzk = 1.0;
@@ -44,7 +44,7 @@ namespace DCI {
 #endif
 
 #ifdef VERBOSE
-    if (VerboseLevel > 0) {
+    if (verbosity_level > 0) {
       std::cout
           << "----------------------" << std::endl
           << "  DCI-C++ First Iter" << std::endl
@@ -55,7 +55,7 @@ namespace DCI {
           << "  rho    = " << rho << std::endl
           << "----------------------" << std::endl;
     }
-    if ( (nvar + ncon <= 20) && (VerboseLevel > 1) ) {
+    if ( (nvar + ncon <= 20) && (verbosity_level > 1) ) {
       std::cout << "x = " << std::endl;
       x->print_more();
       std::cout << "xc = " << std::endl;
@@ -63,7 +63,7 @@ namespace DCI {
       std::cout << "lambda = " << std::endl;
       if (ncon > 0)
         y->print_more();
-      if (Ineq) {
+      if (has_ineq) {
         std::cout << "s = " << std::endl;
         s->print_more();
         std::cout << "sc = " << std::endl;
@@ -73,7 +73,7 @@ namespace DCI {
     GDBSTOP();
 #endif
 
-    CurrentTime = getTime() - StartTime;
+    current_time = getTime() - start_time;
 
     lagrgap = normgp;
     infacgap = normc;
@@ -91,8 +91,8 @@ namespace DCI {
             (itssmll <= maxssmll) && 
             (VertFlag == 0) && 
             (rhomax >= rhomin) && 
-            (!Unlimited) && 
-            (CurrentTime < MaxTime) ) {
+            (!is_unlimited) && 
+            (current_time < max_time) ) {
 
       calcYdif ();
       iter++;
@@ -109,7 +109,7 @@ namespace DCI {
       verticalStep (); //Recalculates f, g and c
       updateScaling_xc();
       if (use_objective_scaling && (objfun_count > 0)) {
-        objfun_scale = Min( Max(Max(objfun_scale, g->norm()), AbsValue(*f)), max_objfun_scale );
+        objective_scaling = Min( Max(Max(objective_scaling, g->norm()), AbsValue(*f)), max_objective_scaling );
         objfun_count--;
       }
 
@@ -150,7 +150,7 @@ namespace DCI {
 #endif
 
 #ifdef VERBOSE
-    if (VerboseLevel > 0) {
+    if (verbosity_level > 0) {
       std::cout << std::endl
           << "----------------------" << std::endl
           << "Vertical Step" << std::endl
@@ -160,7 +160,7 @@ namespace DCI {
           << "  |gp|   = " << gp->norm () << std::endl
           << "  |g|    = " << g->norm () << std::endl
           << "  ngp    = " << ngp << std::endl
-          << "  f_scale= " << objfun_scale << std::endl
+          << "  f_scale= " << objective_scaling << std::endl
           << "  rho    = " << rho << std::endl
           << "  rhomax = " << rhomax << std::endl
           << "  mu     = " << mu << std::endl
@@ -178,7 +178,7 @@ namespace DCI {
           << "  stepsize = " << (*x - *xc).norm() << std::endl
           << "----------------------" << std::endl;
     }
-    if ( (nvar + ncon <= 20) && (VerboseLevel > 1) ) {
+    if ( (nvar + ncon <= 20) && (verbosity_level > 1) ) {
       std::cout << "x = " << std::endl;
       x->print_more();
       std::cout << "xc = " << std::endl;
@@ -186,7 +186,7 @@ namespace DCI {
       std::cout << "lambda = " << std::endl;
       if (ncon > 0)
         y->print_more();
-      if (Ineq) {
+      if (has_ineq) {
         std::cout << "s = " << std::endl;
         s->print_more();
         std::cout << "sc = " << std::endl;
@@ -204,15 +204,15 @@ namespace DCI {
       if (VertFlag != 0)
         std::cout << "VertFlag = " << VertFlag << std::endl;
 
-      CurrentTime = getTime() - StartTime;
+      current_time = getTime() - start_time;
 
       if ( ( (cnormi > csic) || 
              ( (normgp > csig) && 
                (ngp > csig*1e-2) ) ) && 
            (VertFlag == 0) && 
            (rhomax >= rhomin) && 
-           (!Unlimited) && 
-           (CurrentTime < MaxTime) ) {
+           (!is_unlimited) && 
+           (current_time < max_time) ) {
 
         updateScaling_xc();
         horizontalStep (norms); 
@@ -240,7 +240,7 @@ namespace DCI {
 
       } else {
         *x = *xc;
-        if (Ineq)
+        if (has_ineq)
           *s = *sc;
         *f = *fxc;
       }
@@ -265,7 +265,7 @@ namespace DCI {
                 << "ngp(end+1) = " << ngp << ';' << std::endl;
 #endif
 #ifdef VERBOSE
-      if (VerboseLevel > 0) {
+      if (verbosity_level > 0) {
         std::cout << std::endl
             << "----------------------" << std::endl
             << "Horizontal Step" << std::endl
@@ -275,7 +275,7 @@ namespace DCI {
             << "  |gp|   = " << gp->norm () << std::endl
             << "  |g|    = " << g->norm () << std::endl
             << "  ngp    = " << ngp << std::endl
-            << "  f_scale= " << objfun_scale << std::endl
+            << "  f_scale= " << objective_scaling << std::endl
             << "  rho    = " << rho << std::endl
             << "  rhomax = " << rhomax << std::endl
             << "  mu     = " << mu << std::endl
@@ -293,7 +293,7 @@ namespace DCI {
             << "  stepsize = " << (*x - *xc).norm() << std::endl
             << "----------------------" << std::endl;
       }
-      if ( (nvar + ncon <= 20) && (VerboseLevel > 1) ) {
+      if ( (nvar + ncon <= 20) && (verbosity_level > 1) ) {
         std::cout << "x = " << std::endl;
         x->print_more();
         std::cout << "xc = " << std::endl;
@@ -301,7 +301,7 @@ namespace DCI {
         std::cout << "lambda = " << std::endl;
         if (ncon > 0)
           y->print_more();
-        if (Ineq) {
+        if (has_ineq) {
           std::cout << "s = " << std::endl;
           s->print_more();
           std::cout << "sc = " << std::endl;
@@ -320,30 +320,30 @@ namespace DCI {
     } //End
 
     if (VertFlag == 2)
-      ExitFlag = 8;
+      exit_flag = 8;
     else if (VertFlag > 0)
-      ExitFlag = 4;
+      exit_flag = 4;
     else if (rhomax < rhomin)
-      ExitFlag = 1;
+      exit_flag = 1;
     else if (iter > maxit)
-      ExitFlag = 2;
+      exit_flag = 2;
     else if (tRest > maxrest)
-      ExitFlag = 3;
+      exit_flag = 3;
     else if (itssmll > maxssmll)
-      ExitFlag = 5;
-    else if (Unlimited)
-      ExitFlag = 6;
-    else if (CurrentTime >= MaxTime)
-      ExitFlag = 7;
+      exit_flag = 5;
+    else if (is_unlimited)
+      exit_flag = 6;
+    else if (current_time >= max_time)
+      exit_flag = 7;
     else
-      ExitFlag = 0;
+      exit_flag = 0;
 
-    Running = dciFalse;
-    Solved = dciTrue;
+    running = dciFalse;
+    solved = dciTrue;
 
     //Calculating the real function value
     call_fn();
-    CurrentTime = getTime() - StartTime;
+    current_time = getTime() - start_time;
 
 #ifndef NDEBUG
     checkInfactibility();

@@ -23,7 +23,7 @@ namespace DCI {
     pReal dx = d.get_doublex();
 
 #ifdef VERBOSE
-    if (VerboseLevel > 2) {
+    if (verbosity_level > 2) {
       std::cout << "DeltaH = " << DeltaH << std::endl;
     }
 #endif
@@ -54,7 +54,7 @@ namespace DCI {
     }
 
 
-    while ( (theta > eps2) && (theta > eps1*theta0) && (nSteih <= maxitSteih) && (CurrentTime < MaxTime) ) {
+    while ( (theta > eps2) && (theta > eps1*theta0) && (nSteih <= maxitSteih) && (current_time < max_time) ) {
       nSteih++;
       call_prod_xc (GotH, px, Hpx);
       nHprod++;
@@ -150,7 +150,7 @@ namespace DCI {
       gtd = gtd + alpha*gtp;
       theta = thetanew;
 
-      CurrentTime = getTime() - StartTime;
+      current_time = getTime() - start_time;
     }
 
     if (nSteih > maxitSteih)

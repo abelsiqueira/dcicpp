@@ -221,7 +221,7 @@ namespace DCI {
       Mfac.factorize(M, facCorr);
     }
 #ifdef VERBOSE
-    if (VerboseLevel > 2) {
+    if (verbosity_level > 2) {
       M.print_more();
     }
 #endif
@@ -402,7 +402,7 @@ namespace DCI {
       yineqx[i] = 0;
       if (bli - bui > - dciTiny)
         continue;
-      if ( (PartialPenal) && (bli > -dciInf) && (bui < dciInf) ) {
+      if ( (partial_penalization) && (bli > -dciInf) && (bui < dciInf) ) {
         if ( (xi - bli) < (bui - xi) )
           yineqx[i] -= mu/(xi - bli);
         else
@@ -418,7 +418,7 @@ namespace DCI {
       Real cli = clx[ineq_index[i]], cui = cux[ineq_index[i]], si = sx[i];
       Int j = nvar + i;
       yineqx[j] = 0;
-      if ( (PartialPenal) && (cli > -dciInf) && (cui < dciInf) ) {
+      if ( (partial_penalization) && (cli > -dciInf) && (cui < dciInf) ) {
         if ( (si - cli) < (cui - si) )
           yineqx[j] -= mu/(si - cli);
         else
@@ -479,7 +479,7 @@ namespace DCI {
     for (Int i = 0; i < nvar; i++) {
       if (blx[i] - bux[i] > - dciTiny)
         continue;
-      if ( (PartialPenal) && (blx[i] > -dciInf) && (bux[i] < dciInf) ) {
+      if ( (partial_penalization) && (blx[i] > -dciInf) && (bux[i] < dciInf) ) {
         if ( (xx[i] - blx[i]) < (bux[i] - xx[i]) )
           val += log (xx[i] - blx[i]);
         else
@@ -492,8 +492,8 @@ namespace DCI {
         val += log (bux[i] - xx[i]);
     }
     for (Int i = 0; i < nconI; i++) {
-      if ( (PartialPenal) && (clx[ineq_index[i]] > -dciInf) && (cux[ineq_index[i]] < dciInf) ) {
-        if ( (PartialPenal) && (sx[i] - clx[ineq_index[i]]) < (cux[ineq_index[i]] - sx[i]) )
+      if ( (partial_penalization) && (clx[ineq_index[i]] > -dciInf) && (cux[ineq_index[i]] < dciInf) ) {
+        if ( (partial_penalization) && (sx[i] - clx[ineq_index[i]]) < (cux[ineq_index[i]] - sx[i]) )
           val += log (sx[i] - clx[ineq_index[i]]);
         else
           val += log (cux[ineq_index[i]] - sx[i]);
@@ -512,7 +512,7 @@ namespace DCI {
     for (Int i = 0; i < nvar; i++) {
       if (blx[i] - bux[i] > - dciTiny)
         continue;
-      if ( (PartialPenal) && (blx[i] > -dciInf) && (bux[i] < dciInf) ) {
+      if ( (partial_penalization) && (blx[i] > -dciInf) && (bux[i] < dciInf) ) {
         if ( (xcx[i] - blx[i]) < (bux[i] - xcx[i]) )
           val += log (xcx[i] - blx[i]);
         else
@@ -525,7 +525,7 @@ namespace DCI {
         val += log (bux[i] - xcx[i]);
     }
     for (Int i = 0; i < nconI; i++) {
-      if ( (PartialPenal) && (clx[ineq_index[i]] > -dciInf) && (cux[ineq_index[i]] < dciInf) ) {
+      if ( (partial_penalization) && (clx[ineq_index[i]] > -dciInf) && (cux[ineq_index[i]] < dciInf) ) {
         if ( (scx[i] - clx[ineq_index[i]]) < (cux[ineq_index[i]] - scx[i]) )
           val += log (scx[i] - clx[ineq_index[i]]);
         else

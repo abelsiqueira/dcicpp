@@ -33,7 +33,7 @@ namespace DCI {
     Bool fail = dciFalse;
 
 #ifdef VERBOSE
-    if (VerboseLevel > 1) {
+    if (verbosity_level > 1) {
       if (ncon > 0 && nvar + ncon < 10) {
         std::cout << "A = " << std::endl;
         full(*J).print_more ();
@@ -41,15 +41,15 @@ namespace DCI {
     }
 #endif
 
-    CurrentTime = getTime() - StartTime;
+    current_time = getTime() - start_time;
     while ( (!fail) && 
             ( (newnormc > zeta1*rho) || 
               (DLH > eta1*qd) ) && 
-            (CurrentTime < MaxTime) ) {
+            (current_time < max_time) ) {
 
       SteihFlag = innerHorizontalStep (d, qd, gtd);
 #ifdef VERBOSE
-      if (VerboseLevel > 1) {
+      if (verbosity_level > 1) {
         std::cout << "SteihFlag = " << SteihFlag 
                   << ", nSteih = " << nSteih << std::endl;
       }
@@ -139,7 +139,7 @@ namespace DCI {
         if (asoc > DeltaH)
           ssoc.scale (DeltaH/asoc);
         *x = *xc;
-        if (Ineq)
+        if (has_ineq)
           *s = *sc;
         for (Int i = 0; i < nvar; i++)
           xx[i] += ssocx[i];
@@ -179,7 +179,7 @@ namespace DCI {
       if (DeltaH < 1e-10)
         break;
 
-      CurrentTime = getTime() - StartTime;
+      current_time = getTime() - start_time;
     }
     updateScaling_x();
 

@@ -16,7 +16,7 @@ namespace DCI {
       int solve ();
       void show (std::ostream & = std::cout);
       void printLatex (char * = 0) const;
-      void cuter () { StartAtOne = dciTrue; };
+      void cuter () { start_at_one = dciTrue; };
 
       // Sine quibus non
       void set_x (size_t n, Real * V);
@@ -185,15 +185,15 @@ namespace DCI {
       Int nmax, mmax, amax;
       Int nvar, ncon, nconE, nconI, nconL, nconNL;
       std::string problemName;
-      Bool StartAtOne;
-      Bool Initialized;
-      Bool Running;
-      Bool Solved;
-      Bool Ineq, Linear, Bounded;
-      Bool Unlimited;
-      Int DisplayLevel, VerboseLevel, TableLevel;
-      Int ExitFlag;
-      Real MaxTime, CurrentTime, StartTime;
+      Bool start_at_one;
+      Bool initialized;
+      Bool running;
+      Bool solved;
+      Bool has_ineq, is_linear, is_bounded;
+      Bool is_unlimited;
+      Int display_level, verbosity_level, table_print_level;
+      Int exit_flag;
+      Real max_time, current_time, start_time;
 
       // Parameters and Variables
       Real c1, c2;
@@ -210,32 +210,28 @@ namespace DCI {
       Real kappa1, kappa2, kappa3, kappa4;
       Real thetaR, LbdMax;
       Bool GotH, first;
-      Int nSteih, nRej, nSoc, nfailv, nHprod, nRest, nbfgs;
-      Int tSoc, tSteih, tRej, tbfgs, tRest;
-      Int HorzFlag, StepFlag, VertFlag;
-      Int iter, maxit, maxitSteih, minitSteih, relitSteih;
-      Int minstep, itssmll, maxrest, maxssmll;
-      Int bfgsupd;
-      Int cholFacs;
+      Int  nSteih, nRej, nSoc, nfailv, nHprod, nRest, nbfgs;
+      Int  tSoc, tSteih, tRej, tbfgs, tRest;
+      Int  HorzFlag, StepFlag, VertFlag;
+      Int  iter, maxit, maxitSteih, minitSteih, relitSteih;
+      Int  minstep, itssmll, maxrest, maxssmll;
+      Int  bfgsupd;
+      Int  cholFacs;
       Bool Aavail, gavail, LimLbd, FreshA;
       Real minBk;
       Bool use_conjugate_gradient;
-      Bool ScaleVertical;
-      Bool RebootOnVertFail;
-      Bool PartialPenal, project_dcp, project_dn, project_bfgs;
+      Bool scale_vertical;
+      Bool vertical_fail_reboot;
+      Bool partial_penalization, project_dcp, project_dn, project_bfgs;
       Bool trustWorstdn, trustConvexBox, penal_trust, penal_bfgs;
-      Real cholCorrection;
-      Bool cholFailed;
+      Real cholesky_correction;
+      Bool cholesky_failed;
       Real MaxDiag, MinDiag;
       Real infeasible_gradient;
-      Real choleskyCorrection;
-      //Interior Point Variables
-
-      Real objfun_scale, max_objfun_scale;
+      Real objective_scaling, max_objective_scaling;
       Bool use_objective_scaling, use_variable_scaling;
-      Int objfun_count;
-
-      Int nfix, *fixed_index;
+      Int  objfun_count;
+      Int  nfix, *fixed_index;
   };
 }
 
