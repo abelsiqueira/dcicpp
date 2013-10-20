@@ -94,7 +94,7 @@ namespace DCI {
             (!Unlimited) && 
             (CurrentTime < MaxTime) ) {
 
-      calc_ydif ();
+      calcYdif ();
       iter++;
 
       //Check for infactibility
@@ -105,9 +105,9 @@ namespace DCI {
       if (DeltaH < DeltaMin) DeltaH = DeltaMin;
       if (DeltaV < DeltaMin) DeltaV = DeltaMin;
 
-      UpdateScaling_x();
-      vertstep (); //Recalculates f, g and c
-      UpdateScaling_xc();
+      updateScaling_x();
+      verticalStep (); //Recalculates f, g and c
+      updateScaling_xc();
       if (UseObjfunScale && (objfun_count > 0)) {
         objfun_scale = Min( Max(Max(objfun_scale, g->norm()), AbsValue(*f)), max_objfun_scale );
         objfun_count--;
@@ -214,8 +214,8 @@ namespace DCI {
            (!Unlimited) && 
            (CurrentTime < MaxTime) ) {
 
-        UpdateScaling_xc();
-        horzstep (norms); 
+        updateScaling_xc();
+        horizontalStep (norms); 
 #ifndef NDEBUG
         checkInfactibility();
 #endif
@@ -244,13 +244,13 @@ namespace DCI {
           *s = *sc;
         *f = *fxc;
       }
-      updyineq ();
-      gap = calc_gap ();
+      update_yineq ();
+      gap = calcGap ();
 
 #ifdef LOCALTEST
       Vector ytmp (*y);
       call_ofg(dciTrue);
-      update_lambda ();
+      updateLambda ();
       ngpzk = gp->norm();
       *y = ytmp;
       if (solx != 0) {

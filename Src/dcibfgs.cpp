@@ -53,19 +53,19 @@ namespace DCI {
       }
       for (Int i = 0; i < nconI; i++) {
         Real val = 0;
-        if ( (cux[ineqIdx[i]] < dciInf) && (clx[ineqIdx[i]] > -dciInf) ) {
+        if ( (cux[ineq_index[i]] < dciInf) && (clx[ineq_index[i]] > -dciInf) ) {
           if (PartialPenal) {
-            if ( (scx[i] - clx[ineqIdx[i]]) < (cux[ineqIdx[i]] - scx[i]) ) {
+            if ( (scx[i] - clx[ineq_index[i]]) < (cux[ineq_index[i]] - scx[i]) ) {
               val = 1;
             } else {
               val = -1;
             }
           } else {
-            val = cux[ineqIdx[i]] + clx[ineqIdx[i]] - 2*scx[i];
+            val = cux[ineq_index[i]] + clx[ineq_index[i]] - 2*scx[i];
           }
-        } else if (cux[ineqIdx[i]] < dciInf)
+        } else if (cux[ineq_index[i]] < dciInf)
           val = -1;
-        else if (clx[ineqIdx[i]] > -dciInf)
+        else if (clx[ineq_index[i]] > -dciInf)
           val = 1;
         gtmpx[nvar + i] -= mu*val;
       }
@@ -105,7 +105,7 @@ namespace DCI {
 
     gold = gtmp;
 
-    iout = linesearch (xold, sold, d, objfun, gtd, gtmp);
+    iout = lineSearch (xold, sold, d, objfun, gtd, gtmp);
 
     gtmp.sdmult (*J, 1, one, zero, *c);
     
@@ -147,7 +147,7 @@ namespace DCI {
       p = gtmp;
 
       for (Int i = 0; i < ibfgs; i++)
-        Hiprod (i, alpha[i], csi[i], Dx, Ux, Yx, gtmpx, px);
+        HiProd (i, alpha[i], csi[i], Dx, Ux, Yx, gtmpx, px);
 
       for (Int i = 0; i < nvar + nconI; i++)
         Ux[ibfgs*(nvar + nconI) + i] = px[i] + poldx[i];
@@ -158,7 +158,7 @@ namespace DCI {
       csi[ibfgs] /= alpha[ibfgs];
       csi[ibfgs] += 1;
 
-      Hiprod (ibfgs, alpha[ibfgs], csi[ibfgs], Dx, Ux, Yx, gtmpx, px);
+      HiProd (ibfgs, alpha[ibfgs], csi[ibfgs], Dx, Ux, Yx, gtmpx, px);
       p.scale (-1);
 
       gtd = gtmp.dot(p);
@@ -168,7 +168,7 @@ namespace DCI {
         sold = *sc;
       gold = gtmp;
 
-      iout = linesearch (xold, sold, p, objfun, gtd, gtmp);
+      iout = lineSearch (xold, sold, p, objfun, gtd, gtmp);
 
 #ifndef NDEBUG
       checkInfactibility();
@@ -218,7 +218,7 @@ namespace DCI {
 
   }
 
-  void Interface::Hiprod (Int i, Real alpha, Real csi, pReal d, pReal u, pReal y,
+  void Interface::HiProd (Int i, Real alpha, Real csi, pReal d, pReal u, pReal y,
       pReal v, pReal Hv) {
 
     Real cte1 = 0, cte2 = 0;
@@ -236,7 +236,7 @@ namespace DCI {
 
   }
 
-  Int Interface::linesearch (const Vector & x0, const Vector & s0, const Vector & d, Real & objfun, Real & gtd, Vector & gtmp) {
+  Int Interface::lineSearch (const Vector & x0, const Vector & s0, const Vector & d, Real & objfun, Real & gtd, Vector & gtmp) {
     Real f0 = objfun;
     Real fold = f0;
     Real one[2] = {1,0}, zero[2] = {0,0};
@@ -288,7 +288,7 @@ namespace DCI {
     }
 
     for (Int i = 0; i < nconI; i++) {
-      Real si = scx[i], di = Diagx[nvar + i] * dx[nvar + i], cli = clx[ineqIdx[i]], cui = cux[ineqIdx[i]];
+      Real si = scx[i], di = Diagx[nvar + i] * dx[nvar + i], cli = clx[ineq_index[i]], cui = cux[ineq_index[i]];
       if (fabs(di) < dciEps) {
         dx[nvar + i] = 0.0;
         continue;
@@ -425,10 +425,10 @@ namespace DCI {
       }
       for (Int i = 0; i < nconI; i++) {
         scx[i] = s0x[i] + lambda * Diagx[nvar + i]*dx[nvar + i];
-        if (scx[i] == cux[ineqIdx[i]])
-          scx[i] = cux[ineqIdx[i]] - dciEps;
-        else if (scx[i] == clx[ineqIdx[i]])
-          scx[i] = clx[ineqIdx[i]] + dciEps;
+        if (scx[i] == cux[ineq_index[i]])
+          scx[i] = cux[ineq_index[i]] - dciEps;
+        else if (scx[i] == clx[ineq_index[i]])
+          scx[i] = clx[ineq_index[i]] + dciEps;
       }
       call_ccfsg_xc (dciFalse);
       normc = c->norm ();

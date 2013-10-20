@@ -16,7 +16,7 @@ int MAINENTRY () {
   FORTRAN_OPEN ((&funit), fname, (&ierr));
   CDIMEN ((&funit), (&nvar), (&ncon));
 
-  dci.Cuter ();
+  dci.cuter ();
 
   Real x[nvar], bl[nvar], bu[nvar];
   nmax = nvar;

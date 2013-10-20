@@ -15,7 +15,7 @@ namespace DCI {
    * Jacobian matrix.
    */
 
-  void Interface::horzstep (Real & normd) {
+  void Interface::horizontalStep (Real & normd) {
     Vector d (*env, nvar + nconI), ssoc (*env, nvar + nconI);
     Real qd = 0;
     Real newnormc, asoc, alphaT;
@@ -47,7 +47,7 @@ namespace DCI {
               (DLH > eta1*qd) ) && 
             (CurrentTime < MaxTime) ) {
 
-      SteihFlag = dcisteih (d, qd, gtd);
+      SteihFlag = innerHorizontalStep (d, qd, gtd);
 #ifdef VERBOSE
       if (VerboseLevel > 1) {
         std::cout << "SteihFlag = " << SteihFlag 
@@ -101,7 +101,7 @@ namespace DCI {
            ( (normc <= csic) && 
              (newnormc > Max (csic, zeta3*normc) ) ) ) ) {
 
-        StepFlag = NAstep (*c, ssoc);
+        StepFlag = naStep (*c, ssoc);
         scale_xc (ssoc);
 
         // Arrumar tamanho do ssoc a partir do x
@@ -120,7 +120,7 @@ namespace DCI {
           }
         }
         for (Int i = 0; i < nconI; i++) {
-          Real si = sx[i], cli = clx[ineqIdx[i]], cui = cux[ineqIdx[i]], di = ssocx[nvar + i];
+          Real si = sx[i], cli = clx[ineq_index[i]], cui = cux[ineq_index[i]], di = ssocx[nvar + i];
           if (di == 0)
             continue;
           if (di < 0) {
@@ -181,7 +181,7 @@ namespace DCI {
 
       CurrentTime = getTime() - StartTime;
     }
-    UpdateScaling_x();
+    updateScaling_x();
 
     normc = newnormc;
 

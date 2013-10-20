@@ -12,7 +12,7 @@
  */
 
 namespace DCI {
-  Int Interface::dcisteih (Vector & d, Real & qd, Real & gtd) {
+  Int Interface::innerHorizontalStep (Vector & d, Real & qd, Real & gtd) {
     Real theta0, theta, thetanew, alpha, beta, gamma;
     Real dtHp, gtp, ptp, root1, root2, qdnew;
     Int SteihFlag;
@@ -47,7 +47,7 @@ namespace DCI {
       upper[i] = Min( (bui - xi) * (1 - epsmu)/Lambda[i], DeltaH/Lambda[i] );
     }
     for (Int i = 0; i < nconI; i++) {
-      Real si = scx[i], cli = clx[ineqIdx[i]], cui = cux[ineqIdx[i]];
+      Real si = scx[i], cli = clx[ineq_index[i]], cui = cux[ineq_index[i]];
       Int j = nvar + i;
       lower[j] = Max( (cli - si) * (1 - epsmu)/Lambda[j], -DeltaH/Lambda[j] );
       upper[j] = Min( (cui - si) * (1 - epsmu)/Lambda[j], DeltaH/Lambda[j] );
@@ -137,7 +137,7 @@ namespace DCI {
       LimLbd = dciFalse;
       LbdMax = 1e20;
       if (ncon > 0)
-        NAproj (v, r, tmp);
+        naProj (v, r, tmp);
       else
         r = v;
 

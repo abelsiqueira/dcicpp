@@ -27,7 +27,7 @@ namespace DCI {
    * - Return gp too
    */
 
-  Int Interface::vertstep () {
+  Int Interface::verticalStep () {
 //    Vector dn (*env);
     Int fail = 0;
     Int oldAcnt = 1;
@@ -46,7 +46,7 @@ namespace DCI {
     else if (ngp <= 5*csig)
       rho = csic;
     rho = Max (rho, csic);
-    update_mu ();
+    updateMu ();
     nRest = 0;
     nbfgs = 0;
     oldnormc = normc;
@@ -91,13 +91,13 @@ namespace DCI {
         gavail = dciTrue;
 
         if (!Linear && !UseMUMPS) {
-          analyze_J ();
-          cholesky_J ();
+          analyzeJacobian ();
+          cholesky ();
         }
 
         LimLbd = dciTrue;
-        update_lambda ();
-        updyineq ();
+        updateLambda ();
+        update_yineq ();
       } else {
         call_ofg_xc ();
         *gp = *g;
@@ -112,7 +112,7 @@ namespace DCI {
         rho = csic;
       rho = Max (rho, csic);
 
-      update_mu ();
+      updateMu ();
       oldAcnt = 0;
     }
 
@@ -123,7 +123,7 @@ namespace DCI {
         
 #ifdef VERBOSE
         if (VerboseLevel > 1) {
-          std::cout << "Going to dcitrust: nRest " << nRest << std::endl
+          std::cout << "Going to innerVerticalStep: nRest " << nRest << std::endl
                     << std::endl
                     << "|c| = " << normc << std::endl
                     << "rho = " << rho << std::endl
@@ -144,10 +144,10 @@ namespace DCI {
         nRest++;
 
         call_ccfsg_xc(dciTrue, dciFalse);
-        cholesky_J();
+        cholesky();
         infeasible_gradient = 1.0;
 
-        dcitrust(infeasible_gradient);
+        innerVerticalStep(infeasible_gradient);
 #ifdef ITER_MATLAB
     iter_file << "X(:,size(X,2)+1) = [" << xcx[0] << ";" << xcx[1] << "];" << std::endl;
 #endif
@@ -184,8 +184,8 @@ namespace DCI {
           Vector ssoc(*env, nvar + nconI);
           Real asoc;
           call_ccfsg_xc(dciTrue, dciTrue);
-          cholesky_J();
-          StepFlag = NAstep (*c, ssoc);
+          cholesky();
+          StepFlag = naStep (*c, ssoc);
           scale_xc (ssoc);
 
           // Arrumar tamanho do ssoc a partir do x
@@ -204,7 +204,7 @@ namespace DCI {
             }
           }
           for (Int i = 0; i < nconI; i++) {
-            Real si = scx[i], cli = clx[ineqIdx[i]], cui = cux[ineqIdx[i]], di = ssocx[nvar + i];
+            Real si = scx[i], cli = clx[ineq_index[i]], cui = cux[ineq_index[i]], di = ssocx[nvar + i];
             if (di == 0)
               continue;
             if (di < 0) {
@@ -255,7 +255,7 @@ namespace DCI {
           oldAcnt = 0;
 
           if (!Linear && !UseMUMPS) {
-            this->cholesky_J ();
+            this->cholesky ();
           }
 
         } else {
@@ -273,7 +273,7 @@ namespace DCI {
       if (!Aavail) {
         if (!Linear) {
           call_ccfsg_xc (dciTrue); //CuterJacob
-          this->cholesky_J ();
+          this->cholesky ();
         }
         Aavail = dciTrue;
       }
@@ -282,8 +282,8 @@ namespace DCI {
         call_ofg_xc (); //Just g
 
         LimLbd = dciTrue;
-        update_lambda ();
-        updyineq ();
+        updateLambda ();
+        update_yineq ();
 
         normgp = gp->norm ();
         normg = g->norm ();
@@ -296,7 +296,7 @@ namespace DCI {
         rho = Max (rho, Min (phi1*rhomax*ngp, Max (1e-4*rhomax*ngp, 0.75*rhomax) ) );
       rho = Max (rho, csic);
 
-      update_mu ();
+      updateMu ();
     } //Fim do While
 
     if (ncon > 0)

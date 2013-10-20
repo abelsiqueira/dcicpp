@@ -35,7 +35,7 @@ namespace DCI {
 
   Interface::Interface () {
     //Parameters
-    Initialization ();
+    initialization ();
 
     env = new Environment;
     env->set_error_handler (&error);
@@ -55,7 +55,7 @@ namespace DCI {
     delpointer (s);
     delpointer (sols);
     delarray   (equatn);
-    delarray   (ineqIdx);
+    delarray   (ineq_index);
     delarray   (linear);
     delpointer (xc);
     delpointer (sc);
@@ -148,13 +148,13 @@ namespace DCI {
       sols = new Vector (*env, nconI);
       pReal ps = sols->get_doublex ();
       for (Int i = 0; i < nconI; i++) {
-        ps[i] = cx[ineqIdx[i]];
+        ps[i] = cx[ineq_index[i]];
       }
     }
 #endif
 
-    DefineParameters ();
-    InitialValues ();
+    defineParameters ();
+    initialValues ();
     Initialized = dciTrue;
 
     return 0;
@@ -168,7 +168,7 @@ namespace DCI {
 
     Real yoff = 0;
     for (Int i = 0; i < nconI; i++) {
-      Real yi = yx[ineqIdx[i]], li = clx[ineqIdx[i]], ui = cux[ineqIdx[i]];
+      Real yi = yx[ineq_index[i]], li = clx[ineq_index[i]], ui = cux[ineq_index[i]];
       if (li > -dciInf)
         yoff += Max(yi, 0.0);
       if (ui < dciInf)
@@ -465,11 +465,11 @@ namespace DCI {
     if (nconI > 0) {
       Ineq = dciTrue;
       Bounded = dciTrue;
-      ineqIdx = new Int[nconI];
+      ineq_index = new Int[nconI];
       Int numI = 0;
       for (size_t i = 0; i < n; i++) {
         if (equatn[i] == dciFalse) {
-          ineqIdx[numI] = i;
+          ineq_index[numI] = i;
           numI++;
         }
       }
@@ -510,7 +510,7 @@ namespace DCI {
       *f = -dciInf;
     if (Running) {
       *f /= objfun_scale;
-      *f -= mu*calc_pen ();
+      *f -= mu*calcPen ();
       Int numI = 0;
       for (Int i = 0; i < ncon; i++) {
         if (equatn[i] == dciFalse) {
@@ -539,7 +539,7 @@ namespace DCI {
       *fxc = -dciInf;
     if (Running) {
       *fxc /= objfun_scale;
-      *fxc -= mu*calc_pen_xc ();
+      *fxc -= mu*calcPen_xc ();
       Int numI = 0;
       for (Int i = 0; i < ncon; i++) {
         if (equatn[i] == dciFalse) {
@@ -612,7 +612,7 @@ namespace DCI {
       }
       for (Int i = 0; i < nconI; i++) {
         Int j = nvar + i;
-        Real si = sx[i], cli = clx[ineqIdx[i]], cui = cux[ineqIdx[i]];
+        Real si = sx[i], cli = clx[ineq_index[i]], cui = cux[ineq_index[i]];
         if ( (cli > -dciInf) && (cui < dciInf) ) {
           if (PartialPenal) {
             if ( (si - cli) < (cui - si) ) {
@@ -705,7 +705,7 @@ namespace DCI {
       }
       for (Int i = 0; i < nconI; i++) {
         Int j = nvar + i;
-        Real si = scx[i], cli = clx[ineqIdx[i]], cui = cux[ineqIdx[i]];
+        Real si = scx[i], cli = clx[ineq_index[i]], cui = cux[ineq_index[i]];
         if ( (cli > -dciInf) && (cui < dciInf) ) {
           if (PartialPenal) {
             if ( (si - cli) < (cui - si) ) {
@@ -737,7 +737,7 @@ namespace DCI {
   }
 
   void Interface::call_ccfsg (Bool grad, Bool scale) {
-    UpdateScaling_x();
+    updateScaling_x();
     static bool createdVariableScaling = false;
     pInt nnzj = new Int(0);
     (*ccfsg) (&nvar, &ncon, xx, &mmax, cx, nnzj, &amax, Jx, Jvar, Jfun, &grad);
@@ -803,7 +803,7 @@ namespace DCI {
             Int i = Jvar[k];
             VariableScaling[i] = Max(VariableScaling[i], Jx[k]);
           }
-          UpdateScaling_x();
+          updateScaling_x();
         }
         for (Int i = 0; i < nvar; i++)
           VariableScaling[i] = 1.0/VariableScaling[i];
@@ -829,7 +829,7 @@ namespace DCI {
   }
   
   void Interface::call_ccfsg_xc (Bool grad, Bool scale) {
-    UpdateScaling_xc();
+    updateScaling_xc();
     pInt nnzj = new Int(0);
     (*ccfsg) (&nvar, &ncon, xcx, &mmax, cx, nnzj, &amax, Jx, Jvar, Jfun, &grad);
     for (Int i = 0; i < ncon; i++) {
@@ -907,7 +907,7 @@ namespace DCI {
   }
 
   void Interface::call_prod (Bool gotder, pReal px, pReal ux) {
-    UpdateScaling_x();
+    updateScaling_x();
     Real ppx[nvar];
     for (Int i = 0; i < nvar; i++) {
       if (blx[i] > bux[i] - dciTiny)
@@ -946,7 +946,7 @@ namespace DCI {
   }
 
   void Interface::call_prod_xc (Bool gotder, pReal px, pReal ux) {
-    UpdateScaling_xc();
+    updateScaling_xc();
     Real ppx[nvar];
     for (Int i = 0; i < nvar; i++) {
       if (blx[i] > bux[i] - dciTiny)
@@ -1000,13 +1000,13 @@ namespace DCI {
     problemName.assign(pname);
   }
 
-  void Interface::analyze_J () {
+  void Interface::analyzeJacobian () {
     if (LJ == 0) 
       LJ = new Factor (*env);
     LJ->analyze (*J);
   }
 
-  void Interface::cholesky_J () {
+  void Interface::cholesky () {
     if (LJ == 0)
       std::cerr << "analyze should be called first" << std::endl;
     LJ->factorize (*J, cholCorrection);
@@ -1083,14 +1083,14 @@ namespace DCI {
     if (Unlimited)
       return;
     for (Int i = 0; i < nconI; i++) {
-      if ( (sx[ineqIdx[i]] > 1e10) || (sx[ineqIdx[i]] < -1e10) || (scx[ineqIdx[i]] > 1e10) || (scx[ineqIdx[i]] < -1e10) ) {
+      if ( (sx[ineq_index[i]] > 1e10) || (sx[ineq_index[i]] < -1e10) || (scx[ineq_index[i]] > 1e10) || (scx[ineq_index[i]] < -1e10) ) {
         Unlimited = dciTrue;
         break;
       }
-      assert (sx[i] < cux[ineqIdx[i]]);
-      assert (sx[i] > clx[ineqIdx[i]]);
-      assert (scx[i] < cux[ineqIdx[i]]);
-      assert (scx[i] > clx[ineqIdx[i]]);
+      assert (sx[i] < cux[ineq_index[i]]);
+      assert (sx[i] > clx[ineq_index[i]]);
+      assert (scx[i] < cux[ineq_index[i]]);
+      assert (scx[i] > clx[ineq_index[i]]);
     }
   }
 #endif

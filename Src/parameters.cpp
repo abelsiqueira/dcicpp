@@ -7,7 +7,7 @@
 
 namespace DCI {
 
-  void Interface::DefineParameters () {
+  void Interface::defineParameters () {
     DeltaMax = 1e6;
     maxrest = 200;
     maxit = 200;
@@ -57,10 +57,10 @@ namespace DCI {
     MinDiag = 0;
     max_objfun_scale = 1e6;
 
-    ReadParameters();
+    readParameters();
   }
 
-  void Interface::ReadParameters () {
+  void Interface::readParameters () {
     std::ifstream paramFile("dcicpp.spc");
     if (paramFile.fail())
       return;
@@ -74,17 +74,16 @@ namespace DCI {
       en_MaxTime, en_minBk, en_UseCG, en_PartialPenal, en_project_dcp,
       en_project_bfgs, en_trustWorstdn, en_trustConvexBox, en_penal_trust,
       en_penal_bfgs, en_UseMUMPS, en_ScaleVertical, en_DisplayLevel,
-      en_VerboseLevel, en_MaxDiag, en_MinDiag, en_UseVertInteriorPoint,
-      en_UseVertSafeguard, en_UseObjfunScale, 
-      en_objfun_count, en_choleskyCorrection, en_max_objfun_scale,
-      en_UseVariableScaling, en_TableLevel, en_RebootOnVertFail
+      en_VerboseLevel, en_MaxDiag, en_MinDiag, en_UseVertSafeguard,
+      en_UseObjfunScale, en_objfun_count, en_choleskyCorrection,
+      en_max_objfun_scale, en_UseVariableScaling, en_TableLevel,
+      en_RebootOnVertFail
     };
     std::map<std::string, int> paramMap;
 
     paramMap["UseVertSafeguard"] = en_UseVertSafeguard;
     paramMap["choleskyCorrection"] = en_choleskyCorrection;
     paramMap["RebootOnVertFail"] = en_RebootOnVertFail;
-    paramMap["UseVertInteriorPoint"] = en_UseVertInteriorPoint;
     paramMap["MaxDiag"] = en_MaxDiag;
     paramMap["MinDiag"] = en_MinDiag;
     paramMap["VerboseLevel"] = en_VerboseLevel;
@@ -156,7 +155,6 @@ namespace DCI {
         case en_UseVertSafeguard: aux >> UseVertSafeguard; break;
         case en_RebootOnVertFail: aux >> RebootOnVertFail; break;
         case en_choleskyCorrection: aux >> choleskyCorrection; break;
-        case en_UseVertInteriorPoint: aux >> UseVertInteriorPoint; break;
         case en_MaxDiag: aux >> MaxDiag; break;
         case en_MinDiag: aux >> MinDiag; break;
         case en_VerboseLevel: aux >> VerboseLevel; break;
@@ -222,7 +220,7 @@ namespace DCI {
     }
   }
 
-  void Interface::Initialization () {
+  void Interface::initialization () {
     ufn = 0;
     cfn = 0;
     uofg = 0;
@@ -268,7 +266,7 @@ namespace DCI {
     ncon = 0;
     nconE = 0;
     nconI = 0;
-    ineqIdx = 0;
+    ineq_index = 0;
     CurrentTime = 0;
     MaxTime = dciInf;
     DLH = dciInf;
@@ -323,7 +321,6 @@ namespace DCI {
     penal_bfgs = dciTrue;
     UseMUMPS = dciFalse;
     ScaleVertical = dciTrue;
-    UseVertInteriorPoint = dciTrue;
     UseVertSafeguard = dciFalse;
     RebootOnVertFail = dciTrue;
 
@@ -333,7 +330,7 @@ namespace DCI {
     Bounded = dciFalse; //Has bounds
   }
 
-  void Interface::InitialValues () {
+  void Interface::initialValues () {
 
     maxitSteih = Max (minitSteih, Min(maxitSteih, Int(nvar*relitSteih+5) ) );
     minstep *= Min (csig, csic);
@@ -378,13 +375,13 @@ namespace DCI {
 
     if (ncon > 0) {
       for (Int i = 0; i < nconI; i++) {
-        Real cxi = cx[ineqIdx[i]], cli = clx[ineqIdx[i]], cui = cux[ineqIdx[i]];
+        Real cxi = cx[ineq_index[i]], cli = clx[ineq_index[i]], cui = cux[ineq_index[i]];
         Real smldelta = Min ( 1e-2, (cui - cli)/100);
         assert (smldelta > 0);
         sx[i] = Max ( Min ( cxi, cui - smldelta ), cli + smldelta );
         scx[i] = sx[i];
       }
-      UpdateScaling_x();
+      updateScaling_x();
 
       Running = dciTrue;
       // Now, adding s.
@@ -392,8 +389,8 @@ namespace DCI {
       normc = c->norm ();
       call_ofg ();
 
-      this->analyze_J ();
-      this->cholesky_J ();
+      this->analyzeJacobian ();
+      this->cholesky ();
 
       if (y == 0) {
         y = new Vector (*env, ncon);
@@ -401,13 +398,13 @@ namespace DCI {
         for (Int i = 0; i < ncon; i++)
           yx[i] = 0;
       }
-      update_lambda ();
+      updateLambda ();
 //      gp->scale (*g, 1);
 //      gp->sdmult (*J, 1, one, one, *y);
       Ln = *f + y->dot (*c);
     } else { //No constraints, may have bounds on the variables
       Running = dciTrue; //If there are bounds, this will get them.
-      UpdateScaling_x();
+      updateScaling_x();
       call_ofg ();
       normc = 0;
       Ln = *f;

@@ -2,7 +2,7 @@
 //#include <cassert>
 #include <cmath>
 
-/* dcitrust
+/* innerVerticalStep
  *
  * This routine computes a trust region vertical step. This step is
  * the solution of the problem:
@@ -19,7 +19,7 @@
 namespace DCI {
   /* This function must (approximately) solve
    * min m(d) = 0.5*norm */
-  Int Interface::least_square_tr (Vector & d, pReal scalingMatrix,
+  Int Interface::leastSquaresTrustRegion (Vector & d, pReal scalingMatrix,
       Real *lower, Real *upper) {
     d.reset(nvar + nconI, 0.0);
     Int nLstSqrs = 0, maxLstSqrs = nvar + nconI;
@@ -137,7 +137,7 @@ namespace DCI {
     return 0;
   }
   
-  Int Interface::dcitrust (Real & infeasible_gradient) {
+  Int Interface::innerVerticalStep (Real & infeasible_gradient) {
     Real oldnormc = c->norm();
     Vector d(*env), dcp(*env), dn(*env);
     Real ndn;
@@ -171,7 +171,7 @@ namespace DCI {
     }
     for (Int i = 0; i < nconI; i++) {
       Int j = nvar + i;
-      Real gi = gtmpx[j], zi = scx[i], ui = cux[ineqIdx[i]], li = clx[ineqIdx[i]];
+      Real gi = gtmpx[j], zi = scx[i], ui = cux[ineq_index[i]], li = clx[ineq_index[i]];
       if ( (gi < 0) && (ui < dciInf) ) {
         scalingMatrix[j] = 1.0/sqrt(ui - zi);
       } else if ( (gi > 0) && (li > -dciInf) ) {
@@ -183,7 +183,7 @@ namespace DCI {
     normgtmp = gtmp.norm ();
     Vector gtmp_proj(*env);
     gtmp_proj.scale(gtmp, -1.0);
-    project_bounds_xc(gtmp_proj);
+    projectBounds_xc(gtmp_proj);
     infeasible_gradient = gtmp_proj.norm();
 //    DeltaV = normgtmp;
 
@@ -202,7 +202,7 @@ namespace DCI {
     }
     for (Int i = 0; i < nconI; i++) {
       Int j = nvar + i;
-      Real zi = scx[i], li = clx[ineqIdx[i]], ui = cux[ineqIdx[i]];
+      Real zi = scx[i], li = clx[ineq_index[i]], ui = cux[ineq_index[i]];
       lower[j] = Max( -DeltaV, (li > -dciInf ? (li - zi) * (1 - epsmu) : -dciInf) );
       upper[j] = Min( DeltaV, (ui < dciInf ? (ui - zi) * (1 - epsmu) : dciInf) );
     }
@@ -268,9 +268,9 @@ namespace DCI {
       // sc + dcps >= epsmu*sc
       dnavail = dciFalse;
       if (!dnavail) {
-//        naflag = least_square_tr (dn, scalingMatrix, lower, upper);
-        naflag = NAstep (*c, dn);
-/*         naflag = NAstep (ctmp, dn); 
+//        naflag = leastSquaresTrustRegion (dn, scalingMatrix, lower, upper);
+        naflag = naStep (*c, dn);
+/*         naflag = naStep (ctmp, dn); 
  *         if (dn.norm() > DeltaV) {
  *           dn.scale(DeltaV/dn.norm());
  *         }
@@ -349,10 +349,10 @@ namespace DCI {
       for (Int i = 0; i < nconI; i++) {
         Int j = nvar + i;
         scx[i] += (factor*dnx[j] + (1 - factor)*dcpx[j]);
-        if (scx[i] >= cux[ineqIdx[i]])
-          scx[i] = cux[ineqIdx[i]] - dciEps;
-        else if (scx[i] <= clx[ineqIdx[i]])
-          scx[i] = clx[ineqIdx[i]] + dciEps;
+        if (scx[i] >= cux[ineq_index[i]])
+          scx[i] = cux[ineq_index[i]] - dciEps;
+        else if (scx[i] <= clx[ineq_index[i]])
+          scx[i] = clx[ineq_index[i]] + dciEps;
       }
       
 #ifndef NDEBUG

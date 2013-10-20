@@ -4,11 +4,8 @@
 
 namespace DCI {
 
-  /*Int Interface::vertSafeguard () {
-  }*/
-
   // For bfgs use this
-  Int Interface::vertSafeguard () {
+  Int Interface::verticalSafeguard () {
     Vector dn (*env);
 //    Real dnnorm = 0;
     Int iout = 0, ibfgs = 0;
@@ -16,9 +13,9 @@ namespace DCI {
 
     call_ccfsg_xc (dciTrue, scaleJ);
     if (!Linear)
-      this->cholesky_J ();
+      this->cholesky ();
 
-    NAstep (*c, dn);
+    naStep (*c, dn);
 
 //    dnnorm = dn.norm ();
     iout = dcibfgs (dn, ibfgs);
@@ -26,7 +23,7 @@ namespace DCI {
 #ifndef NDEBUG
     checkInfactibility();
 #endif
-    if ( (iout == 3) && calc_feasibilityOpt () )
+    if ( (iout == 3) && calcFeasibilityOpt () )
       return 2;
     else if ( (iout == 1) || (iout > 2) )
       return 1;

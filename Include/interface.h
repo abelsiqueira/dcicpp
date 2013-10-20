@@ -16,7 +16,7 @@ namespace DCI {
       int solve ();
       void show (std::ostream & = std::cout);
       void printLatex (char * = 0) const;
-      void Cuter () { StartAtOne = dciTrue; };
+      void cuter () { StartAtOne = dciTrue; };
 
       // Sine quibus non
       void set_x (size_t n, Real * V);
@@ -90,51 +90,49 @@ namespace DCI {
       void call_names ();
 
       // Internal problem solving functions
-      void analyze_J ();
-      void cholesky_J ();
-      Int vertstep ();
-      Int vertSafeguard ();
-      void horzstep (Real &);
-      Int dcisteih (Vector &, Real &, Real &);
-      Int dcitrust (Real &);
-      Int least_square_tr (Vector &, pReal, pReal, pReal);
-      Real InteriorPointObjFun (Real, Real, Int, Int, pReal, pReal, pReal, pReal,
-          pReal, pReal, pReal, pReal, pInt, pInt);
-      void NAproj (Vector &, Vector &, Vector &);
-      void NAprojApprox (Vector &, Vector &, Vector &);
-      Int NAstep (Vector &, Vector &);
-      Int dcibfgs (const Vector &, Int &);
-      Int dcibfgs2 (const Vector &, Int &);
-      void Hiprod (Int, Real, Real, pReal, pReal, pReal, pReal, pReal);
-      Int linesearch (const Vector &, const Vector &, const Vector &, Real &, Real &, Vector &);
-      Int zoom (const Vector &, const Vector &, const Vector &, Vector &, Real, Real, Real, Real &, Real &, Real, Real, Real, Real);
+      void analyzeJacobian ();
+      void cholesky ();
+      Int  verticalStep ();
+      Int  innerVerticalStep (Real &);
+      Int  verticalSafeguard ();
+      void horizontalStep (Real &);
+      Int  innerHorizontalStep (Vector &, Real &, Real &);
+      Int  leastSquaresTrustRegion (Vector &, pReal, pReal, pReal);
+      void naProj (Vector &, Vector &, Vector &);
+      void naProjApprox (Vector &, Vector &, Vector &);
+      Int  naStep (Vector &, Vector &);
+      Int  dcibfgs (const Vector &, Int &);
+      void HiProd (Int, Real, Real, pReal, pReal, pReal, pReal, pReal);
+      Int  lineSearch (const Vector &, const Vector &, const Vector &, Real &,
+                Real &, Vector &);
+      Int  zoom (const Vector &, const Vector &, const Vector &, Vector &, Real,
+                Real, Real, Real &, Real &, Real, Real, Real, Real);
       Real interpolate (Real, Real, Real, Real, Real, Real, Bool);
-      void DefineParameters ();
-      void ReadParameters ();
-      void InitialValues ();
-      void Initialization ();
+      void defineParameters ();
+      void readParameters ();
+      void initialValues ();
+      void initialization ();
       Real getTime ();
+      void updateScaling_x ();
+      void updateScaling_xc ();
+      void scale_x (Vector &);
+      void scale_xc (Vector &);
+      void projectBounds_x (Vector &);
+      void projectBounds_xc (Vector &);
+      void update_yineq ();
+      void updateLambda ();
+      void updateMu ();
+      Real calcGap ();
+      Real calcYdif ();
+      Real calcPen ();
+      Real calcPen_xc ();
+      Bool calcFeasibilityOpt ();
+      void leastSquaresCG (Bool, const Vector &, Vector &, Vector &);
+      void linearSystemCG (Bool, const Vector &, Vector &);
+
 #ifndef NDEBUG
       void checkInfactibility ();
 #endif
-      void UpdateScaling_x ();
-      void UpdateScaling_xc ();
-      void scale_x (Vector &);
-      void scale_xc (Vector &);
-      void project_bounds_x (Vector &);
-      void project_bounds_xc (Vector &);
-      void updyineq ();
-      void updyineq_xc ();
-      void update_lambda ();
-      void update_mu ();
-      Real calc_gap ();
-      Real calc_ydif ();
-      Real calc_pen ();
-      Real calc_pen_xc ();
-      Real penvthv (const Vector &) const;
-      Bool calc_feasibilityOpt ();
-      void LstSqrCG (Bool, const Vector &, Vector &, Vector &);
-      void LinSysCG (Bool, const Vector &, Vector &);
       void assert (Bool);
 
       // These are the values at the current point x;
@@ -168,7 +166,7 @@ namespace DCI {
       pReal xcx, scx;
       pReal yineqx;
 
-      Int * ineqIdx;
+      Int * ineq_index;
       Real * Lambda; // Scaling matrix
       Real * VariableScaling;
 
