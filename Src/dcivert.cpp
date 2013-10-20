@@ -250,14 +250,6 @@ namespace DCI {
             }
             normc = c->norm();
           }
-
-
-
-//          if (!UseMUMPS)
-//            this->cholesky_J();
-//          if (UseVertSafeguard)
-//            VertFlag = vertSafeguard ();
-//          VertFlag = 0;
         } else if ( ( (normc > thetaR*oldnormc) && (oldAcnt > 0) ) || (oldAcnt > 5) || (iout == 5) ) {
           // dcivert failed. Recompute A
 

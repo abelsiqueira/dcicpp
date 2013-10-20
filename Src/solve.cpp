@@ -345,13 +345,6 @@ namespace DCI {
     call_fn();
     CurrentTime = getTime() - StartTime;
 
-    //MUMPS
-//    if (UseMUMPS) {
-//      id.job=JOB_END;
-//      dmumps_c(&id);
-//      MPI_Finalize();
-//    }
-
 #ifndef NDEBUG
     checkInfactibility();
 #endif

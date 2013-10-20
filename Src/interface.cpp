@@ -72,9 +72,6 @@ namespace DCI {
     if ( (x == 0) || (bl == 0) || (bu == 0) )
       return -1;
 
-    //Mumps
-//    id.n = ncon + nvar + nconI;
-
     call_names ();
     StartTime = getTime();
 
@@ -107,8 +104,6 @@ namespace DCI {
     }
 
     amax = amax + nconI;
-//    if (UseMUMPS)
-//      amax += nvar + nconI + ncon;
 
     f = new Real;
     fxc = new Real;
@@ -812,32 +807,6 @@ namespace DCI {
       delpointer (J);
       J = new Sparse (*env);
       J->triplet_to_sparse (*Jtrip, amax);
-      //Mumps
-//      if (UseMUMPS) {
-//        for (Int i = 0; i < *nnzj; i++) {
-//          Jfun[i] += nvar + nconI + 1;
-//          Jvar[i]++;
-//        }
-//        for (Int i = 0; i < nvar + nconI; i++) {
-//          Jfun[*nnzj + i] = i + 1;
-//          Jvar[*nnzj + i] = i + 1;
-//          Jx[*nnzj + i] = 1;
-//        }
-//        if (cholCorrection > 0) {
-//          for (Int i = 0; i < ncon; i++) {
-//            Jfun[*nnzj + nvar + nconI + i] = nvar + nconI + i + 1;
-//            Jvar[*nnzj + nvar + nconI + i] = nvar + nconI + i + 1;
-//            Jx[*nnzj + nvar + nconI + i] = cholCorrection;
-//          }
-//        }
-//        id.irn = reinterpret_cast<int*>(Jfun);
-//        id.jcn = reinterpret_cast<int*>(Jvar);
-//        id.a = reinterpret_cast<double*>(Jx);
-//        if (cholCorrection > 0)
-//          id.nz = (int)(*nnzj) + nvar + nconI + ncon;
-//        else
-//          id.nz = (int)(*nnzj) + nvar + nconI;
-//      }
     } else {
       if (Running) {
         Int numI = 0;
@@ -916,32 +885,6 @@ namespace DCI {
       delpointer (J);
       J = new Sparse (*env);
       J->triplet_to_sparse (*Jtrip, amax);
-      //Mumps
-//      if (UseMUMPS) {
-//        for (Int i = 0; i < *nnzj; i++) {
-//          Jfun[i] += nvar + nconI + 1;
-//          Jvar[i]++;
-//        }
-//        for (Int i = 0; i < nvar + nconI; i++) {
-//          Jfun[*nnzj + i] = i + 1;
-//          Jvar[*nnzj + i] = i + 1;
-//          Jx[*nnzj + i] = 1;
-//        }
-//        if (cholCorrection > 0) {
-//          for (Int i = 0; i < ncon; i++) {
-//            Jfun[*nnzj + nvar + nconI + i] = nvar + nconI + i + 1;
-//            Jvar[*nnzj + nvar + nconI + i] = nvar + nconI + i + 1;
-//            Jx[*nnzj + nvar + nconI + i] = cholCorrection;
-//          }
-//        }
-//        id.irn = reinterpret_cast<int*>(Jfun);
-//        id.jcn = reinterpret_cast<int*>(Jvar);
-//        id.a = reinterpret_cast<double*>(Jx);
-//        if (cholCorrection > 0)
-//          id.nz = (int)(*nnzj) + nvar + nconI + ncon;
-//        else
-//          id.nz = (int)(*nnzj) + nvar + nconI;
-//      }
     } else {
       if (Running) {
         Int numI = 0;
@@ -1052,16 +995,12 @@ namespace DCI {
   }
 
   void Interface::analyze_J () {
-//    if (UseMUMPS)
-//      return;
     if (LJ == 0) 
       LJ = new Factor (*env);
     LJ->analyze (*J);
   }
 
   void Interface::cholesky_J () {
-//    if (UseMUMPS)
-//      return;
     if (LJ == 0)
       std::cerr << "analyze should be called first" << std::endl;
     LJ->factorize (*J, cholCorrection);
@@ -1149,7 +1088,5 @@ namespace DCI {
     }
   }
 #endif
-  
-
 
 }
