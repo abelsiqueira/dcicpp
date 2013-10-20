@@ -1,6 +1,7 @@
 #include "interface.h"
 #include <sstream>
 #include <fstream>
+#include <stdexcept>
 #include <map>
 #include <string>
 //#include <cassert>
@@ -148,7 +149,16 @@ namespace DCI {
       getline(paramFile, value, '\n');
       std::stringstream aux;
       aux << value;
-      switch (paramMap[param]) {
+      int choice;
+      try {
+        choice = paramMap.at(param);
+      } catch (const std::out_of_range& ex) {
+        std::cerr << "Option " << param << " not recognized. Ignoring" <<
+          std::endl;
+        continue;
+      }
+      
+      switch (choice) {
         case en_vertical_fail_reboot: aux >> vertical_fail_reboot; break;
         case en_MaxDiag: aux >> MaxDiag; break;
         case en_MinDiag: aux >> MinDiag; break;
