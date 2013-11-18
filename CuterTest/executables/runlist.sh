@@ -1,6 +1,13 @@
-#/bin/sh
-for pname in $(cat $1)
+#!/bin/bash
+
+[ $# -lt 1 ] && echo "Need list" && exit 1
+target_dir=cuter.$(date +"%Y.%m.%d_%H.%M")
+list=$1
+
+mkdir -p $target_dir
+cp $list $target_dir/
+
+for problem in $(cat $list)
 do
-  date
-  runcppcuter -p dcicpp -D $pname
+  runcppcuter -p dcicpp -D $problem > $target_dir/$problem.out
 done

@@ -577,33 +577,33 @@ namespace DCI {
             if ( (xi - bli) < (bui - xi) ) {
               if (grad) {
                 gx[i] *= (xi - bli);
-                gx[i] -= mu;
+                gx[i] -= mu/objective_scaling;
               }
               val += log (xi - bli);
             } else {
               if (grad) {
                 gx[i] *= (bui - xi);
-                gx[i] += mu;
+                gx[i] += mu/objective_scaling;
               }
               val += log (bui - xi);
             }
           } else {
             if (grad) {
               gx[i] *= (xi - bli) * (bui - xi);
-              gx[i] += mu * (2*xi - bli - bui);
+              gx[i] += mu * (2*xi - bli - bui)/objective_scaling;
             }
             val += log (xi - bli) + log (bui - xi);
           }
         } else if ( (bli <= -dciInf) && (bui < dciInf) ) {
           if (grad) {
             gx[i] *= (bui - xi);
-            gx[i] += mu;
+            gx[i] += mu/objective_scaling;
           }
           val += log (bui - xi);
         } else if ( (bli > -dciInf) && (bui >= dciInf) ) {
           if (grad) {
             gx[i] *= (xi - bli);
-            gx[i] -= mu;
+            gx[i] -= mu/objective_scaling;
           }
           val += log (xi - bli);
         }
@@ -617,25 +617,25 @@ namespace DCI {
           if (partial_penalization) {
             if ( (si - cli) < (cui - si) ) {
               if (grad)
-                gx[j] = -mu;
+                gx[j] = -mu/objective_scaling;
               val += log (si - cli);
             } else {
               if (grad)
-                gx[j] = mu;
+                gx[j] = mu/objective_scaling;
               val += log (cui - si);
             }
           } else {
             if (grad)
-              gx[j] = mu * (2*si - cli - cui);
+              gx[j] = mu * (2*si - cli - cui)/objective_scaling;
             val += log (si - cli) + log (cui - si);
           }
         } else if ( (cli <= -dciInf) && (cui < dciInf) ) {
           if (grad)
-            gx[j] = mu;
+            gx[j] = mu/objective_scaling;
           val += log (cui - si);
         } else if ( (cli > -dciInf) && (cui >= dciInf) ) {
           if (grad)
-            gx[j] = -mu;
+            gx[j] = -mu/objective_scaling;
           val += log (si - cli);
         }
       }
@@ -670,33 +670,33 @@ namespace DCI {
             if ( (xi - bli) < (bui - xi) ) {
               if (grad) {
                 gx[i] *= (xi - bli);
-                gx[i] -= mu;
+                gx[i] -= mu/objective_scaling;
               }
               val += log (xi - bli);
             } else {
               if (grad) {
                 gx[i] *= (bui - xi);
-                gx[i] += mu;
+                gx[i] += mu/objective_scaling;
               }
               val += log (bui - xi);
             }
           } else {
             if (grad) {
               gx[i] *= (xi - bli) * (bui - xi);
-              gx[i] += mu * (2*xi - bli - bui);
+              gx[i] += mu * (2*xi - bli - bui)/objective_scaling;
             }
             val += log (xi - bli) + log (bui - xi);
           }
         } else if ( (bli <= -dciInf) && (bui < dciInf) ) {
           if (grad) {
             gx[i] *= (bui - xi);
-            gx[i] += mu;
+            gx[i] += mu/objective_scaling;
           }
           val += log (bui - xi);
         } else if ( (bli > -dciInf) && (bui >= dciInf) ) {
           if (grad) {
             gx[i] *= (xi - bli);
-            gx[i] -= mu;
+            gx[i] -= mu/objective_scaling;
           }
           val += log (xi - bli);
         }
@@ -710,25 +710,25 @@ namespace DCI {
           if (partial_penalization) {
             if ( (si - cli) < (cui - si) ) {
               if (grad)
-                gx[j] = -mu;
+                gx[j] = -mu/objective_scaling;
               val += log (si - cli);
             } else {
               if (grad)
-                gx[j] = mu;
+                gx[j] = mu/objective_scaling;
               val += log (cui - si);
             }
           } else {
             if (grad)
-              gx[j] = mu * (2*si - cli - cui);
+              gx[j] = mu * (2*si - cli - cui)/objective_scaling;
             val += log (si - cli) + log (cui - si);
           }
         } else if ( (cli <= -dciInf) && (cui < dciInf) ) {
           if (grad)
-            gx[j] = mu;
+            gx[j] = mu/objective_scaling;
           val += log (cui - si);
         } else if ( (cli > -dciInf) && (cui >= dciInf) ) {
           if (grad)
-            gx[j] = -mu;
+            gx[j] = -mu/objective_scaling;
           val += log (si - cli);
         }
       }

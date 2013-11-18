@@ -1,6 +1,6 @@
 maxit 200000
 maxrest 200000
-max_time 7200
+max_time 600
 partial_penalization 1
 project_dcp 0
 project_bfgs 1
@@ -11,7 +11,7 @@ penal_bfgs 0
 MaxDiag 1e9
 MinDiag 0
 verbosity_level 0
-display_level 2
+display_level 1
 table_print_level 1
 scale_vertical 0
 eta1 1e-12
