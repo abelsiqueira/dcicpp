@@ -191,7 +191,7 @@ namespace DCI {
       Bool solved;
       Bool has_ineq, is_linear, is_bounded;
       Bool is_unlimited;
-      Int display_level, verbosity_level, table_print_level;
+      Int display_level, debug_level, verbosity_level, table_print_level;
       Int exit_flag;
       Real max_time, current_time, start_time;
 
@@ -228,8 +228,9 @@ namespace DCI {
       Bool cholesky_failed;
       Real MaxDiag, MinDiag;
       Real infeasible_gradient;
-      Real objective_scaling, max_objective_scaling;
-      Bool use_objective_scaling, use_variable_scaling;
+      Real objective_scaling, max_objective_scaling, max_constraint_scaling;
+      Real *constraint_scaling;
+      Bool use_objective_scaling, use_variable_scaling, use_constraint_scaling;
       Int  objfun_count;
       Int  nfix, *fixed_index;
   };

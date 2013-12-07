@@ -18,7 +18,7 @@ namespace DCI {
      UNUSED(line);
      UNUSED(message);
 #endif
-  }
+}
 
   void Interface::assert (Bool v) {
     if (v)
@@ -504,6 +504,10 @@ namespace DCI {
           cx[i] = -dciInf;
       }
     }
+    if (ncon > 0 && use_constraint_scaling) {
+      for (Int i = 0; i < ncon; i++)
+        cx[i] /= constraint_scaling[i];
+    }
     if (*f > dciInf)
       *f = dciInf;
     else if (*f < -dciInf)
@@ -532,6 +536,10 @@ namespace DCI {
         else if (cx[i] < -dciInf)
           cx[i] = -dciInf;
       }
+    }
+    if (ncon > 0 && use_constraint_scaling) {
+      for (Int i = 0; i < ncon; i++)
+        cx[i] /= constraint_scaling[i];
     }
     if (*fxc > dciInf)
       *fxc = dciInf;
@@ -772,6 +780,14 @@ namespace DCI {
       }
 
       if (running) {
+        if (ncon > 0 && use_constraint_scaling) {
+          for (Int i = 0; i < ncon; i++)
+            cx[i] /= constraint_scaling[i];
+          for (Int k = 0; k < *nnzj; k++) {
+            Int i = Jfun[k];
+            Jx[k] /= constraint_scaling[i];
+          }
+        }
         if (scale) { 
           for (Int k = 0; k < *nnzj; k++) {
             Int j = Jvar[k];
@@ -814,6 +830,10 @@ namespace DCI {
       J = new Sparse (*env);
       J->triplet_to_sparse (*Jtrip, amax);
     } else {
+      if (ncon > 0 && use_constraint_scaling) {
+        for (Int i = 0; i < ncon; i++)
+          cx[i] /= constraint_scaling[i];
+      }
       if (running) {
         Int numI = 0;
         for (Int i = 0; i < ncon; i++) {
@@ -863,6 +883,14 @@ namespace DCI {
       }
 
       if (running) {
+        if (ncon > 0 && use_constraint_scaling) {
+          for (Int i = 0; i < ncon; i++)
+            cx[i] /= constraint_scaling[i];
+          for (Int k = 0; k < *nnzj; k++) {
+            Int i = Jfun[k];
+            Jx[k] /= constraint_scaling[i];
+          }
+        }
         if (scale) {
           for (Int k = 0; k < *nnzj; k++) {
             Int j = Jvar[k];
@@ -892,6 +920,10 @@ namespace DCI {
       J = new Sparse (*env);
       J->triplet_to_sparse (*Jtrip, amax);
     } else {
+      if (ncon > 0 && use_constraint_scaling) {
+        for (Int i = 0; i < ncon; i++)
+          cx[i] /= constraint_scaling[i];
+      }
       if (running) {
         Int numI = 0;
         for (Int i = 0; i < ncon; i++) {
@@ -919,6 +951,10 @@ namespace DCI {
       for (Int i = 0; i < ncon; i++)
         yx[i] *= objective_scaling;
     }
+    if (use_constraint_scaling) {
+      for (Int i = 0; i < ncon; i++)
+        yx[i] /= constraint_scaling[i];
+    }
     if (ncon == 0)
       (*uprod) (&nvar, &gotder, xx, ppx, ux);
     else
@@ -928,6 +964,10 @@ namespace DCI {
         ux[i] /= objective_scaling;
       for (Int i = 0; i < ncon; i++)
         yx[i] /= objective_scaling;
+    }
+    if (use_constraint_scaling) {
+      for (Int i = 0; i < ncon; i++)
+        yx[i] *= constraint_scaling[i];
     }
     for (Int i = 0; i < nvar; i++) {
       if (blx[i] > bux[i] - dciTiny) {
@@ -958,6 +998,10 @@ namespace DCI {
       for (Int i = 0; i < ncon; i++)
         yx[i] *= objective_scaling;
     }
+    if (use_constraint_scaling) {
+      for (Int i = 0; i < ncon; i++)
+        yx[i] /= constraint_scaling[i];
+    }
     if (ncon == 0)
       (*uprod) (&nvar, &gotder, xcx, ppx, ux);
     else
@@ -967,6 +1011,10 @@ namespace DCI {
         ux[i] /= objective_scaling;
       for (Int i = 0; i < ncon; i++)
         yx[i] /= objective_scaling;
+    }
+    if (use_constraint_scaling) {
+      for (Int i = 0; i < ncon; i++)
+        yx[i] *= constraint_scaling[i];
     }
     for (Int i = 0; i < nvar; i++) {
       if (blx[i] > bux[i] - dciTiny) {

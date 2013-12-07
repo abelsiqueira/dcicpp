@@ -6,6 +6,7 @@ list=$1
 
 mkdir -p $target_dir
 cp $list $target_dir/
+cp dcicpp.spc $target_dir/
 
 for problem in $(cat $list)
 do

@@ -10,6 +10,7 @@ penal_trust 0
 penal_bfgs 0
 MaxDiag 1e9
 MinDiag 0
+debug_level 1
 verbosity_level 0
 display_level 1
 table_print_level 1
@@ -26,6 +27,8 @@ alphaI 2.5
 alphaS 0.0625
 use_objective_scaling 1
 use_variable_scaling 0
+use_constraint_scaling 0
+max_constraint_scaling 1e6
 vertical_fail_reboot 1
 objfun_count 10
 Delta0 1e6

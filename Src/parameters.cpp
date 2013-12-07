@@ -52,11 +52,13 @@ namespace DCI {
     max_time = 5 * 60; // 5 minutes
     minBk = 1e-12;
     display_level = 1;
+    debug_level = 0;
     verbosity_level = 0;
     table_print_level = 0;
     MaxDiag = 1e20;
     MinDiag = 0;
     max_objective_scaling = 1e6;
+    max_constraint_scaling = 1e6;
 
     readParameters();
   }
@@ -74,10 +76,11 @@ namespace DCI {
       en_eps1, en_eps2, en_eps3, en_epsmu, en_epsgap, en_bfgsupd, en_c1, en_c2,
       en_max_time, en_minBk, en_use_conjugate_gradient, en_partial_penalization, en_project_dcp,
       en_project_bfgs, en_trustWorstdn, en_trustConvexBox, en_penal_trust,
-      en_penal_bfgs, en_scale_vertical, en_display_level,
+      en_penal_bfgs, en_scale_vertical, en_display_level, en_debug_level,
       en_verbosity_level, en_MaxDiag, en_MinDiag, 
-      en_use_objective_scaling, en_objfun_count, 
+      en_use_objective_scaling, en_objfun_count, en_use_constraint_scaling,
       en_max_objective_scaling, en_use_variable_scaling, en_table_print_level,
+      en_max_constraint_scaling,
       en_vertical_fail_reboot
     };
     std::map<std::string, int> paramMap;
@@ -85,14 +88,17 @@ namespace DCI {
     paramMap["vertical_fail_reboot"] = en_vertical_fail_reboot;
     paramMap["MaxDiag"] = en_MaxDiag;
     paramMap["MinDiag"] = en_MinDiag;
+    paramMap["debug_level"] = en_debug_level;
     paramMap["verbosity_level"] = en_verbosity_level;
     paramMap["display_level"] = en_display_level;
     paramMap["table_print_level"] = en_table_print_level;
     paramMap["scale_vertical"] = en_scale_vertical;
     paramMap["use_conjugate_gradient"] = en_use_conjugate_gradient;
     paramMap["use_objective_scaling"] = en_use_objective_scaling;
+    paramMap["use_constraint_scaling"] = en_use_constraint_scaling;
     paramMap["objfun_count"] = en_objfun_count;
     paramMap["max_objective_scaling"] = en_max_objective_scaling;
+    paramMap["max_constraint_scaling"] = en_max_constraint_scaling;
     paramMap["use_variable_scaling"] = en_use_variable_scaling;
     paramMap["partial_penalization"] = en_partial_penalization;
     paramMap["project_dcp"] = en_project_dcp;
@@ -145,6 +151,10 @@ namespace DCI {
     paramMap["minBk"] = en_minBk;
 
     std::string param, value;
+
+    if (debug_level > 0) {
+      std::cout << "Parameters loaded:" << std::endl;
+    }
     while (getline(paramFile, param, ' ')) {
       getline(paramFile, value, '\n');
       std::stringstream aux;
@@ -157,11 +167,15 @@ namespace DCI {
           std::endl;
         continue;
       }
+      if (debug_level > 0) {
+        std::cout << param << " = " << value << std::endl;
+      }
       
       switch (choice) {
         case en_vertical_fail_reboot: aux >> vertical_fail_reboot; break;
         case en_MaxDiag: aux >> MaxDiag; break;
         case en_MinDiag: aux >> MinDiag; break;
+        case en_debug_level: aux >> debug_level; break;
         case en_verbosity_level: aux >> verbosity_level; break;
         case en_display_level: aux >> display_level; break;
         case en_table_print_level: aux >> table_print_level; break;
@@ -209,8 +223,10 @@ namespace DCI {
         case en_minBk: aux >> minBk; break;
         case en_use_conjugate_gradient: aux >> use_conjugate_gradient; break;
         case en_use_objective_scaling: aux >> use_objective_scaling; break;
+        case en_use_constraint_scaling: aux >> use_constraint_scaling; break;
         case en_objfun_count: aux >> objfun_count; break;
         case en_max_objective_scaling: aux >> max_objective_scaling; break;
+        case en_max_constraint_scaling: aux >> max_constraint_scaling; break;
         case en_use_variable_scaling: aux >> use_variable_scaling; break;
         case en_partial_penalization: aux >> partial_penalization; break;
         case en_project_dcp: aux >> project_dcp; break;
@@ -313,6 +329,7 @@ namespace DCI {
     //Strategy choices
     use_conjugate_gradient = dciFalse;
     use_objective_scaling = dciTrue;
+    use_constraint_scaling = dciTrue;
     use_variable_scaling = dciTrue;
     partial_penalization = dciTrue;
     project_dcp = dciFalse;
@@ -369,10 +386,25 @@ namespace DCI {
 
     // Calculating the function value and c without the barrier.
     objective_scaling = 1.0;
+    if (ncon > 0) {
+      constraint_scaling = new Real[ncon];
+      for (Int i = 0; i < ncon; i++)
+        constraint_scaling[i] = 1.0;
+    }
     call_fn ();
     call_ofg (dciTrue);
     if (use_objective_scaling)
       objective_scaling = Min( Max(Max(1.0, g->norm()), AbsValue(*f)), max_objective_scaling );
+    if (use_constraint_scaling && ncon > 0) {
+      for (Int i = 0; i < ncon; i++) {
+        constraint_scaling[i] = Min( Max(1.0, AbsValue(cx[i])), max_constraint_scaling);
+        if (clx[i] > -dciInf)
+          clx[i] /= constraint_scaling[i];
+        if (cux[i] < dciInf)
+          cux[i] /= constraint_scaling[i];
+      }
+    }
+    call_fn();
 
     if (ncon > 0) {
       for (Int i = 0; i < nconI; i++) {
@@ -392,6 +424,10 @@ namespace DCI {
 
       this->analyzeJacobian ();
       this->cholesky ();
+
+      if (debug_level > 0) {
+        full(*J).print_more();
+      }
 
       if (y == 0) {
         y = new Vector (*env, ncon);
