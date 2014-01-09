@@ -8,7 +8,7 @@ default: all
 GDB = gdb
 
 LOCALTEST = localtest.tst
-INTESTS = test1.tst test2.tst test3.tst test4.tst test5.tst test6.tst test7.tst test8.tst test9.tst test10.tst test11.tst test12.tst test13.tst test14.tst
+INTESTS = test1.tst test2.tst test3.tst test4.tst test5.tst test6.tst test7.tst test8.tst test9.tst test10.tst test11.tst test12.tst test13.tst test14.tst test15.tst test16.tst
 FIXEDTESTS = fixedtest1.tst fixedtest2.tst fixedtest3.tst
 EQTESTS = eqtest1.tst eqtest2.tst eqtest3.tst eqtest4.tst eqtest5.tst test3eq.tst
 UNCTESTS = unctest1.tst unctest2.tst
@@ -32,6 +32,8 @@ all: library $(INTESTS)
 	$(VALGRIND) $(VALGRINDFLAGS) ./test12.tst
 	$(VALGRIND) $(VALGRINDFLAGS) ./test13.tst
 	$(VALGRIND) $(VALGRINDFLAGS) ./test14.tst
+	$(VALGRIND) $(VALGRINDFLAGS) ./test15.tst
+	$(VALGRIND) $(VALGRINDFLAGS) ./test16.tst
 
 arglin: library $(ARGLINTESTS)
 	$(VALGRIND) $(VALGRINDFLAGS) ./arglinb.tst

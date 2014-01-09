@@ -80,7 +80,7 @@ namespace DCI {
       en_verbosity_level, en_MaxDiag, en_MinDiag, 
       en_use_objective_scaling, en_objfun_count, en_use_constraint_scaling,
       en_max_objective_scaling, en_use_variable_scaling, en_table_print_level,
-      en_max_constraint_scaling,
+      en_max_constraint_scaling, en_use_soc,
       en_vertical_fail_reboot
     };
     std::map<std::string, int> paramMap;
@@ -95,6 +95,7 @@ namespace DCI {
     paramMap["scale_vertical"] = en_scale_vertical;
     paramMap["use_conjugate_gradient"] = en_use_conjugate_gradient;
     paramMap["use_objective_scaling"] = en_use_objective_scaling;
+    paramMap["use_soc"] = en_use_soc;
     paramMap["use_constraint_scaling"] = en_use_constraint_scaling;
     paramMap["objfun_count"] = en_objfun_count;
     paramMap["max_objective_scaling"] = en_max_objective_scaling;
@@ -223,6 +224,7 @@ namespace DCI {
         case en_minBk: aux >> minBk; break;
         case en_use_conjugate_gradient: aux >> use_conjugate_gradient; break;
         case en_use_objective_scaling: aux >> use_objective_scaling; break;
+        case en_use_soc: aux >> use_soc; break;
         case en_use_constraint_scaling: aux >> use_constraint_scaling; break;
         case en_objfun_count: aux >> objfun_count; break;
         case en_max_objective_scaling: aux >> max_objective_scaling; break;
@@ -329,6 +331,7 @@ namespace DCI {
     //Strategy choices
     use_conjugate_gradient = dciFalse;
     use_objective_scaling = dciTrue;
+    use_soc = dciFalse;
     use_constraint_scaling = dciTrue;
     use_variable_scaling = dciTrue;
     partial_penalization = dciTrue;

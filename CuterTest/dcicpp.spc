@@ -15,7 +15,9 @@ verbosity_level 0
 display_level 1
 table_print_level 1
 scale_vertical 0
-eta1 1e-12
+csic 1e-6
+csig 1e-6
+eta1 1e-3
 eta2 0.2 
 eta3 0.6 
 thetaR 0.9 

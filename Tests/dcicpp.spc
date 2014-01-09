@@ -38,7 +38,7 @@ eta3 0.1
 DeltaMin 1e-4
 DeltaTiny 1e-10
 minstep 1e-3
-Delta0 1e5
+Delta0 1e0
 thetaR 0.9
 LbdMax 1e6
 eps1 1e-6
@@ -54,4 +54,6 @@ minBk 1e-12
 display_level 0
 verbosity_level 0
 use_objective_scaling 1
+use_constraint_scaling 0
+use_soc 1
 use_variable_scaling 0

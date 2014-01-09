@@ -149,7 +149,23 @@ namespace DCI {
 
         innerVerticalStep(infeasible_gradient);
 #ifdef ITER_MATLAB
-    iter_file << "X(:,size(X,2)+1) = [" << xcx[0] << ";" << xcx[1] << "];" << std::endl;
+        iter_file << "X(:,size(X,2)+1) = [" << xcx[0] << ";" << xcx[1] << "];" << std::endl;
+#endif
+
+#ifdef VERBOSE
+        if (verbosity_level > 1) {
+          std::cout << "After innerVerticalStep" << std::endl;
+          std::cout << "|c| = " << normc << std::endl;
+          std::cout << "rho = " << rho << std::endl;
+          if ( (nvar < 10) && (ncon < 10) ) {
+            std::cout << "xc = " << std::endl;
+            xc->print_more();
+            if (has_ineq) {
+              std::cout << "sc = " << std::endl;
+              sc->print_more();
+            }
+          }
+        }
 #endif
 
 #ifndef NDEBUG
@@ -295,6 +311,14 @@ namespace DCI {
       else
         rho = Max (rho, Min (phi1*rhomax*ngp, Max (1e-4*rhomax*ngp, 0.75*rhomax) ) );
       rho = Max (rho, csic);
+#ifdef VERBOSE
+      if (verbosity_level > 1) {
+        std::cout << "After last update"
+            << std::endl
+            << "|c| = " << normc << std::endl
+            << "rho = " << rho << std::endl;
+      }
+#endif
 
       updateMu ();
     } //Fim do While

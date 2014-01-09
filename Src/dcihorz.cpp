@@ -48,12 +48,7 @@ namespace DCI {
             (current_time < max_time) ) {
 
       SteihFlag = innerHorizontalStep (d, qd, gtd);
-#ifdef VERBOSE
-      if (verbosity_level > 1) {
-        std::cout << "SteihFlag = " << SteihFlag 
-                  << ", nSteih = " << nSteih << std::endl;
-      }
-#endif
+
 
       pReal dx = d.get_doublex();
       scale_xc (d);
@@ -76,6 +71,26 @@ namespace DCI {
           sx[i] = clx[i] + 1e-12;
       }
 
+#ifdef VERBOSE
+      if (verbosity_level > 1) {
+        std::cout << "SteihFlag = " << SteihFlag 
+                  << ", nSteih = " << nSteih << std::endl;
+      }
+      if ( (nvar + ncon <= 5) && (verbosity_level > 1) ) {
+        std::cout << "DeltaH*Diag^-1 = " << std::endl;
+        for (Int i = 0; i < nvar+ncon; i++) {
+          std::cout << DeltaH/scaling_matrix[i] << std::endl;
+        }
+        std::cout << "x+ = " << std::endl;
+        x->print_more();
+        if (has_ineq) {
+          std::cout << "s+ = " << std::endl;
+          s->print_more();
+        }
+      }
+#endif
+
+      Vector tmp_c(*c);
       call_fn ();
 #ifndef NDEBUG
       try {
@@ -96,12 +111,16 @@ namespace DCI {
       else
         normd = d.norm (0);
 
-      if ( first && 
+      if ( first && use_soc && 
          ( (newnormc > Min (zeta1*rho, zeta1*normc + zeta2*rho) ) || 
            ( (normc <= csic) && 
              (newnormc > Max (csic, zeta3*normc) ) ) ) ) {
 
-        StepFlag = naStep (*c, ssoc);
+        pReal ptmp_c = tmp_c.get_doublex();
+        for (Int i = 0; i < ncon; i++) {
+          ptmp_c[i] = cx[i] - ptmp_c[i];
+        }
+        StepFlag = naStep (tmp_c, ssoc);
         scale_xc (ssoc);
 
         // Arrumar tamanho do ssoc a partir do x
@@ -146,6 +165,19 @@ namespace DCI {
         for (Int i = 0; i < nconI; i++) {
           sx[i] += ssocx[nvar + i];
         }
+#ifdef VERBOSE
+      if (verbosity_level > 1) {
+        std::cout << "SOC = " << std::endl;
+      }
+      if ( (nvar + ncon <= 5) && (verbosity_level > 1) ) {
+        std::cout << "x+ = " << std::endl;
+        x->print_more();
+        if (has_ineq) {
+          std::cout << "s+ = " << std::endl;
+          s->print_more();
+        }
+      }
+#endif
         call_fn ();
         newnormc = c->norm ();
         nSoc++;
@@ -169,6 +201,15 @@ namespace DCI {
           DeltaH = normd * alphaR;
         }
         nRej++;
+#ifdef VERBOSE
+        if (verbosity_level > 1) {
+          std::cout << "Passo rejeitado" << std::endl;
+          if (newnormc > zeta1*rho)
+            std::cout << "-> Fora do cilindro" << std::endl;
+          if (DLH > eta1*qd)
+            std::cout << "-> Decrescimo insuficiente" << std::endl;
+        }
+#endif
       } else if (DLH <= eta2*qd)
         DeltaH = Max (DeltaH, normd*alphaI);
 
