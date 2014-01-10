@@ -168,7 +168,7 @@ namespace DCI {
 
     Real yoff = 0;
     for (Int i = 0; i < nconI; i++) {
-      Real yi = yx[ineq_index[i]], li = clx[ineq_index[i]], ui = cux[ineq_index[i]];
+      Real yi = yx[ineq_index[i]], li = l_bndx[nvar+i], ui = u_bndx[nvar+i];
       if (li > -dciInf)
         yoff += Max(yi, 0.0);
       if (ui < dciInf)
@@ -522,10 +522,10 @@ namespace DCI {
     if (running) {
       *f /= objective_scaling;
       *f -= mu*calcPen ();
-      Int numI = 0;
+      Int numI = nvar;
       for (Int i = 0; i < ncon; i++) {
         if (equatn[i] == dciFalse) {
-          cx[i] -= sx[numI];
+          cx[i] -= xx[numI];
           numI++;
         }
       }
@@ -555,10 +555,10 @@ namespace DCI {
     if (running) {
       *fxc /= objective_scaling;
       *fxc -= mu*calcPen_xc ();
-      Int numI = 0;
+      Int numI = nvar;
       for (Int i = 0; i < ncon; i++) {
         if (equatn[i] == dciFalse) {
-          cx[i] -= scx[numI];
+          cx[i] -= xcx[numI];
           numI++;
         }
       }
@@ -672,10 +672,10 @@ namespace DCI {
             Jx[k] *= scaling_matrix[j];
           }
         }
-        Int numI = 0, j = nvar;
+        Int j = nvar;
         for (Int i = 0; i < ncon; i++) { //Lines
           if (equatn[i] == dciFalse) {
-            Real si = sx[numI];
+            Real si = xx[j];
             cx[i] -= si;
             if (scale)
               Jx[*nnzj] = -scaling_matrix[j];
@@ -684,7 +684,6 @@ namespace DCI {
             Jvar[*nnzj] = j;
             Jfun[*nnzj] = i;
             (*nnzj)++;
-            numI++;
             j++;
           }
         }
@@ -713,10 +712,10 @@ namespace DCI {
           cx[i] /= constraint_scaling[i];
       }
       if (running) {
-        Int numI = 0;
+        Int numI = nvar;
         for (Int i = 0; i < ncon; i++) {
           if (equatn[i] == dciFalse) {
-            Real si = sx[numI];
+            Real si = xx[numI];
             cx[i] -= si;
             numI++;
           }
@@ -775,10 +774,10 @@ namespace DCI {
             Jx[k] *= scaling_matrix[j];
           }
         }
-        Int numI = 0, j = nvar;
+        Int j = nvar;
         for (Int i = 0; i < ncon; i++) { //Lines
           if (equatn[i] == dciFalse) {
-            Real si = scx[numI];
+            Real si = xcx[j];
             cx[i] -= si;
             if (scale)
               Jx[*nnzj] = -scaling_matrix[j];
@@ -787,7 +786,6 @@ namespace DCI {
             Jvar[*nnzj] = j;
             Jfun[*nnzj] = i;
             (*nnzj)++;
-            numI++;
             j++;
           }
         }
@@ -803,10 +801,10 @@ namespace DCI {
           cx[i] /= constraint_scaling[i];
       }
       if (running) {
-        Int numI = 0;
+        Int numI = nvar;
         for (Int i = 0; i < ncon; i++) {
           if (equatn[i] == dciFalse) {
-            Real si = scx[numI];
+            Real si = xcx[numI];
             cx[i] -= si;
             numI++;
           }
@@ -974,7 +972,7 @@ namespace DCI {
     } catch (const char * ex) {
       throw(ex);
     }
-    for (Int i = 0; i < nvar; i++) {
+    for (Int i = 0; i < nvar+nconI; i++) {
       if ( (xx[i] > 1e10) || (xx[i] < -1e10) || (xcx[i] > 1e10) || (xcx[i] < -1e10) ) {
         is_unlimited = dciTrue;
         break;
@@ -1008,16 +1006,6 @@ namespace DCI {
     }
     if (is_unlimited)
       return;
-    for (Int i = 0; i < nconI; i++) {
-      if ( (sx[ineq_index[i]] > 1e10) || (sx[ineq_index[i]] < -1e10) || (scx[ineq_index[i]] > 1e10) || (scx[ineq_index[i]] < -1e10) ) {
-        is_unlimited = dciTrue;
-        break;
-      }
-      assert (sx[i] < cux[ineq_index[i]]);
-      assert (sx[i] > clx[ineq_index[i]]);
-      assert (scx[i] < cux[ineq_index[i]]);
-      assert (scx[i] > clx[ineq_index[i]]);
-    }
   }
 #endif
 
