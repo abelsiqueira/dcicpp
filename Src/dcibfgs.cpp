@@ -34,19 +34,19 @@ namespace DCI {
     if (penal_bfgs) {
       for (Int i = 0; i < nvar; i++) {
         Real val = 0;
-        if ( (bux[i] < dciInf) && (blx[i] > -dciInf) ) {
+        if ( (u_bndx[i] < dciInf) && (l_bndx[i] > -dciInf) ) {
           if (partial_penalization) {
-            if ( (xcx[i] - blx[i]) < (bux[i] - xcx[i]) ) {
+            if ( (xcx[i] - l_bndx[i]) < (u_bndx[i] - xcx[i]) ) {
               val = 1;
             } else {
               val = -1;
             }
           } else {
-            val = bux[i] + blx[i] - 2*xcx[i];
+            val = u_bndx[i] + l_bndx[i] - 2*xcx[i];
           }
-        } else if (bux[i] < dciInf) {
+        } else if (u_bndx[i] < dciInf) {
           val = -1;
-        } else if (blx[i] > -dciInf) {
+        } else if (l_bndx[i] > -dciInf) {
           val = 1;
         }
         gtmpx[i] -= mu*val;
@@ -261,7 +261,7 @@ namespace DCI {
       scale_xc (Diag);
 
     for (Int i = 0; i < nvar; i++) {
-      Real xi = xcx[i], di = Diagx[i]*dx[i], bli = blx[i], bui = bux[i];
+      Real xi = xcx[i], di = Diagx[i]*dx[i], bli = l_bndx[i], bui = u_bndx[i];
       if (fabs(di) < dciEps) {
         dx[i] = 0.0;
         continue;
@@ -325,10 +325,10 @@ namespace DCI {
 
       for (Int i = 0; i < nvar; i++) {
         xcx[i] += lambda*Diagx[i]*dx[i];
-        if (xcx[i] == bux[i])
-          xcx[i] = bux[i] - dciEps;
-        else if (xcx[i] == blx[i])
-          xcx[i] = blx[i] + dciEps;
+        if (xcx[i] == u_bndx[i])
+          xcx[i] = u_bndx[i] - dciEps;
+        else if (xcx[i] == l_bndx[i])
+          xcx[i] = l_bndx[i] + dciEps;
       }
       for (Int i = 0; i < nconI; i++) {
         scx[i] += lambda*Diagx[nvar + i]*dx[nvar + i];
@@ -418,10 +418,10 @@ namespace DCI {
 
       for (Int i = 0; i < nvar; i++) {
         xcx[i] = x0x[i] + lambda * Diagx[i]*dx[i];
-        if (xcx[i] == bux[i])
-          xcx[i] = bux[i] - dciEps;
-        else if (xcx[i] == blx[i])
-          xcx[i] = blx[i] + dciEps;
+        if (xcx[i] == u_bndx[i])
+          xcx[i] = u_bndx[i] - dciEps;
+        else if (xcx[i] == l_bndx[i])
+          xcx[i] = l_bndx[i] + dciEps;
       }
       for (Int i = 0; i < nconI; i++) {
         scx[i] = s0x[i] + lambda * Diagx[nvar + i]*dx[nvar + i];

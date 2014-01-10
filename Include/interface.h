@@ -19,21 +19,8 @@ namespace DCI {
       void cuter () { start_at_one = dciTrue; };
 
       // Sine quibus non
-      void set_x (size_t n, Real * V);
-      void set_x (Vector &);
-      void set_sol (size_t n, Real * V);
-      void set_sol (Vector &);
-      void set_lambda (size_t n, Real * V);
-      void set_lambda (Vector &);
-      void set_bl (size_t n, Real * V);
-      void set_bl (Vector &);
-      void set_bu (size_t n, Real * V);
-      void set_bu (Vector &);
-      void set_cl (size_t n, Real * V);
-      void set_cl (Vector &);
-      void set_cu (size_t n, Real * V);
-      void set_cu (Vector &);
-      void set_equatn (size_t n, Bool *V);
+      void con_setup (size_t, Real *, Real *, Real *, size_t, Real *, Real *,
+          Bool *);
       void set_linear (size_t n, Bool *V);
 
       Real * get_x () const { return xx; }
@@ -148,7 +135,7 @@ namespace DCI {
       Vector * gp;
       Vector * yineq;
 
-      Vector * x, * bl, * bu;
+      Vector * x, * l_bnd, * u_bnd;
       Vector * solx;
       Vector * y, * cl, * cu;
       Vector * s; //Slacks s = -c_I(x)
@@ -157,7 +144,7 @@ namespace DCI {
       Vector * xc, *sc;
       Vector * feasOpt;
 
-      pReal xx, blx, bux;
+      pReal xx, l_bndx, u_bndx;
       pReal yx, clx, cux;
       pReal sx;
       pReal gx, cx;

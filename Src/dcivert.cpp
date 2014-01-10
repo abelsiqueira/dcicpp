@@ -208,7 +208,7 @@ namespace DCI {
           Real alphassoc = 1;
           pReal ssocx = ssoc.get_doublex();
           for (Int i = 0; i < nvar; i++) {
-            Real xi = xcx[i], bli = blx[i], bui = bux[i], di = ssocx[i];
+            Real xi = xcx[i], bli = l_bndx[i], bui = u_bndx[i], di = ssocx[i];
             if (di == 0)
               continue;
             if (di < 0) {

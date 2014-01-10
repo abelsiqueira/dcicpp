@@ -53,15 +53,15 @@ namespace DCI {
       pReal dx = d.get_doublex();
       scale_xc (d);
       for (Int i = 0; i < nvar; i++) {
-        if (blx[i] - bux[i] > -dciEps) {
+        if (l_bndx[i] - u_bndx[i] > -dciEps) {
           dx[i] = 0;
           continue;
         }
         xx[i] = xcx[i] + dx[i];
-        if (xx[i] == bux[i])
-          xx[i] = bux[i] - 1e-12;
-        else if (xx[i] == blx[i])
-          xx[i] = blx[i] + 1e-12;
+        if (xx[i] == u_bndx[i])
+          xx[i] = u_bndx[i] - 1e-12;
+        else if (xx[i] == l_bndx[i])
+          xx[i] = l_bndx[i] + 1e-12;
       }
       for (Int i = 0; i < nconI; i++) {
         sx[i] = scx[i] + dx[nvar + i];
@@ -127,7 +127,7 @@ namespace DCI {
         Real alphassoc = 1;
         pReal ssocx = ssoc.get_doublex();
         for (Int i = 0; i < nvar; i++) {
-          Real xi = xx[i], bli = blx[i], bui = bux[i], di = ssocx[i];
+          Real xi = xx[i], bli = l_bndx[i], bui = u_bndx[i], di = ssocx[i];
           if (di == 0)
             continue;
           if (di < 0) {

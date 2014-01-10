@@ -42,7 +42,7 @@ namespace DCI {
     nSteih = 0;
 
     for (Int i = 0; i < nvar; i++) {
-      Real xi = xcx[i], bli = blx[i], bui = bux[i];
+      Real xi = xcx[i], bli = l_bndx[i], bui = u_bndx[i];
       lower[i] = Max( (bli - xi) * (1 - epsmu)/scaling_matrix[i], -DeltaH/scaling_matrix[i] );
       upper[i] = Min( (bui - xi) * (1 - epsmu)/scaling_matrix[i], DeltaH/scaling_matrix[i] );
     }

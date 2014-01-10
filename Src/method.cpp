@@ -9,9 +9,9 @@ namespace DCI {
     for (Int i = 0; i < nvar; i++) {
       Real alpha = 1.0;
       if (vx[i] > 0)
-        alpha = Min(alpha, (bux[i] - xx[i])/vx[i]);
+        alpha = Min(alpha, (u_bndx[i] - xx[i])/vx[i]);
       else if (vx[i] < 0)
-        alpha = Min(alpha, (blx[i] - xx[i])/vx[i]);
+        alpha = Min(alpha, (l_bndx[i] - xx[i])/vx[i]);
       if (alpha < 1)
         vx[i] *= alpha;
     }
@@ -32,9 +32,9 @@ namespace DCI {
     for (Int i = 0; i < nvar; i++) {
       Real alpha = 1.0;
       if (vx[i] > 0)
-        alpha = Min(alpha, (bux[i] - xcx[i])/vx[i]);
+        alpha = Min(alpha, (u_bndx[i] - xcx[i])/vx[i]);
       else if (vx[i] < 0)
-        alpha = Min(alpha, (blx[i] - xcx[i])/vx[i]);
+        alpha = Min(alpha, (l_bndx[i] - xcx[i])/vx[i]);
       if (alpha < 1)
         vx[i] *= alpha;
     }
@@ -304,7 +304,7 @@ namespace DCI {
       scaling_matrix = new Real[nvar + nconI];
 
     for (Int i = 0; i < nvar; i++) {
-      Real zi = xx[i], Li = blx[i], Ui = bux[i];
+      Real zi = xx[i], Li = l_bndx[i], Ui = u_bndx[i];
       if (Li > Ui - dciTiny) {
         scaling_matrix[i] = 1.0;
         continue;
@@ -353,7 +353,7 @@ namespace DCI {
       scaling_matrix = new Real[nvar + nconI];
 
     for (Int i = 0; i < nvar; i++) {
-      Real zi = xcx[i], Li = blx[i], Ui = bux[i];
+      Real zi = xcx[i], Li = l_bndx[i], Ui = u_bndx[i];
       if (Li > Ui - dciTiny) {
         scaling_matrix[i] = 1.0;
         continue;
@@ -398,7 +398,7 @@ namespace DCI {
 
   void Interface::update_yineq () { //This is -mu*Penalization on obj fun
     for (Int i = 0; i < nvar; i++) {
-      Real bli = blx[i], bui = bux[i], xi = xx[i];
+      Real bli = l_bndx[i], bui = u_bndx[i], xi = xx[i];
       yineqx[i] = 0;
       if (bli - bui > - dciTiny)
         continue;
@@ -443,7 +443,7 @@ namespace DCI {
   Real Interface::calcGap () {
     Real gap = 0;
     for (Int i = 0; i < nvar; i++)  {
-      Real xi = xx[i], bli = blx[i], bui = bux[i];
+      Real xi = xx[i], bli = l_bndx[i], bui = u_bndx[i];
       if ( (bli <= -dciInf) && (bui >= dciInf) )
         continue;
       if (bli > -dciInf)
@@ -477,19 +477,19 @@ namespace DCI {
   Real Interface::calcPen () {
     Real val = 0.0;
     for (Int i = 0; i < nvar; i++) {
-      if (blx[i] - bux[i] > - dciTiny)
+      if (l_bndx[i] - u_bndx[i] > - dciTiny)
         continue;
-      if ( (partial_penalization) && (blx[i] > -dciInf) && (bux[i] < dciInf) ) {
-        if ( (xx[i] - blx[i]) < (bux[i] - xx[i]) )
-          val += log (xx[i] - blx[i]);
+      if ( (partial_penalization) && (l_bndx[i] > -dciInf) && (u_bndx[i] < dciInf) ) {
+        if ( (xx[i] - l_bndx[i]) < (u_bndx[i] - xx[i]) )
+          val += log (xx[i] - l_bndx[i]);
         else
-          val += log (bux[i] - xx[i]);
+          val += log (u_bndx[i] - xx[i]);
         continue;
       }
-      if (blx[i] > -dciInf)
-        val += log (xx[i] - blx[i]);
-      if (bux[i] < dciInf)
-        val += log (bux[i] - xx[i]);
+      if (l_bndx[i] > -dciInf)
+        val += log (xx[i] - l_bndx[i]);
+      if (u_bndx[i] < dciInf)
+        val += log (u_bndx[i] - xx[i]);
     }
     for (Int i = 0; i < nconI; i++) {
       if ( (partial_penalization) && (clx[ineq_index[i]] > -dciInf) && (cux[ineq_index[i]] < dciInf) ) {
@@ -510,19 +510,19 @@ namespace DCI {
   Real Interface::calcPen_xc () {
     Real val = 0.0;
     for (Int i = 0; i < nvar; i++) {
-      if (blx[i] - bux[i] > - dciTiny)
+      if (l_bndx[i] - u_bndx[i] > - dciTiny)
         continue;
-      if ( (partial_penalization) && (blx[i] > -dciInf) && (bux[i] < dciInf) ) {
-        if ( (xcx[i] - blx[i]) < (bux[i] - xcx[i]) )
-          val += log (xcx[i] - blx[i]);
+      if ( (partial_penalization) && (l_bndx[i] > -dciInf) && (u_bndx[i] < dciInf) ) {
+        if ( (xcx[i] - l_bndx[i]) < (u_bndx[i] - xcx[i]) )
+          val += log (xcx[i] - l_bndx[i]);
         else
-          val += log (bux[i] - xcx[i]);
+          val += log (u_bndx[i] - xcx[i]);
         continue;
       }
-      if (blx[i] > -dciInf)
-        val += log (xcx[i] - blx[i]);
-      if (bux[i] < dciInf)
-        val += log (bux[i] - xcx[i]);
+      if (l_bndx[i] > -dciInf)
+        val += log (xcx[i] - l_bndx[i]);
+      if (u_bndx[i] < dciInf)
+        val += log (u_bndx[i] - xcx[i]);
     }
     for (Int i = 0; i < nconI; i++) {
       if ( (partial_penalization) && (clx[ineq_index[i]] > -dciInf) && (cux[ineq_index[i]] < dciInf) ) {

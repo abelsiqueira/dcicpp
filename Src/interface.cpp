@@ -18,7 +18,7 @@ namespace DCI {
      UNUSED(line);
      UNUSED(message);
 #endif
-}
+  }
 
   void Interface::assert (Bool v) {
     if (v)
@@ -46,8 +46,8 @@ namespace DCI {
     delpointer (fxc);
     delpointer (x);
     delpointer (solx);
-    delpointer (bl);
-    delpointer (bu);
+    delpointer (l_bnd);
+    delpointer (u_bnd);
     delpointer (y);
     delpointer (yineq);
     delpointer (cl);
@@ -75,7 +75,7 @@ namespace DCI {
 
   int Interface::start () {
     //Tests for null
-    if ( (x == 0) || (bl == 0) || (bu == 0) )
+    if ( (x == 0) || (l_bnd == 0) || (u_bnd == 0) )
       return -1;
 
     call_names ();
@@ -393,70 +393,15 @@ namespace DCI {
     file.close ();
   }
 
-  void Interface::set_x (size_t n, Real * V) {
-    x = new Vector (*env, n, V);
+  void Interface::con_setup (size_t n, Real * x, Real * bl, Real * bu, 
+      size_t m, Real * cl, Real * cu, Bool * equatn) {
+    this->equatn = new Bool[n];
     set_nvar(n);
-    xx = x->get_doublex();
-    xc = new Vector (*env, n, V);
-    xcx = xc->get_doublex();
-    variable_scaling = new Real[n];
-    for (Int i = 0; i < (Int)n; i++)
-      variable_scaling[i] = 1.0;
-  }
-
-  void Interface::set_sol (size_t n, Real * V) {
-    solx = new Vector (*env, n, V);
-  }
-
-  void Interface::set_bl (size_t n, Real * V) {
-    bl = new Vector (*env, n, V);
-    set_nvar(n);
-    blx = bl->get_doublex();
-    for (size_t i = 0; i < n; i++) {
-      if (blx[i] > -dciInf) {
-        is_bounded = dciTrue;
-        break;
-      }
-    }
-  }
-
-  void Interface::set_bu (size_t n, Real * V) {
-    bu = new Vector (*env, n, V);
-    set_nvar(n);
-    bux = bu->get_doublex();
-    for (size_t i = 0; i < n; i++) {
-      if (bux[i] < dciInf) {
-        is_bounded = dciTrue;
-        break;
-      }
-    }
-  }
-
-  void Interface::set_lambda (size_t n, Real * V) {
-    y = new Vector (*env, n, V);
-    set_ncon(n);
-    yx = y->get_doublex();
-  }
-
-  void Interface::set_cl (size_t n, Real * V) {
-    cl = new Vector (*env, n, V);
-    set_ncon(n);
-    clx = cl->get_doublex();
-  }
-
-  void Interface::set_cu (size_t n, Real * V) {
-    cu = new Vector (*env, n, V);
-    set_ncon(n);
-    cux = cu->get_doublex();
-  }
-
-  void Interface::set_equatn (size_t n, Bool * V) {
-    equatn = new Bool[n];
-    set_ncon(n);
+    set_ncon(m);
     nconE = nconI = 0;
-    for (size_t i = 0; i < n; i++) {
-      Bool tmp = V[i];
-      equatn[i] = tmp;
+    for (size_t i = 0; i < m; i++) {
+      Bool tmp = equatn[i];
+      this->equatn[i] = tmp;
       if (tmp == dciFalse)
         nconI++;
       else
@@ -467,13 +412,46 @@ namespace DCI {
       is_bounded = dciTrue;
       ineq_index = new Int[nconI];
       Int numI = 0;
-      for (size_t i = 0; i < n; i++) {
-        if (equatn[i] == dciFalse) {
+      for (size_t i = 0; i < m; i++) {
+        if (this->equatn[i] == dciFalse) {
           ineq_index[numI] = i;
           numI++;
         }
       }
     }
+    this->x = new Vector (*env, n+nconI);
+    xx = this->x->get_doublex();
+    for (size_t i = 0; i < n; i++)
+      xx[i] = x[i];
+    xc = new Vector (*(this->x));
+    xcx = xc->get_doublex();
+    l_bnd = new Vector (*env, n+nconI);
+    u_bnd = new Vector (*env, n+nconI);
+    l_bndx = l_bnd->get_doublex();
+    u_bndx = u_bnd->get_doublex();
+    for (size_t i = 0; i < n; i++) {
+      l_bndx[i] = bl[i];
+      u_bndx[i] = bu[i];
+    }
+    for (size_t i = 0; i < n; i++) {
+      if (l_bndx[i] > -dciInf || u_bndx[i] < dciInf) {
+        is_bounded = dciTrue;
+        break;
+      }
+    }
+    for (Int i = 0; i < nconI; i++) {
+      l_bndx[nvar+i] = cl[ineq_index[i]];
+      u_bndx[nvar+i] = cu[ineq_index[i]];
+    }
+
+    variable_scaling = new Real[n];
+    for (Int i = 0; i < (Int) n; i++)
+      variable_scaling[i] = 1.0;
+
+    this->cl = new Vector(*env, m, cl);
+    clx = this->cl->get_doublex();
+    this->cu = new Vector(*env, m, cu);
+    cux = this->cu->get_doublex();
   }
 
   void Interface::set_linear (size_t n, Bool * V) {
@@ -577,7 +555,7 @@ namespace DCI {
         }
       }
       for (Int i = 0; i < nvar; i++) {
-        Real xi = xx[i], bli = blx[i], bui = bux[i];
+        Real xi = xx[i], bli = l_bndx[i], bui = u_bndx[i];
         if (bli - bui > - dciTiny) 
           gx[i] = 0;
         else if ( (bli > -dciInf) && (bui < dciInf) ) {
@@ -670,7 +648,7 @@ namespace DCI {
         }
       }
       for (Int i = 0; i < nvar; i++) {
-        Real xi = xcx[i], bli = blx[i], bui = bux[i];
+        Real xi = xcx[i], bli = l_bndx[i], bui = u_bndx[i];
         if (bli - bui > - dciTiny) 
           gx[i] = 0;
         else if ( (bli > -dciInf) && (bui < dciInf) ) {
@@ -770,7 +748,7 @@ namespace DCI {
       }
       // Fixed variables fix
       for (Int k = 0; k < *nnzj; k++) {
-        Real bli = blx[Jvar[k]], bui = bux[Jvar[k]];
+        Real bli = l_bndx[Jvar[k]], bui = u_bndx[Jvar[k]];
         if (bli - bui > - dciTiny) {
           Jx[k]   = Jx[*nnzj-1];
           Jvar[k] = Jvar[*nnzj-1];
@@ -873,7 +851,7 @@ namespace DCI {
       }
       // Fixed variables fix
       for (Int k = 0; k < *nnzj; k++) {
-        Real bli = blx[Jvar[k]], bui = bux[Jvar[k]];
+        Real bli = l_bndx[Jvar[k]], bui = u_bndx[Jvar[k]];
         if (bli - bui > - dciTiny) {
           Jx[k]   = Jx[*nnzj-1];
           Jvar[k] = Jvar[*nnzj-1];
@@ -942,7 +920,7 @@ namespace DCI {
     updateScaling_x();
     Real ppx[nvar];
     for (Int i = 0; i < nvar; i++) {
-      if (blx[i] > bux[i] - dciTiny)
+      if (l_bndx[i] > u_bndx[i] - dciTiny)
         ppx[i] = 0.0;
       else
         ppx[i] = scaling_matrix[i] * px[i];
@@ -970,11 +948,11 @@ namespace DCI {
         yx[i] *= constraint_scaling[i];
     }
     for (Int i = 0; i < nvar; i++) {
-      if (blx[i] > bux[i] - dciTiny) {
+      if (l_bndx[i] > u_bndx[i] - dciTiny) {
         ux[i] = 0;
       } else {
         ux[i] *= scaling_matrix[i];
-        Real li = blx[i], ui = bux[i], pxi = px[i];
+        Real li = l_bndx[i], ui = u_bndx[i], pxi = px[i];
         if (li > -dciInf || ui < dciInf)
           ux[i] += mu * pxi;
       }
@@ -989,7 +967,7 @@ namespace DCI {
     updateScaling_xc();
     Real ppx[nvar];
     for (Int i = 0; i < nvar; i++) {
-      if (blx[i] > bux[i] - dciTiny)
+      if (l_bndx[i] > u_bndx[i] - dciTiny)
         ppx[i] = 0;
       else
         ppx[i] = scaling_matrix[i] * px[i];
@@ -1017,11 +995,11 @@ namespace DCI {
         yx[i] *= constraint_scaling[i];
     }
     for (Int i = 0; i < nvar; i++) {
-      if (blx[i] > bux[i] - dciTiny) {
+      if (l_bndx[i] > u_bndx[i] - dciTiny) {
         ux[i] = 0;
       } else {
           ux[i] *= scaling_matrix[i];
-        Real li = blx[i], ui = bux[i], pxi = px[i];
+        Real li = l_bndx[i], ui = u_bndx[i], pxi = px[i];
         if (li > -dciInf || ui < dciInf)
           ux[i] += mu * pxi;
       }
@@ -1101,32 +1079,32 @@ namespace DCI {
         is_unlimited = dciTrue;
         break;
       }
-      if (blx[i] - bux[i] > - dciTiny)
+      if (l_bndx[i] - u_bndx[i] > - dciTiny)
         continue;
 
-      if (xx[i] >= bux[i]) {
+      if (xx[i] >= u_bndx[i]) {
         std::cout << "ERROR" << std::endl;
         GDBSTOP ();
       }
-      assert (xx[i] < bux[i]);
+      assert (xx[i] < u_bndx[i]);
 
-      if (xx[i] <= blx[i]) {
+      if (xx[i] <= l_bndx[i]) {
         std::cout << "ERROR" << std::endl;
         GDBSTOP ();
       }
-      assert (xx[i] > blx[i]);
+      assert (xx[i] > l_bndx[i]);
 
-      if (xcx[i] >= bux[i]) {
+      if (xcx[i] >= u_bndx[i]) {
         std::cout << "ERROR" << std::endl;
         GDBSTOP ();
       }
-      assert (xcx[i] < bux[i]);
+      assert (xcx[i] < u_bndx[i]);
 
-      if (xcx[i] <= blx[i]) {
+      if (xcx[i] <= l_bndx[i]) {
         std::cout << "ERROR" << std::endl;
         GDBSTOP ();
       }
-      assert (xcx[i] > blx[i]);
+      assert (xcx[i] > l_bndx[i]);
     }
     if (is_unlimited)
       return;

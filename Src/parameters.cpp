@@ -268,8 +268,8 @@ namespace DCI {
     normc = 0;
     x = 0;
     solx = 0;
-    bl = 0;
-    bu = 0;
+    l_bnd = 0;
+    u_bnd = 0;
     y = 0;
     yineq = 0;
     cl = 0;
@@ -358,7 +358,7 @@ namespace DCI {
 
     std::vector<Int> fixed_vector;
     for (Int i = 0; i < nvar; i++) {
-      Real bli = blx[i], bui = bux[i];
+      Real bli = l_bndx[i], bui = u_bndx[i];
       variable_scaling[i] = 1.0;
       if ( (xx[i] > bli) && (xx[i] < bui) ) {
         xcx[i] = xx[i];
@@ -397,10 +397,12 @@ namespace DCI {
     call_fn ();
     call_ofg (dciTrue);
     if (use_objective_scaling)
-      objective_scaling = Min( Max(Max(1.0, g->norm()), AbsValue(*f)), max_objective_scaling );
+      objective_scaling = Min( Max(Max(1.0, g->norm()), AbsValue(*f)),
+          max_objective_scaling );
     if (use_constraint_scaling && ncon > 0) {
       for (Int i = 0; i < ncon; i++) {
-        constraint_scaling[i] = Min( Max(1.0, AbsValue(cx[i])), max_constraint_scaling);
+        constraint_scaling[i] = Min( Max(1.0, AbsValue(cx[i])),
+            max_constraint_scaling);
         if (clx[i] > -dciInf)
           clx[i] /= constraint_scaling[i];
         if (cux[i] < dciInf)

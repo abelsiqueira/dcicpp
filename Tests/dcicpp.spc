@@ -51,7 +51,7 @@ c1 0.5
 c2 5e-1
 max_time 6000
 minBk 1e-12
-display_level 0
+display_level 1
 verbosity_level 0
 use_objective_scaling 1
 use_constraint_scaling 0

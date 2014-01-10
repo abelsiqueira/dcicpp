@@ -160,7 +160,7 @@ namespace DCI {
     gtmp.sdmult (*J, 1, one, zero, ctmp); // g = J'*c
     pReal gtmpx = gtmp.get_doublex();
     for (Int i = 0; i < nvar; i++) {
-      Real gi = gtmpx[i], zi = xcx[i], ui = bux[i], li = blx[i];
+      Real gi = gtmpx[i], zi = xcx[i], ui = u_bndx[i], li = l_bndx[i];
       if ( (gi < 0) && (ui < dciInf) ) {
         scalingMatrix[i] = 1.0/sqrt(ui - zi);
       } else if ( (gi > 0) && (li > -dciInf) ) {
@@ -196,7 +196,7 @@ namespace DCI {
     //Now with the infinity norm
     Real lower[nvar + nconI], upper[nvar + nconI];
     for (Int i = 0; i < nvar; i++) {
-      Real zi = xcx[i], li = blx[i], ui = bux[i];
+      Real zi = xcx[i], li = l_bndx[i], ui = u_bndx[i];
       lower[i] = Max( -DeltaV, (li > -dciInf ? (li - zi) * (1 - epsmu) : -dciInf) );
       upper[i] = Min( DeltaV, (ui < dciInf ? (ui - zi) * (1 - epsmu) : dciInf) );
     }
@@ -338,13 +338,13 @@ namespace DCI {
       Vector xtemp(*xc), stemp((nconI ? *sc : *env));
 
       for (Int i = 0; i < nvar; i++) {
-        if (blx[i] - bux[i] > -dciEps)
+        if (l_bndx[i] - u_bndx[i] > -dciEps)
           continue;
         xcx[i] += (factor*dnx[i] + (1 - factor)*dcpx[i]);
-        if (xcx[i] >= bux[i])
-          xcx[i] = bux[i] - dciEps;
-        else if (xcx[i] <= blx[i])
-          xcx[i] = blx[i] + dciEps;
+        if (xcx[i] >= u_bndx[i])
+          xcx[i] = u_bndx[i] - dciEps;
+        else if (xcx[i] <= l_bndx[i])
+          xcx[i] = l_bndx[i] + dciEps;
       }
       for (Int i = 0; i < nconI; i++) {
         Int j = nvar + i;
