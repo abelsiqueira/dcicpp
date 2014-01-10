@@ -70,6 +70,7 @@ namespace DCI {
       void call_fn ();
       void call_fn_xc ();
       void call_ofg (Bool = dciTrue);
+      void call_ofg (pReal, Bool = dciTrue);
       void call_ofg_xc (Bool = dciTrue);
       void call_prod (Bool, pReal, pReal);
       void call_prod_xc (Bool, pReal, pReal);

@@ -566,10 +566,14 @@ namespace DCI {
   }
 
   void Interface::call_ofg (Bool grad) {
+    call_ofg(xx, grad);
+  }
+
+  void Interface::call_ofg (pReal px, Bool grad) {
     if (ncon == 0)
-      (*uofg) (&nvar, xx, f, gx, &grad);
+      (*uofg) (&nvar, px, f, gx, &grad);
     else
-      (*cofg) (&nvar, xx, f, gx, &grad);
+      (*cofg) (&nvar, px, f, gx, &grad);
     if (*f > dciInf)
       *f = dciInf;
     else if (*f < -dciInf)
@@ -581,174 +585,41 @@ namespace DCI {
         if (grad) {
           for (Int i = 0; i < nvar; i++)
             gx[i] /= objective_scaling;
+          for (Int i = nvar; i < nvar + nconI; i++)
+            gx[i] = 0;
         }
       }
-      for (Int i = 0; i < nvar; i++) {
-        Real xi = xx[i], bli = l_bndx[i], bui = u_bndx[i];
-        if (bli - bui > - dciTiny) 
+      for (Int i = 0; i < nvar+nconI; i++) {
+        Real xi = px[i], li = l_bndx[i], ui = u_bndx[i];
+        if (li - ui > - dciTiny) 
           gx[i] = 0;
-        else if ( (bli > -dciInf) && (bui < dciInf) ) {
-          if (partial_penalization) {
-            if ( (xi - bli) < (bui - xi) ) {
-              if (grad) {
-                gx[i] *= (xi - bli);
-                gx[i] -= mu/objective_scaling;
-              }
-              val += log (xi - bli);
-            } else {
-              if (grad) {
-                gx[i] *= (bui - xi);
-                gx[i] += mu/objective_scaling;
-              }
-              val += log (bui - xi);
+        else if (li > -dciInf || ui < dciInf) {
+          if ( (xi - li) < (ui - xi) ) {
+            if (grad) {
+              gx[i] *= (xi - li);
+              gx[i] -= mu/objective_scaling;
             }
+            val += log (xi - li);
           } else {
             if (grad) {
-              gx[i] *= (xi - bli) * (bui - xi);
-              gx[i] += mu * (2*xi - bli - bui)/objective_scaling;
+              gx[i] *= (ui - xi);
+              gx[i] += mu/objective_scaling;
             }
-            val += log (xi - bli) + log (bui - xi);
+            val += log (ui - xi);
           }
-        } else if ( (bli <= -dciInf) && (bui < dciInf) ) {
-          if (grad) {
-            gx[i] *= (bui - xi);
-            gx[i] += mu/objective_scaling;
-          }
-          val += log (bui - xi);
-        } else if ( (bli > -dciInf) && (bui >= dciInf) ) {
-          if (grad) {
-            gx[i] *= (xi - bli);
-            gx[i] -= mu/objective_scaling;
-          }
-          val += log (xi - bli);
         }
-        if (grad)
+        if (grad && i < nvar)
           gx[i] *= variable_scaling[i];
-      }
-      for (Int i = 0; i < nconI; i++) {
-        Int j = nvar + i;
-        Real si = sx[i], cli = clx[ineq_index[i]], cui = cux[ineq_index[i]];
-        if ( (cli > -dciInf) && (cui < dciInf) ) {
-          if (partial_penalization) {
-            if ( (si - cli) < (cui - si) ) {
-              if (grad)
-                gx[j] = -mu/objective_scaling;
-              val += log (si - cli);
-            } else {
-              if (grad)
-                gx[j] = mu/objective_scaling;
-              val += log (cui - si);
-            }
-          } else {
-            if (grad)
-              gx[j] = mu * (2*si - cli - cui)/objective_scaling;
-            val += log (si - cli) + log (cui - si);
-          }
-        } else if ( (cli <= -dciInf) && (cui < dciInf) ) {
-          if (grad)
-            gx[j] = mu/objective_scaling;
-          val += log (cui - si);
-        } else if ( (cli > -dciInf) && (cui >= dciInf) ) {
-          if (grad)
-            gx[j] = -mu/objective_scaling;
-          val += log (si - cli);
-        }
       }
       *f -= mu*val;
     }
   }
 
   void Interface::call_ofg_xc (Bool grad) {
-    if (ncon == 0)
-      (*uofg) (&nvar, xcx, fxc, gx, &grad);
-    else
-      (*cofg) (&nvar, xcx, fxc, gx, &grad);
-    if (*fxc > dciInf)
-      *fxc = dciInf;
-    else if (*fxc < -dciInf)
-      *fxc = -dciInf;
-    if (running) {
-      Real val = 0.0;
-      if (objective_scaling != 1) {
-        *fxc /= objective_scaling;
-        if (grad) {
-          for (Int i = 0; i < nvar; i++)
-            gx[i] /= objective_scaling;
-        }
-      }
-      for (Int i = 0; i < nvar; i++) {
-        Real xi = xcx[i], bli = l_bndx[i], bui = u_bndx[i];
-        if (bli - bui > - dciTiny) 
-          gx[i] = 0;
-        else if ( (bli > -dciInf) && (bui < dciInf) ) {
-          if (partial_penalization) {
-            if ( (xi - bli) < (bui - xi) ) {
-              if (grad) {
-                gx[i] *= (xi - bli);
-                gx[i] -= mu/objective_scaling;
-              }
-              val += log (xi - bli);
-            } else {
-              if (grad) {
-                gx[i] *= (bui - xi);
-                gx[i] += mu/objective_scaling;
-              }
-              val += log (bui - xi);
-            }
-          } else {
-            if (grad) {
-              gx[i] *= (xi - bli) * (bui - xi);
-              gx[i] += mu * (2*xi - bli - bui)/objective_scaling;
-            }
-            val += log (xi - bli) + log (bui - xi);
-          }
-        } else if ( (bli <= -dciInf) && (bui < dciInf) ) {
-          if (grad) {
-            gx[i] *= (bui - xi);
-            gx[i] += mu/objective_scaling;
-          }
-          val += log (bui - xi);
-        } else if ( (bli > -dciInf) && (bui >= dciInf) ) {
-          if (grad) {
-            gx[i] *= (xi - bli);
-            gx[i] -= mu/objective_scaling;
-          }
-          val += log (xi - bli);
-        }
-        if (grad)
-          gx[i] *= variable_scaling[i];
-      }
-      for (Int i = 0; i < nconI; i++) {
-        Int j = nvar + i;
-        Real si = scx[i], cli = clx[ineq_index[i]], cui = cux[ineq_index[i]];
-        if ( (cli > -dciInf) && (cui < dciInf) ) {
-          if (partial_penalization) {
-            if ( (si - cli) < (cui - si) ) {
-              if (grad)
-                gx[j] = -mu/objective_scaling;
-              val += log (si - cli);
-            } else {
-              if (grad)
-                gx[j] = mu/objective_scaling;
-              val += log (cui - si);
-            }
-          } else {
-            if (grad)
-              gx[j] = mu * (2*si - cli - cui)/objective_scaling;
-            val += log (si - cli) + log (cui - si);
-          }
-        } else if ( (cli <= -dciInf) && (cui < dciInf) ) {
-          if (grad)
-            gx[j] = mu/objective_scaling;
-          val += log (cui - si);
-        } else if ( (cli > -dciInf) && (cui >= dciInf) ) {
-          if (grad)
-            gx[j] = -mu/objective_scaling;
-          val += log (si - cli);
-        }
-      }
-      *fxc -= mu*val;
-    }
+    Real tmp = *f;
+    call_ofg (xcx, grad);
+    *fxc = *f;
+    *f = tmp;
   }
 
   void Interface::call_ccfsg (Bool grad, Bool scale) {

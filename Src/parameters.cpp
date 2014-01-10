@@ -403,21 +403,28 @@ namespace DCI {
       for (Int i = 0; i < ncon; i++) {
         constraint_scaling[i] = Min( Max(1.0, AbsValue(cx[i])),
             max_constraint_scaling);
-        if (clx[i] > -dciInf)
-          clx[i] /= constraint_scaling[i];
-        if (cux[i] < dciInf)
-          cux[i] /= constraint_scaling[i];
+      }
+      for (Int i = 0; i < nconI; i++) {
+        Int j = nvar+ineq_index[i];
+        if (l_bndx[j] > -dciInf)
+          l_bndx[j] /= constraint_scaling[i];
+        if (u_bndx[j] < dciInf)
+          u_bndx[j] /= constraint_scaling[i];
       }
     }
     call_fn();
 
     if (ncon > 0) {
       for (Int i = 0; i < nconI; i++) {
-        Real cxi = cx[ineq_index[i]], cli = clx[ineq_index[i]], cui = cux[ineq_index[i]];
+        Real cxi = cx[ineq_index[i]], cli = l_bndx[ineq_index[i]], cui =
+          u_bndx[ineq_index[i]];
         Real smldelta = Min ( 1e-2, (cui - cli)/100);
         assert (smldelta > 0);
-        sx[i] = Max ( Min ( cxi, cui - smldelta ), cli + smldelta );
+        sx[i] = Max( Min(cxi, cui-smldelta), cli+smldelta);
         scx[i] = sx[i];
+//        Int j = nvar + i;
+//        xx[j] = Max ( Min ( cxi, cui - smldelta ), cli + smldelta );
+//        xcx[j] = xx[j];
       }
       updateScaling_x();
 
