@@ -51,8 +51,6 @@ namespace DCI {
     nbfgs = 0;
     oldnormc = normc;
     *xc = *x;
-    if (has_ineq)
-      *sc = *s;
     VertFlag = 0;
     if (iter == 1) {
       Aavail = dciTrue;
@@ -227,7 +225,6 @@ namespace DCI {
             ssoc.scale (DeltaV/asoc);
           for (Int i = 0; i < nvar+nconI; i++)
             xcx[i] += ssocx[i];
-          copy_scx();
           call_fn ();
           normc = c->norm ();
           fail = 0;
@@ -244,7 +241,6 @@ namespace DCI {
                 numI++;
               }
             }
-            copy_scx();
             normc = c->norm();
           }
         } else if ( ( (normc > thetaR*oldnormc) && (oldAcnt > 0) ) || (oldAcnt > 5) || (iout == 5) ) {

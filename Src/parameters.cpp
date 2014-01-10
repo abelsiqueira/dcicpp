@@ -274,10 +274,8 @@ namespace DCI {
     yineq = 0;
     cl = 0;
     cu = 0;
-    s = 0;
     sols = 0;
     xc = 0;
-    sc = 0;
     feasOpt = 0;
     equatn = 0;
     linear = 0;
@@ -420,8 +418,6 @@ namespace DCI {
           u_bndx[ineq_index[i]];
         Real smldelta = Min ( 1e-2, (cui - cli)/100);
         assert (smldelta > 0);
-        sx[i] = Max( Min(cxi, cui-smldelta), cli+smldelta);
-        scx[i] = sx[i];
         Int j = nvar + i;
         xx[j] = Max ( Min ( cxi, cui - smldelta ), cli + smldelta );
         xcx[j] = xx[j];

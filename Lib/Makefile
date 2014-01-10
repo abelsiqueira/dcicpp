@@ -7,7 +7,8 @@ default: all
 DCIDIR = ..
 include ../make.inc
 
-OBJ = dcihorz.o dcivert.o dcitrust.o dcisteih.o dcisafeguard.o dcibfgs.o method.o solve.o parameters.o interface.o factor.o triplet.o vector.o environment.o 
+#OBJ = dcihorz.o dcivert.o dcitrust.o dcisteih.o dcisafeguard.o dcibfgs.o method.o solve.o parameters.o interface.o factor.o triplet.o vector.o environment.o 
+OBJ = dcihorz.o dcivert.o dcitrust.o dcisteih.o method.o solve.o parameters.o interface.o factor.o triplet.o vector.o environment.o 
 
 all: $(OBJ) 
 	$(AR) $(DCILIBNAME) $(OBJ)

@@ -52,13 +52,11 @@ namespace DCI {
     delpointer (yineq);
     delpointer (cl);
     delpointer (cu);
-    delpointer (s);
     delpointer (sols);
     delarray   (equatn);
     delarray   (ineq_index);
     delarray   (linear);
     delpointer (xc);
-    delpointer (sc);
     delpointer (feasOpt);
     delpointer (g);
     delpointer (H);
@@ -118,12 +116,6 @@ namespace DCI {
     if (ncon > 0) {
       c = new Vector (*env, mmax);
       cx = c->get_doublex();
-      if (has_ineq) {
-        s = new Vector (*env, nconI);
-        sx = s->get_doublex();
-        sc = new Vector (*env, nconI);
-        scx = sc->get_doublex();
-      }
       Jtrip = new Triplet (*env, mmax, nmax + nconI, amax, 0); //0 is for unsymmetric
       Jx = Jtrip->get_doublex();
       Jfun = static_cast < Int * > (Jtrip->triplet->i);
@@ -294,12 +286,6 @@ namespace DCI {
         if (ncon > 0) {
           std::cout << "lambda = " << std::endl;
           y->print_more();
-          if (has_ineq) {
-            std::cout << "s = " << std::endl;
-            s->print_more();
-            std::cout << "sc = " << std::endl;
-            sc->print_more();
-          }
         }
       }
       if (display_level > 1) {

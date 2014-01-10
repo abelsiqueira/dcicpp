@@ -151,9 +151,6 @@ namespace DCI {
     Real normgtmp = 0;
     Real beta1 = 0.1, beta2 = 0.25;
 
-    if (has_ineq)
-      stmp = *sc;
-
     Aavail = dciFalse;
 
     Real scalingMatrix[nvar + nconI];
@@ -320,7 +317,7 @@ namespace DCI {
         }
       }
 
-      Vector xtemp(*xc), stemp((nconI ? *sc : *env));
+      Vector xtemp(*xc);
 
       for (Int i = 0; i < nvar+nconI; i++) {
         if (l_bndx[i] - u_bndx[i] > -dciEps)
@@ -331,7 +328,6 @@ namespace DCI {
         else if (xcx[i] <= l_bndx[i])
           xcx[i] = l_bndx[i] + dciEps;
       }
-      copy_scx();
       
 #ifndef NDEBUG
       checkInfactibility();
@@ -346,8 +342,6 @@ namespace DCI {
       if (Ared/Pred < beta2) {
         DeltaV /= 4;
         *xc = xtmp;
-        if (has_ineq) 
-          *sc = stmp;
         call_ccfsg_xc(dciFalse);
         normc = c->norm();
       } else if (Ared/Pred > 0.75) {

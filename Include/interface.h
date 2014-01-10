@@ -119,15 +119,6 @@ namespace DCI {
       void leastSquaresCG (Bool, const Vector &, Vector &, Vector &);
       void linearSystemCG (Bool, const Vector &, Vector &);
 
-      void copy_sx () {
-        for (int i = 0; i < nconI; i++)
-          sx[i] = xx[nvar+i];
-      }
-      void copy_scx () {
-        for (int i = 0; i < nconI; i++)
-          scx[i] = xcx[nvar+i];
-      }
-
 #ifndef NDEBUG
       void checkInfactibility ();
 #endif
@@ -149,19 +140,17 @@ namespace DCI {
       Vector * x, * l_bnd, * u_bnd;
       Vector * solx;
       Vector * y, * cl, * cu;
-      Vector * s; //Slacks s = -c_I(x)
       Vector * sols;
       Bool * equatn, * linear;
-      Vector * xc, *sc;
+      Vector * xc;
       Vector * feasOpt;
 
       pReal xx, l_bndx, u_bndx;
       pReal yx, clx, cux;
-      pReal sx;
       pReal gx, cx;
       pReal Jx;
       pInt Jfun, Jvar;
-      pReal xcx, scx;
+      pReal xcx;
       pReal yineqx;
 
       Int * ineq_index;

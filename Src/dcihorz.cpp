@@ -63,7 +63,6 @@ namespace DCI {
         else if (xx[i] == l_bndx[i])
           xx[i] = l_bndx[i] + dciEps;
       }
-      copy_sx();
 
 #ifdef VERBOSE
       if (verbosity_level > 1) {
@@ -77,10 +76,6 @@ namespace DCI {
         }
         std::cout << "x+ = " << std::endl;
         x->print_more();
-        if (has_ineq) {
-          std::cout << "s+ = " << std::endl;
-          s->print_more();
-        }
       }
 #endif
 
@@ -143,7 +138,6 @@ namespace DCI {
         *x = *xc;
         for (Int i = 0; i < nvar+nconI; i++)
           xx[i] += ssocx[i];
-        copy_sx();
 #ifdef VERBOSE
       if (verbosity_level > 1) {
         std::cout << "SOC = " << std::endl;

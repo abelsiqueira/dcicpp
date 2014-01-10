@@ -66,8 +66,6 @@ namespace DCI {
       if (has_ineq) {
         std::cout << "s = " << std::endl;
         s->print_more();
-        std::cout << "sc = " << std::endl;
-        sc->print_more();
       }
     }
     GDBSTOP();
@@ -118,7 +116,7 @@ namespace DCI {
       if (solx != 0) {
         eck = eckp;
         eckp = eckpp;
-        eckpp = norm(*xc - *solx) + norm(*sc - *sols);
+        eckpp = norm(*xc - *solx);
       }
 #endif
 
@@ -189,8 +187,6 @@ namespace DCI {
       if (has_ineq) {
         std::cout << "s = " << std::endl;
         s->print_more();
-        std::cout << "sc = " << std::endl;
-        sc->print_more();
       }
     }
     GDBSTOP();
@@ -240,8 +236,6 @@ namespace DCI {
 
       } else {
         *x = *xc;
-        if (has_ineq)
-          *s = *sc;
         *f = *fxc;
       }
       update_yineq ();
@@ -304,8 +298,6 @@ namespace DCI {
         if (has_ineq) {
           std::cout << "s = " << std::endl;
           s->print_more();
-          std::cout << "sc = " << std::endl;
-          sc->print_more();
         }
       }
       GDBSTOP();
