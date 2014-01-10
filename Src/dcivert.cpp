@@ -207,7 +207,7 @@ namespace DCI {
           // Arrumar tamanho do ssoc a partir do x
           Real alphassoc = 1;
           pReal ssocx = ssoc.get_doublex();
-          for (Int i = 0; i < nvar; i++) {
+          for (Int i = 0; i < nvar+nconI; i++) {
             Real xi = xcx[i], bli = l_bndx[i], bui = u_bndx[i], di = ssocx[i];
             if (di == 0)
               continue;
@@ -219,46 +219,32 @@ namespace DCI {
                 alphassoc = Min (alphassoc, val);
             }
           }
-          for (Int i = 0; i < nconI; i++) {
-            Real si = scx[i], cli = clx[ineq_index[i]], cui = cux[ineq_index[i]], di = ssocx[nvar + i];
-            if (di == 0)
-              continue;
-            if (di < 0) {
-              Real val = (cli - si)*(1 - epsmu)/di;
-                alphassoc = Min (alphassoc, val);
-            } else {
-              Real val = (cui - si)*(1 - epsmu)/di;
-                alphassoc = Min (alphassoc, val);
-            }
-          }
           if (alphassoc < 1)
             ssoc.scale (alphassoc);
 
           asoc = ssoc.norm (0);
           if (asoc > DeltaV)
             ssoc.scale (DeltaV/asoc);
-          for (Int i = 0; i < nvar; i++)
+          for (Int i = 0; i < nvar+nconI; i++)
             xcx[i] += ssocx[i];
-          for (Int i = 0; i < nconI; i++) {
-            scx[i] += ssocx[nvar + i];
-          }
+          copy_scx();
           call_fn ();
           normc = c->norm ();
           fail = 0;
-
 
           if (vertical_fail_reboot && VertFlag == 0) {
             // Has failed but is not infeasible
             Real constr[ncon], funval;
             (*cfn) (&nvar, &ncon, xcx, &funval, &mmax, constr);
-            Int numI = 0;
+            Int numI = nvar;
             for (Int i = 0; i < ncon; i++) {
               if (equatn[i] == dciFalse) {
                 if (constr[i] > clx[i] && constr[i] < cux[i])
-                  scx[numI] = constr[i];
+                  xcx[numI] = constr[i];
                 numI++;
               }
             }
+            copy_scx();
             normc = c->norm();
           }
         } else if ( ( (normc > thetaR*oldnormc) && (oldAcnt > 0) ) || (oldAcnt > 5) || (iout == 5) ) {

@@ -41,20 +41,14 @@ namespace DCI {
     gtd = 0;
     nSteih = 0;
 
-    for (Int i = 0; i < nvar; i++) {
+    for (Int i = 0; i < nvar+nconI; i++) {
       Real xi = xcx[i], bli = l_bndx[i], bui = u_bndx[i];
       lower[i] = Max( (bli - xi) * (1 - epsmu)/scaling_matrix[i], -DeltaH/scaling_matrix[i] );
       upper[i] = Min( (bui - xi) * (1 - epsmu)/scaling_matrix[i], DeltaH/scaling_matrix[i] );
     }
-    for (Int i = 0; i < nconI; i++) {
-      Real si = scx[i], cli = clx[ineq_index[i]], cui = cux[ineq_index[i]];
-      Int j = nvar + i;
-      lower[j] = Max( (cli - si) * (1 - epsmu)/scaling_matrix[j], -DeltaH/scaling_matrix[j] );
-      upper[j] = Min( (cui - si) * (1 - epsmu)/scaling_matrix[j], DeltaH/scaling_matrix[j] );
-    }
 
-
-    while ( (theta > eps2) && (theta > eps1*theta0) && (nSteih <= maxitSteih) && (current_time < max_time) ) {
+    while ( (theta > eps2) && (theta > eps1*theta0) && (nSteih <= maxitSteih) &&
+        (current_time < max_time) ) {
       nSteih++;
       call_prod_xc (GotH, px, Hpx);
       nHprod++;

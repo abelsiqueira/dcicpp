@@ -52,24 +52,18 @@ namespace DCI {
 
       pReal dx = d.get_doublex();
       scale_xc (d);
-      for (Int i = 0; i < nvar; i++) {
+      for (Int i = 0; i < nvar+nconI; i++) {
         if (l_bndx[i] - u_bndx[i] > -dciEps) {
           dx[i] = 0;
           continue;
         }
         xx[i] = xcx[i] + dx[i];
         if (xx[i] == u_bndx[i])
-          xx[i] = u_bndx[i] - 1e-12;
+          xx[i] = u_bndx[i] - dciEps;
         else if (xx[i] == l_bndx[i])
-          xx[i] = l_bndx[i] + 1e-12;
+          xx[i] = l_bndx[i] + dciEps;
       }
-      for (Int i = 0; i < nconI; i++) {
-        sx[i] = scx[i] + dx[nvar + i];
-        if (sx[i] == cux[i])
-          sx[i] = cux[i] - 1e-12;
-        else if (sx[i] == clx[i])
-          sx[i] = clx[i] + 1e-12;
-      }
+      copy_sx();
 
 #ifdef VERBOSE
       if (verbosity_level > 1) {
@@ -119,16 +113,15 @@ namespace DCI {
              (newnormc > Max (csic, zeta3*normc) ) ) ) ) {
 
         pReal ptmp_c = tmp_c.get_doublex();
-        for (Int i = 0; i < ncon; i++) {
+        for (Int i = 0; i < ncon; i++)
           ptmp_c[i] = cx[i] - ptmp_c[i];
-        }
         StepFlag = naStep (tmp_c, ssoc);
         scale_xc (ssoc);
 
         // Arrumar tamanho do ssoc a partir do x
         Real alphassoc = 1;
         pReal ssocx = ssoc.get_doublex();
-        for (Int i = 0; i < nvar; i++) {
+        for (Int i = 0; i < nvar+nconI; i++) {
           Real xi = xx[i], bli = l_bndx[i], bui = u_bndx[i], di = ssocx[i];
           if (di == 0)
             continue;
@@ -140,18 +133,6 @@ namespace DCI {
               alphassoc = Min (alphassoc, val);
           }
         }
-        for (Int i = 0; i < nconI; i++) {
-          Real si = sx[i], cli = clx[ineq_index[i]], cui = cux[ineq_index[i]], di = ssocx[nvar + i];
-          if (di == 0)
-            continue;
-          if (di < 0) {
-            Real val = (cli - si)*(1 - epsmu)/di;
-              alphassoc = Min (alphassoc, val);
-          } else {
-            Real val = (cui - si)*(1 - epsmu)/di;
-              alphassoc = Min (alphassoc, val);
-          }
-        }
         if (alphassoc < 1)
           ssoc.scale (alphassoc);
 
@@ -160,13 +141,9 @@ namespace DCI {
         if (asoc > DeltaH)
           ssoc.scale (DeltaH/asoc);
         *x = *xc;
-        if (has_ineq)
-          *s = *sc;
-        for (Int i = 0; i < nvar; i++)
+        for (Int i = 0; i < nvar+nconI; i++)
           xx[i] += ssocx[i];
-        for (Int i = 0; i < nconI; i++) {
-          sx[i] += ssocx[nvar + i];
-        }
+        copy_sx();
 #ifdef VERBOSE
       if (verbosity_level > 1) {
         std::cout << "SOC = " << std::endl;

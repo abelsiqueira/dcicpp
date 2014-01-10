@@ -119,6 +119,15 @@ namespace DCI {
       void leastSquaresCG (Bool, const Vector &, Vector &, Vector &);
       void linearSystemCG (Bool, const Vector &, Vector &);
 
+      void copy_sx () {
+        for (int i = 0; i < nconI; i++)
+          sx[i] = xx[nvar+i];
+      }
+      void copy_scx () {
+        for (int i = 0; i < nconI; i++)
+          scx[i] = xcx[nvar+i];
+      }
+
 #ifndef NDEBUG
       void checkInfactibility ();
 #endif

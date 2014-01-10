@@ -422,9 +422,9 @@ namespace DCI {
         assert (smldelta > 0);
         sx[i] = Max( Min(cxi, cui-smldelta), cli+smldelta);
         scx[i] = sx[i];
-//        Int j = nvar + i;
-//        xx[j] = Max ( Min ( cxi, cui - smldelta ), cli + smldelta );
-//        xcx[j] = xx[j];
+        Int j = nvar + i;
+        xx[j] = Max ( Min ( cxi, cui - smldelta ), cli + smldelta );
+        xcx[j] = xx[j];
       }
       updateScaling_x();
 

@@ -159,7 +159,7 @@ namespace DCI {
     Real scalingMatrix[nvar + nconI];
     gtmp.sdmult (*J, 1, one, zero, ctmp); // g = J'*c
     pReal gtmpx = gtmp.get_doublex();
-    for (Int i = 0; i < nvar; i++) {
+    for (Int i = 0; i < nvar+nconI; i++) {
       Real gi = gtmpx[i], zi = xcx[i], ui = u_bndx[i], li = l_bndx[i];
       if ( (gi < 0) && (ui < dciInf) ) {
         scalingMatrix[i] = 1.0/sqrt(ui - zi);
@@ -167,17 +167,6 @@ namespace DCI {
         scalingMatrix[i] = 1.0/sqrt(zi - li);
       } else {
         scalingMatrix[i] = 1;
-      }
-    }
-    for (Int i = 0; i < nconI; i++) {
-      Int j = nvar + i;
-      Real gi = gtmpx[j], zi = scx[i], ui = cux[ineq_index[i]], li = clx[ineq_index[i]];
-      if ( (gi < 0) && (ui < dciInf) ) {
-        scalingMatrix[j] = 1.0/sqrt(ui - zi);
-      } else if ( (gi > 0) && (li > -dciInf) ) {
-        scalingMatrix[j] = 1.0/sqrt(zi - li);
-      } else {
-        scalingMatrix[j] = 1;
       }
     }
     normgtmp = gtmp.norm ();
@@ -195,16 +184,12 @@ namespace DCI {
     }
     //Now with the infinity norm
     Real lower[nvar + nconI], upper[nvar + nconI];
-    for (Int i = 0; i < nvar; i++) {
+    for (Int i = 0; i < nvar+nconI; i++) {
       Real zi = xcx[i], li = l_bndx[i], ui = u_bndx[i];
-      lower[i] = Max( -DeltaV, (li > -dciInf ? (li - zi) * (1 - epsmu) : -dciInf) );
-      upper[i] = Min( DeltaV, (ui < dciInf ? (ui - zi) * (1 - epsmu) : dciInf) );
-    }
-    for (Int i = 0; i < nconI; i++) {
-      Int j = nvar + i;
-      Real zi = scx[i], li = clx[ineq_index[i]], ui = cux[ineq_index[i]];
-      lower[j] = Max( -DeltaV, (li > -dciInf ? (li - zi) * (1 - epsmu) : -dciInf) );
-      upper[j] = Min( DeltaV, (ui < dciInf ? (ui - zi) * (1 - epsmu) : dciInf) );
+      lower[i] = Max( -DeltaV, (li > -dciInf ? (li - zi) * (1 - epsmu) :
+            -dciInf) );
+      upper[i] = Min(  DeltaV, (ui <  dciInf ? (ui - zi) * (1 - epsmu) : 
+             dciInf) );
     }
     Vector aux(*env);
     d = gtmp;
@@ -337,7 +322,7 @@ namespace DCI {
 
       Vector xtemp(*xc), stemp((nconI ? *sc : *env));
 
-      for (Int i = 0; i < nvar; i++) {
+      for (Int i = 0; i < nvar+nconI; i++) {
         if (l_bndx[i] - u_bndx[i] > -dciEps)
           continue;
         xcx[i] += (factor*dnx[i] + (1 - factor)*dcpx[i]);
@@ -346,14 +331,7 @@ namespace DCI {
         else if (xcx[i] <= l_bndx[i])
           xcx[i] = l_bndx[i] + dciEps;
       }
-      for (Int i = 0; i < nconI; i++) {
-        Int j = nvar + i;
-        scx[i] += (factor*dnx[j] + (1 - factor)*dcpx[j]);
-        if (scx[i] >= cux[ineq_index[i]])
-          scx[i] = cux[ineq_index[i]] - dciEps;
-        else if (scx[i] <= clx[ineq_index[i]])
-          scx[i] = clx[ineq_index[i]] + dciEps;
-      }
+      copy_scx();
       
 #ifndef NDEBUG
       checkInfactibility();
@@ -368,7 +346,8 @@ namespace DCI {
       if (Ared/Pred < beta2) {
         DeltaV /= 4;
         *xc = xtmp;
-        if (has_ineq) *sc = stmp;
+        if (has_ineq) 
+          *sc = stmp;
         call_ccfsg_xc(dciFalse);
         normc = c->norm();
       } else if (Ared/Pred > 0.75) {
