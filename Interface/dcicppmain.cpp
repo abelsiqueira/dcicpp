@@ -29,7 +29,7 @@ int MAINENTRY () {
     dci.set_ufn (UFN);
     dci.set_unames (UNAMES);
 
-    dci.con_setup (nvar, x, bl, bu, 0, 0, 0, 0);
+    dci.unc_setup (nvar, x, bl, bu);
   } else {
     mmax = ncon;
     Real y[ncon], cl[ncon], cu[ncon];

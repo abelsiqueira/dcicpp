@@ -393,6 +393,35 @@ namespace DCI {
     file.close ();
   }
 
+  void Interface::unc_setup (size_t n, Real * x, Real * bl, Real * bu) {
+    set_nvar(n);
+    nconE = nconI = 0;
+    this->x = new Vector (*env, n+nconI);
+    xx = this->x->get_doublex();
+    for (size_t i = 0; i < n; i++)
+      xx[i] = x[i];
+    xc = new Vector (*(this->x));
+    xcx = xc->get_doublex();
+    l_bnd = new Vector (*env, n+nconI);
+    u_bnd = new Vector (*env, n+nconI);
+    l_bndx = l_bnd->get_doublex();
+    u_bndx = u_bnd->get_doublex();
+    for (size_t i = 0; i < n; i++) {
+      l_bndx[i] = bl[i];
+      u_bndx[i] = bu[i];
+    }
+    for (size_t i = 0; i < n; i++) {
+      if (l_bndx[i] > -dciInf || u_bndx[i] < dciInf) {
+        is_bounded = dciTrue;
+        break;
+      }
+    }
+
+    variable_scaling = new Real[n];
+    for (Int i = 0; i < (Int) n; i++)
+      variable_scaling[i] = 1.0;
+  }
+
   void Interface::con_setup (size_t n, Real * x, Real * bl, Real * bu, 
       size_t m, Real * cl, Real * cu, Bool * equatn) {
     this->equatn = new Bool[n];

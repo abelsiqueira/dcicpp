@@ -90,7 +90,9 @@ namespace DCI {
       }
 #endif
 
-      Vector tmp_c(*c);
+      Vector tmp_c(*env);
+      if (ncon > 0)
+        tmp_c = *c;
       call_fn ();
 #ifndef NDEBUG
       try {

@@ -10,7 +10,7 @@ penal_trust 0
 penal_bfgs 0
 MaxDiag 1e9
 MinDiag 0
-debug_level 1
+debug_level 0
 verbosity_level 0
 display_level 1
 table_print_level 1
