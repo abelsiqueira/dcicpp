@@ -403,19 +403,18 @@ namespace DCI {
             max_constraint_scaling);
       }
       for (Int i = 0; i < nconI; i++) {
-        Int j = nvar+ineq_index[i];
+        Int j = nvar + i;
         if (l_bndx[j] > -dciInf)
-          l_bndx[j] /= constraint_scaling[i];
+          l_bndx[j] /= constraint_scaling[ineq_index[i]];
         if (u_bndx[j] < dciInf)
-          u_bndx[j] /= constraint_scaling[i];
+          u_bndx[j] /= constraint_scaling[ineq_index[i]];
       }
     }
     call_fn();
 
     if (ncon > 0) {
       for (Int i = 0; i < nconI; i++) {
-        Real cxi = cx[ineq_index[i]], cli = l_bndx[ineq_index[i]], cui =
-          u_bndx[ineq_index[i]];
+        Real cxi = cx[ineq_index[i]], cli = l_bndx[nvar+i], cui = u_bndx[nvar+i];
         Real smldelta = Min ( 1e-2, (cui - cli)/100);
         assert (smldelta > 0);
         Int j = nvar + i;
