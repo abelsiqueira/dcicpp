@@ -133,19 +133,20 @@ namespace DCI {
 
         ssoc.saxpy (d, 1);
         asoc = ssoc.norm (0);
-        if (asoc > DeltaH)
-          ssoc.scale (DeltaH/asoc);
         *x = *xc;
-        for (Int i = 0; i < nvar+nconI; i++)
-          xx[i] += ssocx[i];
+        if (asoc > DeltaH)
+          x->saxpy(ssoc, DeltaH/asoc);
+        else
+          x->saxpy(ssoc, 1.0);
+
 #ifdef VERBOSE
-      if (verbosity_level > 1) {
-        std::cout << "SOC = " << std::endl;
-      }
-      if ( (nvar + ncon <= 5) && (verbosity_level > 1) ) {
-        std::cout << "x+ = " << std::endl;
-        x->print_more();
-      }
+        if (verbosity_level > 1) {
+          std::cout << "SOC = " << std::endl;
+        }
+        if ( (nvar + ncon <= 5) && (verbosity_level > 1) ) {
+          std::cout << "x+ = " << std::endl;
+          x->print_more();
+        }
 #endif
         call_fn ();
         newnormc = c->norm ();

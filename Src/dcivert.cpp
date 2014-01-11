@@ -214,9 +214,10 @@ namespace DCI {
 
           asoc = ssoc.norm (0);
           if (asoc > DeltaV)
-            ssoc.scale (DeltaV/asoc);
-          for (Int i = 0; i < nvar+nconI; i++)
-            xcx[i] += ssocx[i];
+            xc->saxpy(ssoc, DeltaV/asoc);
+          else
+            xc->saxpy(ssoc, 1.0);
+
           call_fn ();
           normc = c->norm ();
           fail = 0;
@@ -235,7 +236,8 @@ namespace DCI {
             }
             normc = c->norm();
           }
-        } else if ( ( (normc > thetaR*oldnormc) && (oldAcnt > 0) ) || (oldAcnt > 5) || (iout == 5) ) {
+        } else if ( ( (normc > thetaR*oldnormc) && (oldAcnt > 0) ) || 
+                    (oldAcnt > 5) || (iout == 5) ) {
           // dcivert failed. Recompute A
 
           if (!is_linear) {
