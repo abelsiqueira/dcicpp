@@ -410,7 +410,7 @@ namespace DCI {
 
   void Interface::con_setup (size_t n, Real * x, Real * bl, Real * bu, 
       size_t m, Real * cl, Real * cu, Bool * equatn) {
-    this->equatn = new Bool[n];
+    this->equatn = new Bool[m];
     set_nvar(n);
     set_ncon(m);
     nconE = nconI = 0;
