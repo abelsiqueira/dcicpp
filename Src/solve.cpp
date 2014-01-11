@@ -63,10 +63,6 @@ namespace DCI {
       std::cout << "lambda = " << std::endl;
       if (ncon > 0)
         y->print_more();
-      if (has_ineq) {
-        std::cout << "s = " << std::endl;
-        s->print_more();
-      }
     }
     GDBSTOP();
 #endif
@@ -184,10 +180,6 @@ namespace DCI {
       std::cout << "lambda = " << std::endl;
       if (ncon > 0)
         y->print_more();
-      if (has_ineq) {
-        std::cout << "s = " << std::endl;
-        s->print_more();
-      }
     }
     GDBSTOP();
 #endif
@@ -295,10 +287,6 @@ namespace DCI {
         std::cout << "lambda = " << std::endl;
         if (ncon > 0)
           y->print_more();
-        if (has_ineq) {
-          std::cout << "s = " << std::endl;
-          s->print_more();
-        }
       }
       GDBSTOP();
 #endif

@@ -145,10 +145,6 @@ namespace DCI {
       if ( (nvar + ncon <= 5) && (verbosity_level > 1) ) {
         std::cout << "x+ = " << std::endl;
         x->print_more();
-        if (has_ineq) {
-          std::cout << "s+ = " << std::endl;
-          s->print_more();
-        }
       }
 #endif
         call_fn ();

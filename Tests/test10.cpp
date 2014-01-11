@@ -97,23 +97,17 @@ int main () {
 
   x[0] = 2;
   x[1] = 2;
-  y[0] = 1;
   bl[0] = 2;
   bl[1] = 0;
   bu[0] = 50;
   bu[1] = dciInf;
   
+  y[0] = 0;
   cl[0] = 0;
   cu[0] = dciInf;
   equatn[0] = dciFalse;
 
-  dci.set_x (n, x);
-  dci.set_bl (n, bl);
-  dci.set_bu (n, bu);
-  dci.set_lambda (m, y);
-  dci.set_cl (m, cl);
-  dci.set_cu (m, cu);
-  dci.set_equatn (m, equatn);
+  dci.con_setup (n, x, bl, bu, m, y, cl, cu, equatn);
 
   dci.start ();
   dci.solve ();

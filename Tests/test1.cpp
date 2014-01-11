@@ -79,14 +79,8 @@ int main () {
   Int n = 5, m = 1;
   DCI::Interface dci;
   Real x[n], bl[n], bu[n];
-  Real cl[m], cu[m];
+  Real y[m], cl[m], cu[m];
   Bool equatn[m];
-
-  Real sol[n], fsol;
-
-  for (Int i = 0; i < n; i++)
-    sol[i] = 1.0/n;
-  fsol = (n-1)*(n-1)/(1.0*n);
 
   dci.set_cofg (COFG);
   dci.set_cprod (CPROD);
@@ -100,31 +94,16 @@ int main () {
   }
   
   for (Int i = 0; i < m; i++) {
-//    y[i] = 0;
+    y[i] = 0;
     cl[i] = -dciInf; // No lower bound
     cu[i] = 0; // c(x) <= 0
     equatn[i] = dciFalse; // Inequality
   }
 
-  dci.con_setup (n, x, bl, bu, m, cl, cu, equatn);
-//  dci.set_x (n, x);
-//  dci.set_bl (n, bl);
-//  dci.set_bu (n, bu);
-//  dci.set_lambda (m, y);
-//  dci.set_cl (m, cl);
-//  dci.set_cu (m, cu);
-//  dci.set_equatn (m, equatn);
+  dci.con_setup (n, x, bl, bu, m, y, cl, cu, equatn);
 
   dci.start ();
   dci.solve ();
   dci.show();
-
-  pReal px = dci.get_x();
-  Real difnorm = 0.0;
-  for (Int i = 0; i < n; i++)
-    difnorm += pow(px[i] - sol[i], 2);
-  std::cout << "|x* - sol|^2 = " << difnorm << std::endl;
-  std::cout << "|f* - f| = " << DCI::AbsValue(dci.get_f() - fsol)
-    << std::endl;
 
 }

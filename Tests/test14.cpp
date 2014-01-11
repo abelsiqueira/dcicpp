@@ -141,7 +141,7 @@ int main () {
   Int n = 6, m = 6;
   DCI::Interface dci;
   Real x[n], bl[n], bu[n];
-  Real cl[m], cu[m];
+  Real y[m], cl[m], cu[m];
   Bool equatn[m], linear[m];
 
   dci.set_cofg (COFG);
@@ -159,6 +159,7 @@ int main () {
   for (Int i = 0; i < 6; i++) {
     bl[i] = 0;
     bu[i] = dciInf;
+    y[i] = 0;
     cl[i] = 0;
     cu[i] = 0;
     equatn[i] = dciTrue;
@@ -168,13 +169,7 @@ int main () {
   bu[0] = 1;
   bu[3] = 1;
 
-  dci.set_x (n, x);
-  dci.set_bl (n, bl);
-  dci.set_bu (n, bu);
-//  dci.set_lambda (m, y);
-  dci.set_cl (m, cl);
-  dci.set_cu (m, cu);
-  dci.set_equatn (m, equatn);
+  dci.con_setup (n, x, bl, bu, m, y, cl, cu, equatn);
   dci.set_linear (m, linear);
 
   dci.start ();

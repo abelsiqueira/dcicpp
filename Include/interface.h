@@ -21,7 +21,7 @@ namespace DCI {
       // Sine quibus non
       void unc_setup (size_t, Real *, Real *, Real *);
       void con_setup (size_t, Real *, Real *, Real *, size_t, Real *, Real *,
-          Bool *);
+          Real *, Bool *);
       void set_linear (size_t n, Bool *V);
 
       Real * get_x () const { return xx; }

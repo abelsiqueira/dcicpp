@@ -47,18 +47,10 @@ int MAINENTRY () {
     dci.set_ccifg (CCIFG);
     dci.set_cnames (CNAMES);
 
-//    dci.set_lambda (ncon, y);
-//    dci.set_cl (ncon, cl);
-//    dci.set_cu (ncon, cu);
-//    dci.set_equatn (ncon, equatn);
     dci.set_linear (ncon, linear);
     dci.set_amax (amax);
-    dci.con_setup (nvar, x, bl, bu, ncon, cl, cu, equatn);
+    dci.con_setup (nvar, x, bl, bu, ncon, y, cl, cu, equatn);
   }
-
-//  dci.set_x (nvar, x);
-//  dci.set_bl (nvar, bl);
-//  dci.set_bu (nvar, bu);
 
   dci.start ();
   try {

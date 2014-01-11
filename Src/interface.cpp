@@ -45,14 +45,12 @@ namespace DCI {
     delpointer (f);
     delpointer (fxc);
     delpointer (x);
-    delpointer (solx);
     delpointer (l_bnd);
     delpointer (u_bnd);
     delpointer (y);
     delpointer (yineq);
     delpointer (cl);
     delpointer (cu);
-    delpointer (sols);
     delarray   (equatn);
     delarray   (ineq_index);
     delarray   (linear);
@@ -130,20 +128,6 @@ namespace DCI {
     yineq = new Vector (*env, nvar + nconI);
     yineqx = yineq->get_doublex ();
     gp = new Vector (*env, nmax + nconI);
-
-
-#ifdef LOCALTEST
-    if (solx != 0) {
-      Vector tmp (*xc);
-      *xc = *solx;
-      call_fn_xc ();
-      sols = new Vector (*env, nconI);
-      pReal ps = sols->get_doublex ();
-      for (Int i = 0; i < nconI; i++) {
-        ps[i] = cx[ineq_index[i]];
-      }
-    }
-#endif
 
     defineParameters ();
     initialValues ();
@@ -409,10 +393,12 @@ namespace DCI {
   }
 
   void Interface::con_setup (size_t n, Real * x, Real * bl, Real * bu, 
-      size_t m, Real * cl, Real * cu, Bool * equatn) {
-    this->equatn = new Bool[m];
+      size_t m, Real * y, Real * cl, Real * cu, Bool * equatn) {
     set_nvar(n);
     set_ncon(m);
+    this->equatn = new Bool[m];
+    this->y = new Vector (*env, m, y);
+    yx = this->y->get_doublex();
     nconE = nconI = 0;
     for (size_t i = 0; i < m; i++) {
       Bool tmp = equatn[i];

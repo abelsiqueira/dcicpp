@@ -131,10 +131,6 @@ namespace DCI {
             full(*J).print_more ();
             std::cout << "xc = " << std::endl;
             xc->print_more ();
-            if (has_ineq) {
-              std::cout << "sc = " << std::endl;
-              sc->print_more ();
-            }
           }
         }
         GDBSTOP ();
@@ -158,10 +154,6 @@ namespace DCI {
           if ( (nvar < 10) && (ncon < 10) ) {
             std::cout << "xc = " << std::endl;
             xc->print_more();
-            if (has_ineq) {
-              std::cout << "sc = " << std::endl;
-              sc->print_more();
-            }
           }
         }
 #endif

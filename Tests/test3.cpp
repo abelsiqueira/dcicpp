@@ -102,7 +102,7 @@ void CCFSG (Int * n, Int * m, Real * x, Int * mmax, Real * c, Int * nnzJ, Int * 
 int main () {
   Int n = 10, m = 1;
   DCI::Interface dci;
-  Real x[n], bl[n], bu[n], sol[n];
+  Real x[n], bl[n], bu[n];
   Real y[m], cl[m], cu[m];
   Bool equatn[m];
 
@@ -113,11 +113,9 @@ int main () {
 
   for (Int i = 0; i < n; i++) {
     x[i] = 1;
-    sol[i] = 0;
     bl[i] = -dciInf;
     bu[i] = dciInf;
   }
-  sol[n - 1] = r/sqrt(n);
   
   for (Int i = 0; i < m; i++) {
     y[i] = 0;
@@ -126,14 +124,7 @@ int main () {
     equatn[i] = dciFalse;
   }
 
-  dci.set_x (n, x);
-  dci.set_sol (n, sol);
-  dci.set_bl (n, bl);
-  dci.set_bu (n, bu);
-  dci.set_lambda (m, y);
-  dci.set_cl (m, cl);
-  dci.set_cu (m, cu);
-  dci.set_equatn (m, equatn);
+  dci.con_setup (n, x, bl, bu, m, y, cl, cu, equatn);
 
   dci.start ();
   dci.solve ();
