@@ -8,6 +8,15 @@ mkdir -p $target_dir
 cp $list $target_dir/
 cp dcicpp.spc $target_dir/
 
+cat >> $target_dir/INFORMATION << EOF
+git localization
+hash: $(git gethash)
+status:
+$(git status)
+diff
+$(git diff)
+EOF
+
 for problem in $(cat $list)
 do
   runcppcuter -p dcicpp -D $problem > $target_dir/$problem.out
