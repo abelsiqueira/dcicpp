@@ -3,6 +3,7 @@
 #include <sstream>
 #include <algorithm>
 #include <fstream>
+#include <iomanip>
 //#include <cassert>
 
 namespace DCI {
@@ -238,7 +239,7 @@ namespace DCI {
             << "|c(x)| = " << normc << std::endl
             << "|g(x) + J(x)'*y| = " << normgp << std::endl
             << "y offset = " << yoff << std::endl
-            << "BFGS? " << ((tbfgs > 0) ? "yes" : "no") << std::endl
+//            << "BFGS? " << ((tbfgs > 0) ? "yes" : "no") << std::endl
             << "Number of Iterations = " << iter << std::endl
             << "Elapsed Time = " << (current_time > 0 ? current_time : 0) << " s" << std::endl;
       }
@@ -351,14 +352,14 @@ namespace DCI {
          << nvar << " & "
          << ncon << " & ";
     if (table_print_level > 0) {
-      file << *f << " & "
-           << normgp << " & "
-           << normc << " & ";
+      file << std::scientific << std::setprecision(8) << *f << " & "
+           << std::scientific << std::setprecision(8) << normgp << " & "
+           << std::scientific << std::setprecision(8) << normc << " & ";
     }
     file << iter << " & "
          << (current_time > 0 ? current_time : 0) << " & "
-         << ((ncon > 0) ? "con" : "unc") << " & "
-         << ((tbfgs > 0) ? "bfgs" : "") << "\\\\ \\hline\n";
+         << ((ncon > 0) ? "con" : "unc") 
+         << "\\\\ \\hline\n";
 
     file.close ();
   }

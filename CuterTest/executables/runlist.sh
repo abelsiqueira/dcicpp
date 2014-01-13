@@ -17,7 +17,15 @@ diff
 $(git diff)
 EOF
 
-for problem in $(cat $list)
+list=$(cat $list)
+cd $target_dir
+for problem in $list
 do
-  runcppcuter -p dcicpp -D $problem > $target_dir/$problem.out
+  runcppcuter -p dcicpp -D $problem > $problem.out
 done
+
+echo -n "Problem & nvar & ncon " > table_latex
+echo -n "& f & |gp| & |c|" >> table_latex
+echo -n "& iter & time & type & bfgs" >> table_latex
+echo "\\\\ \\hline" >> table_latex
+sort latex_*  >> table_latex
