@@ -82,7 +82,8 @@ namespace DCI {
       void analyzeJacobian ();
       void cholesky ();
       Int  verticalStep ();
-      Int  innerVerticalStep (Real &);
+      Int  innerNormalDirection (Real &);
+      void innerNormalPhase ();
       Int  verticalSafeguard ();
       void horizontalStep (Real &);
       Int  innerHorizontalStep (Vector &, Real &, Real &);
