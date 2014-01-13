@@ -85,8 +85,8 @@ namespace DCI {
       Int  innerNormalDirection (Real &);
       void innerNormalPhase ();
       Int  normalSafeguard ();
-      void horizontalStep (Real &);
-      Int  innerHorizontalStep (Vector &, Real &, Real &);
+      void tangentStep (Real &);
+      Int  innerTangentStep (Vector &, Real &, Real &);
       void naProj (Vector &, Vector &, Vector &);
       void naProjApprox (Vector &, Vector &, Vector &);
       Int  naStep (Vector &, Vector &);
@@ -199,7 +199,7 @@ namespace DCI {
       Bool GotH, first;
       Int  nSteih, nRej, nSoc, nfailv, nHprod, nRest, nbfgs;
       Int  tSoc, tSteih, tRej, tbfgs, tRest;
-      Int  HorzFlag, StepFlag, NormalFlag;
+      Int  TangentFlag, StepFlag, NormalFlag;
       Int  iter, maxit, maxitSteih, minitSteih, relitSteih;
       Int  minstep, itssmll, maxrest, maxssmll;
       Int  bfgsupd;

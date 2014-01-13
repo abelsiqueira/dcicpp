@@ -203,7 +203,7 @@ namespace DCI {
            (current_time < max_time) ) {
 
         updateScaling_xc();
-        horizontalStep (norms); 
+        tangentStep (norms); 
 #ifndef NDEBUG
         checkInfactibility();
 #endif

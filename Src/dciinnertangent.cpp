@@ -2,17 +2,17 @@
 //#include <cassert>
 #include <cmath>
 
-/* This routine computes the horizontal step by using Steihaug's algorithm.
+/* This routine computes the tangent step by using Steihaug's algorithm.
  *
- * The horizontal step is an approximate solution for:
+ * The tangent step is an approximate solution for:
  *
  * min 0.5*d'*B*d + g_p'*d
  * s.t. A*d = 0
- *      ||d|| < delta
+ *      l <= d <= u
  */
 
 namespace DCI {
-  Int Interface::innerHorizontalStep (Vector & d, Real & qd, Real & gtd) {
+  Int Interface::innerTangentStep (Vector & d, Real & qd, Real & gtd) {
     Real theta0, theta, thetanew, alpha, beta, gamma;
     Real dtHp, gtp, ptp, root1, root2, qdnew;
     Int SteihFlag;

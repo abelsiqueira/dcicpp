@@ -4,10 +4,10 @@
 
 namespace DCI {
   /* *************************************************
-   * ******      HorzStep: Horizontal Step      ******
+   * ******      TangentStep: Tangent Step      ******
    * *************************************************
    *
-   * This function finds the horizontal step. It is
+   * This function finds the Tangent step. It is
    * supposed to find a miniminum to an approximation
    * of f around the current point, with the conditions
    * of being in a trust region, doesn't leave the 
@@ -15,7 +15,7 @@ namespace DCI {
    * Jacobian matrix.
    */
 
-  void Interface::horizontalStep (Real & normd) {
+  void Interface::tangentStep (Real & normd) {
     Vector d (*env, nvar + nconI), ssoc (*env, nvar + nconI);
     Real qd = 0;
     Real newnormc, asoc, alphaT;
@@ -47,7 +47,7 @@ namespace DCI {
               (DLH > eta1*qd) ) && 
             (current_time < max_time) ) {
 
-      SteihFlag = innerHorizontalStep (d, qd, gtd);
+      SteihFlag = innerTangentStep (d, qd, gtd);
 
 
       pReal dx = d.get_doublex();
