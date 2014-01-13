@@ -76,23 +76,23 @@ namespace DCI {
       en_eps1, en_eps2, en_eps3, en_epsmu, en_epsgap, en_bfgsupd, en_c1, en_c2,
       en_max_time, en_minBk, en_use_conjugate_gradient, en_partial_penalization, en_project_dcp,
       en_project_bfgs, en_trustWorstdn, en_trustConvexBox, en_penal_trust,
-      en_penal_bfgs, en_scale_vertical, en_display_level, en_debug_level,
+      en_penal_bfgs, en_scale_normal, en_display_level, en_debug_level,
       en_verbosity_level, en_MaxDiag, en_MinDiag, 
       en_use_objective_scaling, en_objfun_count, en_use_constraint_scaling,
       en_max_objective_scaling, en_use_variable_scaling, en_table_print_level,
       en_max_constraint_scaling, en_use_soc,
-      en_vertical_fail_reboot
+      en_normal_fail_reboot
     };
     std::map<std::string, int> paramMap;
 
-    paramMap["vertical_fail_reboot"] = en_vertical_fail_reboot;
+    paramMap["normal_fail_reboot"] = en_normal_fail_reboot;
     paramMap["MaxDiag"] = en_MaxDiag;
     paramMap["MinDiag"] = en_MinDiag;
     paramMap["debug_level"] = en_debug_level;
     paramMap["verbosity_level"] = en_verbosity_level;
     paramMap["display_level"] = en_display_level;
     paramMap["table_print_level"] = en_table_print_level;
-    paramMap["scale_vertical"] = en_scale_vertical;
+    paramMap["scale_normal"] = en_scale_normal;
     paramMap["use_conjugate_gradient"] = en_use_conjugate_gradient;
     paramMap["use_objective_scaling"] = en_use_objective_scaling;
     paramMap["use_soc"] = en_use_soc;
@@ -173,7 +173,7 @@ namespace DCI {
       }
       
       switch (choice) {
-        case en_vertical_fail_reboot: aux >> vertical_fail_reboot; break;
+        case en_normal_fail_reboot: aux >> normal_fail_reboot; break;
         case en_MaxDiag: aux >> MaxDiag; break;
         case en_MinDiag: aux >> MinDiag; break;
         case en_debug_level: aux >> debug_level; break;
@@ -237,7 +237,7 @@ namespace DCI {
         case en_trustConvexBox: aux >> trustConvexBox; break;
         case en_penal_trust: aux >> penal_trust; break;
         case en_penal_bfgs: aux >> penal_bfgs; break;
-        case en_scale_vertical: aux >> scale_vertical; break;
+        case en_scale_normal: aux >> scale_normal; break;
       }
     }
   }
@@ -298,7 +298,7 @@ namespace DCI {
     solved = dciFalse;
     is_unlimited = dciFalse;
     solved = 0;
-    VertFlag = 0;
+    NormalFlag = 0;
     iter = 0;
     itssmll = 0;
     tRest = 0;
@@ -340,8 +340,8 @@ namespace DCI {
     trustConvexBox = dciFalse;
     penal_trust = dciTrue;
     penal_bfgs = dciTrue;
-    scale_vertical = dciTrue;
-    vertical_fail_reboot = dciTrue;
+    scale_normal = dciTrue;
+    normal_fail_reboot = dciTrue;
 
     //Program properties
     has_ineq = dciFalse; //Has some inequalities

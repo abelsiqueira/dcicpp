@@ -6,10 +6,10 @@
 
 namespace DCI {
   /* ************************************************
-   * ******      VertStep : Vertical Step      ******
+   * ******      NormalStep : Normal Step      ******
    * ************************************************
    *
-   * This function finds the vertical step. It is supposed
+   * This function finds the normal step. It is supposed
    * to find a point x such that
    * 
    * ||h(x)|| <= rho
@@ -27,7 +27,7 @@ namespace DCI {
    * - Return gp too
    */
 
-  Int Interface::verticalStep () {
+  Int Interface::normalStep () {
 //    Vector dn (*env);
 //    Int fail = 0;
 //    Int oldAcnt = 1;
@@ -51,7 +51,7 @@ namespace DCI {
     nbfgs = 0;
 //    oldnormc = normc;
     *xc = *x;
-    VertFlag = 0;
+    NormalFlag = 0;
     if (iter == 1) {
       Aavail = dciTrue;
       gavail = dciTrue;
@@ -115,7 +115,7 @@ namespace DCI {
     }
 
     current_time = getTime() - start_time;
-    while ( (normc > rho) && (nRest <= maxrest) && (VertFlag == 0) && (current_time < max_time) ) {
+    while ( (normc > rho) && (nRest <= maxrest) && (NormalFlag == 0) && (current_time < max_time) ) {
 
       innerNormalPhase();
 

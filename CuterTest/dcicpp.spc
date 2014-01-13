@@ -14,7 +14,7 @@ debug_level 0
 verbosity_level 0
 display_level 1
 table_print_level 1
-scale_vertical 0
+scale_normal 0
 csic 1e-6
 csig 1e-6
 eta1 1e-3
@@ -31,6 +31,6 @@ use_objective_scaling 1
 use_variable_scaling 0
 use_constraint_scaling 0
 max_constraint_scaling 1e6
-vertical_fail_reboot 1
+normal_fail_reboot 1
 objfun_count 10
 Delta0 1e6

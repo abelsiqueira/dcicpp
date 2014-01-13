@@ -81,10 +81,10 @@ namespace DCI {
       // Internal problem solving functions
       void analyzeJacobian ();
       void cholesky ();
-      Int  verticalStep ();
+      Int  normalStep ();
       Int  innerNormalDirection (Real &);
       void innerNormalPhase ();
-      Int  verticalSafeguard ();
+      Int  normalSafeguard ();
       void horizontalStep (Real &);
       Int  innerHorizontalStep (Vector &, Real &, Real &);
       void naProj (Vector &, Vector &, Vector &);
@@ -199,7 +199,7 @@ namespace DCI {
       Bool GotH, first;
       Int  nSteih, nRej, nSoc, nfailv, nHprod, nRest, nbfgs;
       Int  tSoc, tSteih, tRej, tbfgs, tRest;
-      Int  HorzFlag, StepFlag, VertFlag;
+      Int  HorzFlag, StepFlag, NormalFlag;
       Int  iter, maxit, maxitSteih, minitSteih, relitSteih;
       Int  minstep, itssmll, maxrest, maxssmll;
       Int  bfgsupd;
@@ -207,8 +207,8 @@ namespace DCI {
       Bool Aavail, gavail, LimLbd, FreshA;
       Real minBk;
       Bool use_conjugate_gradient;
-      Bool scale_vertical;
-      Bool vertical_fail_reboot;
+      Bool scale_normal;
+      Bool normal_fail_reboot;
       Bool partial_penalization, project_dcp, project_dn, project_bfgs;
       Bool trustWorstdn, trustConvexBox, penal_trust, penal_bfgs;
       Real cholesky_correction;

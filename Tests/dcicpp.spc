@@ -1,4 +1,4 @@
-scale_vertical 0
+scale_normal 0
 MaxDiag 1e9
 MinDiag 0
 use_conjugate_gradient 0

@@ -83,7 +83,7 @@ namespace DCI {
             (iter <= maxit) && 
             (tRest <= maxrest) && 
             (itssmll <= maxssmll) && 
-            (VertFlag == 0) && 
+            (NormalFlag == 0) && 
             (rhomax >= rhomin) && 
             (!is_unlimited) && 
             (current_time < max_time) ) {
@@ -100,7 +100,7 @@ namespace DCI {
       if (DeltaV < DeltaMin) DeltaV = DeltaMin;
 
       updateScaling_x();
-      verticalStep (); //Recalculates f, g and c
+      normalStep (); //Recalculates f, g and c
       updateScaling_xc();
       if (use_objective_scaling && (objfun_count > 0)) {
         objective_scaling = Min( Max(Max(objective_scaling, g->norm()), AbsValue(*f)), max_objective_scaling );
@@ -118,7 +118,7 @@ namespace DCI {
 
       tRest += nRest;
       tbfgs += nbfgs;
-//      assert ( (normc <= rho) || (VertFlag != 0) || (tRest > maxrest) );
+//      assert ( (normc <= rho) || (NormalFlag != 0) || (tRest > maxrest) );
 
       call_ofg_xc (dciFalse);
 
@@ -147,7 +147,7 @@ namespace DCI {
     if (verbosity_level > 0) {
       std::cout << std::endl
           << "----------------------" << std::endl
-          << "Vertical Step" << std::endl
+          << "Normal Step" << std::endl
           << "  Iter   = " << iter << std::endl
           << "  f(x)   = " << *fxc << std::endl
           << "  |c(x)| = " << (ncon > 0 ? c->norm () : 0) << std::endl
@@ -189,15 +189,15 @@ namespace DCI {
     }
 #endif
 
-      if (VertFlag != 0)
-        std::cout << "VertFlag = " << VertFlag << std::endl;
+      if (NormalFlag != 0)
+        std::cout << "NormalFlag = " << NormalFlag << std::endl;
 
       current_time = getTime() - start_time;
 
       if ( ( (cnormi > csic) || 
              ( (normgp > csig) && 
                (ngp > csig*1e-2) ) ) && 
-           (VertFlag == 0) && 
+           (NormalFlag == 0) && 
            (rhomax >= rhomin) && 
            (!is_unlimited) && 
            (current_time < max_time) ) {
@@ -299,9 +299,9 @@ namespace DCI {
       
     } //End
 
-    if (VertFlag == 2)
+    if (NormalFlag == 2)
       exit_flag = 8;
-    else if (VertFlag > 0)
+    else if (NormalFlag > 0)
       exit_flag = 4;
     else if (rhomax < rhomin)
       exit_flag = 1;

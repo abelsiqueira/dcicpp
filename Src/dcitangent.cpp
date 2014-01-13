@@ -184,7 +184,7 @@ namespace DCI {
         DeltaH = Max (DeltaH, normd*alphaI);
 
 //      if (normc > 0 && d.norm() < 1e-12 &&  infeasible_gradient/normc < 1e-6)
-//        VertFlag = 2;
+//        NormalFlag = 2;
 
       first = dciFalse;
       if (DeltaH < 1e-10)

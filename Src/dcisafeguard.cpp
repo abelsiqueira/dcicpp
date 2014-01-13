@@ -5,11 +5,11 @@
 namespace DCI {
 
   // For bfgs use this
-  Int Interface::verticalSafeguard () {
+  Int Interface::normalSafeguard () {
     Vector dn (*env);
 //    Real dnnorm = 0;
     Int iout = 0, ibfgs = 0;
-    Bool scaleJ = scale_vertical;
+    Bool scaleJ = scale_normal;
 
     call_ccfsg_xc (dciTrue, scaleJ);
     if (!is_linear)

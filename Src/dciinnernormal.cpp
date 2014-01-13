@@ -2,20 +2,6 @@
 //#include <cassert>
 #include <cmath>
 
-/* innerVerticalStep
- *
- * This routine computes a trust region vertical step. This step is
- * the solution of the problem:
- *
- * min 0.5*(||h(x) + A*d||^2 - ||h(x)||^2)
- * s.t. ||d|| <= DeltaV
- *
- * The algorithm uses a variant of the dogleg method described by
- * M. Powell in "A hybrid method for nonlinear equations", in
- * Numerical Methods for Nonlinear Algebraic Equation,
- * P. Rabinowitz, ed. 1970.
- */
-
 namespace DCI {
   Int Interface::innerNormalDirection (Real & infeasible_gradient) {
     Real oldnormc = c->norm();
@@ -250,11 +236,11 @@ namespace DCI {
     Int fail = 0;
     Int oldAcnt = 0;
 
-    while ( (normc > rho) && (nRest <= maxrest) && (VertFlag == 0) && (current_time < max_time) ) {
+    while ( (normc > rho) && (nRest <= maxrest) && (NormalFlag == 0) && (current_time < max_time) ) {
       
 #ifdef VERBOSE
       if (verbosity_level > 1) {
-        std::cout << "Going to innerVerticalStep: nRest " << nRest << std::endl
+        std::cout << "Going to innerNormalStep: nRest " << nRest << std::endl
                   << std::endl
                   << "|c| = " << normc << std::endl
                   << "rho = " << rho << std::endl
@@ -281,7 +267,7 @@ namespace DCI {
 
 #ifdef VERBOSE
       if (verbosity_level > 1) {
-        std::cout << "After innerVerticalStep" << std::endl;
+        std::cout << "After innerNormalStep" << std::endl;
         std::cout << "|c| = " << normc << std::endl;
         std::cout << "rho = " << rho << std::endl;
         if ( (nvar < 10) && (ncon < 10) ) {
@@ -313,12 +299,11 @@ namespace DCI {
           }
           GDBSTOP ();
         }
-//          std::cout << "Entering fail at dcivert" << std::endl;
 #endif
       
         call_ccfsg_xc (dciTrue, dciFalse);
         if (normc > 0 && infeasible_gradient/normc < 1e-6)
-          VertFlag = 2;
+          NormalFlag = 2;
 
         Vector ssoc(*env, nvar + nconI);
         Real asoc;
@@ -355,7 +340,7 @@ namespace DCI {
         normc = c->norm ();
         fail = 0;
 
-        if (vertical_fail_reboot && normc > rho && VertFlag == 0) {
+        if (normal_fail_reboot && normc > rho && NormalFlag == 0) {
           // Has failed but is not infeasible
           Real constr[ncon], funval;
           (*cfn) (&nvar, &ncon, xcx, &funval, &mmax, constr);
@@ -371,7 +356,7 @@ namespace DCI {
         }
       } else if ( ( (normc > thetaR*oldnormc) && (oldAcnt > 0) ) || 
                   (oldAcnt > 5) ) {
-        // dcivert failed. Recompute A
+        // Failed. Recompute A
 
         if (!is_linear) {
           call_ccfsg_xc (dciTrue, dciFalse); //CuterJacob
