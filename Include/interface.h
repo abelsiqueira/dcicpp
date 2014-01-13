@@ -86,7 +86,6 @@ namespace DCI {
       Int  verticalSafeguard ();
       void horizontalStep (Real &);
       Int  innerHorizontalStep (Vector &, Real &, Real &);
-      Int  leastSquaresTrustRegion (Vector &, pReal, pReal, pReal);
       void naProj (Vector &, Vector &, Vector &);
       void naProjApprox (Vector &, Vector &, Vector &);
       Int  naStep (Vector &, Vector &);
