@@ -10,8 +10,7 @@ include ../make.inc
 OBJ = dcitangent.o dcinormal.o dciinnernormal.o dciinnertangent.o method.o \
 			solve.o parameters.o interface.o factor.o triplet.o vector.o environment.o 
 
-all: $(OBJ) 
-	$(AR) $(DCILIBNAME) $(OBJ)
+all: $(OBJ) $(DCILIBNAME)
 
 $(DCILIBNAME): $(OBJ)
 	$(AR) $(DCILIBNAME) $(OBJ)

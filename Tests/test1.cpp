@@ -19,7 +19,7 @@ using namespace DCI;
  */
 
 //g(x) = 2*(x - e)
-void COFG (Int * n, Real * x, Real * f, Real * g, Bool * grad) {
+void COFG (pInt, Int * n, Real * x, Real * f, Real * g, Bool * grad) {
   Real xi = 0;
   *f = 0;
   for (Int i = 0; i < *n; i++) {
@@ -31,17 +31,12 @@ void COFG (Int * n, Real * x, Real * f, Real * g, Bool * grad) {
 }
 
 //H(x,y) = 2*I
-void CPROD (Int * n, Int * m, Bool * getder, Real * , Int * mmax,
-            Real * , Real * p, Real * q) {
-  if ( (*getder == 0) || (*getder == 1) ) {
-    if ( (*m != 1) || (*mmax < *m) )
-      return;
-    for (Int i = 0; i < *n; i++)
-      q[i] = 2*p[i];
-  }
+void CPROD (pInt, Int * n, Int *, Bool *, Real *, Real * , Real * p, Real * q) {
+  for (Int i = 0; i < *n; i++)
+    q[i] = 2*p[i];
 }
 
-void CFN (Int * n, Int * , Real * x, Real * f, Int * , Real * c) {
+void CFN (pInt, Int * n, Int *, Real * x, Real * f, Real * c) {
   Real xi = 0;
   
   *f = 0;
@@ -54,18 +49,12 @@ void CFN (Int * n, Int * , Real * x, Real * f, Int * , Real * c) {
 }
 
 //J(x) = e'
-void CCFSG (Int * n, Int * m, Real * x, Int * mmax, Real * c, Int * nnzJ, 
-            Int * jmax, Real * J, Int * indvar, Int * indfun, Bool * Grad) {
+void CCFSG (pInt, Int * n, Int *, Real * x, Real * c, Int * nnzJ, Int *,
+    Real * J, Int * indvar, Int * indfun, Bool * Grad) {
   c[0] = -1;
   for (Int i = 0; i < *n; i++)
     c[0] += x[i];
   if (*Grad == dciFalse)
-    return;
-  if (*m != 1)
-    return;
-  if (*mmax != 1)
-    return;
-  if (*jmax < 0)
     return;
   for (Int i = 0; i < *n; i++) {
     J[i] = 1;

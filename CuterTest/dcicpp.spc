@@ -1,6 +1,6 @@
 maxit 200000
 maxrest 200000
-max_time 600
+max_time 300
 partial_penalization 1
 project_dcp 0
 project_bfgs 1

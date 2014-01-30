@@ -28,7 +28,7 @@ Initialize_Settings() {
 
     # Package to run
     PKG='dcicpp'
-    let package_set=0
+    let package_set=1
 
     # Problem to decode
     PROBLEM=''
@@ -146,9 +146,9 @@ Parse_Arguments() {
                            let architecture_set=1
                            shift
                            ;;
-            -p|--package)  PKG="$2"
-                           let package_set=1
-                           shift
+            -p|--package)  
+              echo "This modification is supposed to be used only by dcicpp. Use runcutest instead"
+                           exit 1
                            ;;
             -sp|--single)  PRECISION="single"
                            ;;

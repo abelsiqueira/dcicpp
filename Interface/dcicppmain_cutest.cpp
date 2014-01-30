@@ -10,7 +10,6 @@ int MAINENTRY () {
   DCI::Interface dci;
   char fname[10] = "OUTSDIF.d";
   Int nvar = 0, ncon = 0, amax = 0;
-  Int nmax, mmax;
   Int funit = 42, ierr = 0, fout = 6, io_buffer = 11, status;
 
   FORTRAN_open (&funit, fname, &ierr);
@@ -19,7 +18,6 @@ int MAINENTRY () {
   dci.cuter ();
 
   Real x[nvar], bl[nvar], bu[nvar];
-  nmax = nvar;
 
   if (ncon == 0) {
     CUTEST_usetup (&status, &funit, &fout, &io_buffer, &nvar, x, bl, bu);
@@ -31,7 +29,6 @@ int MAINENTRY () {
 
     dci.unc_setup (nvar, x, bl, bu);
   } else {
-    mmax = ncon;
     Real y[ncon], cl[ncon], cu[ncon];
     Bool equatn[ncon], linear[ncon];
     Int efirst = 0, lfirst = 0, nvfirst = 0;
