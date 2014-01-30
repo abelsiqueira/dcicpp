@@ -46,7 +46,7 @@ namespace DCI {
     for (Int i = 1; i <= ncon; i++) {
       if (!equatn[i-1])
         continue;
-      (*ccifg) (&nvar, &i, xcx, &ci, gcx, &tmpTrue);
+      (*ccifg) (&cuter_status, &nvar, &i, xcx, &ci, gcx, &tmpTrue);
       cli = clx[i-1];
       cui = cux[i-1];
 

@@ -16,13 +16,13 @@ namespace DCI {
       int solve ();
       void show (std::ostream & = std::cout);
       void printLatex (char * = 0) const;
-      void cuter () { start_at_one = dciTrue; };
+      void cuter () { start_at_one = dciTrue; cuter_status = 0;};
 
       // Sine quibus non
-      void unc_setup (size_t, Real *, Real *, Real *);
-      void con_setup (size_t, Real *, Real *, Real *, size_t, Real *, Real *,
+      void unc_setup (Int, Real *, Real *, Real *);
+      void con_setup (Int, Real *, Real *, Real *, Int, Real *, Real *,
           Real *, Bool *);
-      void set_linear (size_t n, Bool *V);
+      void set_linear (Int n, Bool *V);
 
       Real * get_x () const { return xx; }
       Real   get_f () const { return *f; }
@@ -221,6 +221,7 @@ namespace DCI {
       Bool use_soc;
       Int  objfun_count;
       Int  nfix, *fixed_index;
+      Int  cuter_status;
   };
 }
 

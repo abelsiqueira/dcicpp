@@ -364,12 +364,12 @@ namespace DCI {
     file.close ();
   }
 
-  void Interface::unc_setup (size_t n, Real * x, Real * bl, Real * bu) {
+  void Interface::unc_setup (Int n, Real * x, Real * bl, Real * bu) {
     set_nvar(n);
     nconE = nconI = 0;
     this->x = new Vector (*env, n+nconI);
     xx = this->x->get_doublex();
-    for (size_t i = 0; i < n; i++)
+    for (Int i = 0; i < n; i++)
       xx[i] = x[i];
     xc = new Vector (*(this->x));
     xcx = xc->get_doublex();
@@ -377,11 +377,11 @@ namespace DCI {
     u_bnd = new Vector (*env, n+nconI);
     l_bndx = l_bnd->get_doublex();
     u_bndx = u_bnd->get_doublex();
-    for (size_t i = 0; i < n; i++) {
+    for (Int i = 0; i < n; i++) {
       l_bndx[i] = bl[i];
       u_bndx[i] = bu[i];
     }
-    for (size_t i = 0; i < n; i++) {
+    for (Int i = 0; i < n; i++) {
       if (l_bndx[i] > -dciInf || u_bndx[i] < dciInf) {
         is_bounded = dciTrue;
         break;
@@ -393,15 +393,15 @@ namespace DCI {
       variable_scaling[i] = 1.0;
   }
 
-  void Interface::con_setup (size_t n, Real * x, Real * bl, Real * bu, 
-      size_t m, Real * y, Real * cl, Real * cu, Bool * equatn) {
+  void Interface::con_setup (Int n, Real * x, Real * bl, Real * bu, 
+      Int m, Real * y, Real * cl, Real * cu, Bool * equatn) {
     set_nvar(n);
     set_ncon(m);
     this->equatn = new Bool[m];
     this->y = new Vector (*env, m, y);
     yx = this->y->get_doublex();
     nconE = nconI = 0;
-    for (size_t i = 0; i < m; i++) {
+    for (Int i = 0; i < m; i++) {
       Bool tmp = equatn[i];
       this->equatn[i] = tmp;
       if (tmp == dciFalse)
@@ -414,7 +414,7 @@ namespace DCI {
       is_bounded = dciTrue;
       ineq_index = new Int[nconI];
       Int numI = 0;
-      for (size_t i = 0; i < m; i++) {
+      for (Int i = 0; i < m; i++) {
         if (this->equatn[i] == dciFalse) {
           ineq_index[numI] = i;
           numI++;
@@ -423,7 +423,7 @@ namespace DCI {
     }
     this->x = new Vector (*env, n+nconI);
     xx = this->x->get_doublex();
-    for (size_t i = 0; i < n; i++)
+    for (Int i = 0; i < n; i++)
       xx[i] = x[i];
     xc = new Vector (*(this->x));
     xcx = xc->get_doublex();
@@ -431,11 +431,11 @@ namespace DCI {
     u_bnd = new Vector (*env, n+nconI);
     l_bndx = l_bnd->get_doublex();
     u_bndx = u_bnd->get_doublex();
-    for (size_t i = 0; i < n; i++) {
+    for (Int i = 0; i < n; i++) {
       l_bndx[i] = bl[i];
       u_bndx[i] = bu[i];
     }
-    for (size_t i = 0; i < n; i++) {
+    for (Int i = 0; i < n; i++) {
       if (l_bndx[i] > -dciInf || u_bndx[i] < dciInf) {
         is_bounded = dciTrue;
         break;
@@ -456,11 +456,11 @@ namespace DCI {
     cux = this->cu->get_doublex();
   }
 
-  void Interface::set_linear (size_t n, Bool * V) {
+  void Interface::set_linear (Int n, Bool * V) {
     linear = new Bool[n];
     set_ncon(n);
     nconL = nconNL = 0;
-    for (size_t i = 0; i < n; i++) {
+    for (Int i = 0; i < n; i++) {
       Bool tmp = V[i];
       linear[i] = tmp;
       if (tmp == dciFalse)
@@ -474,9 +474,9 @@ namespace DCI {
 
   void Interface::call_fn () {
     if (ncon == 0) {
-      (*ufn) (&nvar, xx, f);
+      (*ufn) (&this->cuter_status, &nvar, xx, f);
     } else {
-      (*cfn) (&nvar, &ncon, xx, f, &mmax, cx);
+      (*cfn) (&this->cuter_status, &nvar, &ncon, xx, f, cx);
       for (Int i = 0; i < ncon; i++) {
         if (cx[i] > dciInf)
           cx[i] = dciInf;
@@ -507,9 +507,9 @@ namespace DCI {
 
   void Interface::call_fn_xc () {
     if (ncon == 0) {
-      (*ufn) (&nvar, xcx, fxc);
+      (*ufn) (&this->cuter_status, &nvar, xcx, fxc);
     } else {
-      (*cfn) (&nvar, &ncon, xcx, fxc, &mmax, cx);
+      (*cfn) (&this->cuter_status, &nvar, &ncon, xcx, fxc, cx);
       for (Int i = 0; i < ncon; i++) {
         if (cx[i] > dciInf)
           cx[i] = dciInf;
@@ -544,9 +544,9 @@ namespace DCI {
 
   void Interface::call_ofg (pReal px, Bool grad) {
     if (ncon == 0)
-      (*uofg) (&nvar, px, f, gx, &grad);
+      (*uofg) (&this->cuter_status, &nvar, px, f, gx, &grad);
     else
-      (*cofg) (&nvar, px, f, gx, &grad);
+      (*cofg) (&this->cuter_status, &nvar, px, f, gx, &grad);
     if (*f > dciInf)
       *f = dciInf;
     else if (*f < -dciInf)
@@ -599,7 +599,7 @@ namespace DCI {
     updateScaling_x();
     static bool createdvariable_scaling = false;
     pInt nnzj = new Int(0);
-    (*ccfsg) (&nvar, &ncon, xx, &mmax, cx, nnzj, &amax, Jx, Jvar, Jfun, &grad);
+    (*ccfsg) (&this->cuter_status, &nvar, &ncon, xx, cx, nnzj, &amax, Jx, Jvar, Jfun, &grad);
     for (Int i = 0; i < ncon; i++) {
       if (cx[i] > dciInf)
         cx[i] = dciInf;
@@ -701,7 +701,7 @@ namespace DCI {
   void Interface::call_ccfsg_xc (Bool grad, Bool scale) {
     updateScaling_xc();
     pInt nnzj = new Int(0);
-    (*ccfsg) (&nvar, &ncon, xcx, &mmax, cx, nnzj, &amax, Jx, Jvar, Jfun, &grad);
+    (*ccfsg) (&this->cuter_status, &nvar, &ncon, xcx, cx, nnzj, &amax, Jx, Jvar, Jfun, &grad);
     for (Int i = 0; i < ncon; i++) {
       if (cx[i] > dciInf)
         cx[i] = dciInf;
@@ -805,9 +805,9 @@ namespace DCI {
         yx[i] /= constraint_scaling[i];
     }
     if (ncon == 0)
-      (*uprod) (&nvar, &gotder, xx, ppx, ux);
+      (*uprod) (&this->cuter_status, &nvar, &gotder, xx, ppx, ux);
     else
-      (*cprod) (&nvar, &ncon, &gotder, xx, &mmax, yx, ppx, ux);
+      (*cprod) (&this->cuter_status, &nvar, &ncon, &gotder, xx, yx, ppx, ux);
     if (objective_scaling != 1) {
       for (Int i = 0; i < nvar; i++)
         ux[i] /= objective_scaling;
@@ -852,9 +852,9 @@ namespace DCI {
         yx[i] /= constraint_scaling[i];
     }
     if (ncon == 0)
-      (*uprod) (&nvar, &gotder, xcx, ppx, ux);
+      (*uprod) (&this->cuter_status, &nvar, &gotder, xcx, ppx, ux);
     else
-      (*cprod) (&nvar, &ncon, &gotder, xcx, &mmax, yx, ppx, ux);
+      (*cprod) (&this->cuter_status, &nvar, &ncon, &gotder, xcx, yx, ppx, ux);
     if (objective_scaling != 1) {
       for (Int i = 0; i < nvar; i++)
         ux[i] /= objective_scaling;
@@ -888,10 +888,10 @@ namespace DCI {
     }
     char pname[10], vnames[10*nvar];
     if (ncon == 0)
-      (*unames) (&nvar, pname, vnames);
+      (*unames) (&this->cuter_status, &nvar, pname, vnames);
     else {
       char gnames[10*ncon];
-      (*cnames) (&nvar, &ncon, pname, vnames, gnames);
+      (*cnames) (&this->cuter_status, &nvar, &ncon, pname, vnames, gnames);
     }
     pname[8] = 0;
     problemName.assign(pname);

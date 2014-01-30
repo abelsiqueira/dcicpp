@@ -317,7 +317,7 @@ namespace DCI {
         if (normal_fail_reboot && normc > rho && NormalFlag == 0) {
           // Has failed but is not infeasible
           Real constr[ncon], funval;
-          (*cfn) (&nvar, &ncon, xcx, &funval, &mmax, constr);
+          (*cfn) (&cuter_status, &nvar, &ncon, xcx, &funval, constr);
           Int numI = nvar;
           for (Int i = 0; i < ncon; i++) {
             if (equatn[i] == dciFalse) {

@@ -27,7 +27,11 @@ localtest: library
 cuter: library
 	$(MV) Lib/$(DCILIBNAME) $(MYCUTER)/double/lib/$(DCILIBNAME)
 	mkdir -p $(CUTER)/common/src/pkg/dcicpp
-	(cd Interface; make all)
+	(cd Interface; make cuter)
+
+cutest: library
+	#$(MV) Lib/$(DCILIBNAME) $(MYCUTER)/double/lib/$(DCILIBNAME)
+	(cd Interface; make cutest)
 
 test: library
 	(cd Tests; make )
@@ -50,7 +54,9 @@ arglintests: library
 clean:
 	(cd Lib; make clean )
 	(cd Tests; make clean )
+	(cd Interface; make clean )
 
 purge:
 	(cd Lib; make purge )
 	(cd Tests; make purge )
+	(cd Interface; make purge )
