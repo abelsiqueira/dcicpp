@@ -21,7 +21,7 @@ list=$(cat $list)
 cd $target_dir
 for problem in $list
 do
-  rundcicpp -p dcicpp -D $problem > $problem.out
+  rundcicpp -D $problem &> $problem.out
 done
 
 echo -n "Problem & nvar & ncon " > table_latex
