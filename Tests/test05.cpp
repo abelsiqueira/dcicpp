@@ -23,7 +23,7 @@ using namespace DCI;
  *
  */
 
-void COFG (Int * n, Real * x, Real * f, Real * g, Bool * grad) {
+void COFG (pInt, Int * n, Real * x, Real * f, Real * g, Bool * grad) {
   Real xi = 0;
   *f = 0;
   for (Int i = 0; i < *n; i++) {
@@ -35,45 +35,33 @@ void COFG (Int * n, Real * x, Real * f, Real * g, Bool * grad) {
 }
 
 //H(x,y) = 2*I
-void CPROD (Int * n, Int * m, Bool * getder, Real * x, Int * mmax, Real * y, Real * p, Real * q) {
-  if ( (*getder == 0) || (*getder == 1) ) {
-    if ( (*m != *n) || (*mmax < *m) )
-      throw("Error");
-    for (Int i = 0; i < *n; i++)
-      q[i] = (1 - 6*x[i]*y[i])*p[i];
-  }
+void CPROD (pInt, Int * n, Int *, Bool *, Real * x, Real * y, Real * p,
+    Real * q) {
+  for (Int i = 0; i < *n; i++)
+    q[i] = (1 - 6*x[i]*y[i])*p[i];
 }
 
-void CFN (Int * n, Int * m, Real * x, Real * f, Int * mmax, Real * c) {
+void CFN (pInt, Int * n, Int *, Real * x, Real * f, Real * c) {
   Real xi = 0;
   *f = 0;
   for (Int i = 0; i < *n; i++) {
     xi = x[i];
     *f += xi*xi;
   }
-  if (*m != *n)
-    throw("Error");
-  if (*mmax < 1)
-    throw("Error");
   for (Int i = 0; i < *n; i++) {
     Real xi = x[i];
     c[i] = - xi * xi * xi;
   }
 }
 
-void CCFSG (Int * n, Int * m, Real * x, Int * mmax, Real * c, Int * nnzJ, Int * jmax, Real * J, Int * indvar, Int * indfun, Bool * Grad) {
+void CCFSG (pInt, Int * n, Int *, Real * x, Real * c, Int * nnzJ, Int *,
+    Real * J, Int * indvar, Int * indfun, Bool * Grad) {
   for (Int i = 0; i < *n; i++) {
     Real xi = x[i];
     c[i] = - xi * xi * xi;
   }
   if (*Grad == dciFalse)
     return;
-  if (*m != *n)
-    throw("Error");
-  if (*mmax != *n)
-    throw("Error");
-  if (*jmax < 0)
-    throw("Error");
   Int k = 0;
   for (Int i = 0; i < *n; i++) {
     Real xi = x[i];

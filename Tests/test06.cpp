@@ -42,7 +42,7 @@ void UGR (Int * n, Real * x, Real * g) {
   }
 }
 
-void COFG (Int * n, Real * x, Real * f, Real * g, Bool * grad) {
+void COFG (pInt, Int * n, Real * x, Real * f, Real * g, Bool * grad) {
   Real xi = 0, xi2 = 0;
   *f = 0;
   for (Int i = 0; i < *n; i++) {
@@ -55,23 +55,18 @@ void COFG (Int * n, Real * x, Real * f, Real * g, Bool * grad) {
 }
 
 //H(x,y) = 2*I
-void CPROD (Int * n, Int * m, Bool * getder, Real * x, Int * mmax, Real * y, Real * p, Real * q) {
-  if ( (*getder == 0) || (*getder == 1) ) {
-    if ( (*n < *m) || (*m != 2) || (*mmax < *m) )
-      throw("Error");
-    for (Int i = 0; i < *n - 1; i++) {
-      Real xi = x[i];
-      q[i] = (12*xi*xi + 2*(y[0] + y[1]))*p[i];
-    }
-    Real xn = x[*n - 1];
-    q[*n - 1] = (12*xn*xn + 2*y[0])*p[*n - 1];
+void CPROD (pInt, Int * n, Int *, Bool *, Real * x, Real * y, Real * p,
+    Real * q) {
+  for (Int i = 0; i < *n - 1; i++) {
+    Real xi = x[i];
+    q[i] = (12*xi*xi + 2*(y[0] + y[1]))*p[i];
   }
+  Real xn = x[*n - 1];
+  q[*n - 1] = (12*xn*xn + 2*y[0])*p[*n - 1];
 }
 
-void CFN (Int * n, Int * m, Real * x, Real * f, Int * mmax, Real * c) {
+void CFN (pInt, Int * n, Int *, Real * x, Real * f, Real * c) {
   UFN (n, x, f);
-  if ( (*n < *m) || (*m != 2) || (*mmax < *m) )
-    throw("Error");
   c[0] = x[*n-1]*x[*n-1] - 1;
   c[1] = -x[*n-1];
   for (Int i = 0; i < *n - 1; i++) {
@@ -82,7 +77,8 @@ void CFN (Int * n, Int * m, Real * x, Real * f, Int * mmax, Real * c) {
   }
 }
 
-void CCFSG (Int * n, Int * m, Real * x, Int * mmax, Real * c, Int * nnzJ, Int * jmax, Real * J, Int * indvar, Int * indfun, Bool * Grad) {
+void CCFSG (pInt, Int * n, Int *, Real * x, Real * c, Int * nnzJ, Int *,
+    Real * J, Int * indvar, Int * indfun, Bool * Grad) {
   c[0] = x[*n-1]*x[*n-1] - 1;
   c[1] = -x[*n-1];
   for (Int i = 0; i < *n - 1; i++) {
@@ -91,9 +87,6 @@ void CCFSG (Int * n, Int * m, Real * x, Int * mmax, Real * c, Int * nnzJ, Int * 
     c[0] += xi;
     c[1] += xi;
   }
-  if ( (*n < *m) || (*m != 2) || (*mmax < *m) || (*jmax < 0) )
-    throw("Error");
-
   if (*Grad == dciFalse)
     return;
   Int k = 0;

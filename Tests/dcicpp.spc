@@ -49,7 +49,7 @@ epsgap 1e-4
 bfgsupd 5
 c1 0.5
 c2 5e-1
-max_time 6000
+max_time 60
 minBk 1e-12
 display_level 0
 verbosity_level 0

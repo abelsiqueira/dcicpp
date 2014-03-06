@@ -27,7 +27,7 @@ using namespace DCI;
 
 Real r = 2;
 
-void COFG (Int * n, Real * x, Real * f, Real * g, Bool * grad) {
+void COFG (pInt, Int * n, Real * x, Real * f, Real * g, Bool * grad) {
   Real xi = 0;
   *f = 0;
   for (Int i = 0; i < *n; i++) {
@@ -39,45 +39,30 @@ void COFG (Int * n, Real * x, Real * f, Real * g, Bool * grad) {
 }
 
 //H(x,y) = 2*I
-void CPROD (Int * n, Int * m, Bool * getder, Real * , Int * mmax, Real * y, Real * p, Real * q) {
-  if ( (*getder == 0) || (*getder == 1) ) {
-    if ( (*n != 2) || (*m != 2) || (*mmax < *m) )
-      throw("Wrong Dimensions");
-    q[0] = (-1 + 2 * y[0] + 2 * y[1] / (r*r) ) * p[0];
-    q[1] = (-1 + 2 * y[0] / (r*r) + 2 * y[1] ) * p[1];
-  }
+void CPROD (pInt, Int *, Int *, Bool *, Real *, Real * y, Real * p, Real * q) {
+  q[0] = (-1 + 2 * y[0] + 2 * y[1] / (r*r) ) * p[0];
+  q[1] = (-1 + 2 * y[0] / (r*r) + 2 * y[1] ) * p[1];
 }
 
-void CFN (Int * n, Int * m, Real * x, Real * f, Int * mmax, Real * c) {
+void CFN (pInt, Int *n, Int *, Real * x, Real * f, Real * c) {
   Real xi = 0;
   *f = 0;
   for (Int i = 0; i < *n; i++) {
     xi = x[i];
     *f -= 0.5*xi*xi;
   }
-  if ( (*n != 2) || (*m != 2) )
-    throw("Wrong Dimensions");
-  if (*mmax < 2)
-    throw("Wrong Dimensions");
   Real v1 = x[0]*x[0], v2 = x[1]*x[1], rr = r*r;
   c[0] = v1 + v2/rr - 1;
   c[1] = v1/rr + v2 - 1;
 }
 
-void CCFSG (Int * n, Int * m, Real * x, Int * mmax, Real * c, Int * nnzJ, Int * jmax, Real * J, Int * indvar, Int * indfun, Bool * Grad) {
+void CCFSG (pInt, Int *, Int *, Real * x, Real * c, Int * nnzJ, Int *, Real * J,
+    Int * indvar, Int * indfun, Bool * Grad) {
   Real v1 = x[0]*x[0], v2 = x[1]*x[1], rr = r*r;
   c[0] = v1 + v2/rr - 1;
   c[1] = v1/rr + v2 - 1;
   if (*Grad == dciFalse)
     return;
-  if (*n != 2)
-    throw("Wrong Dimensions");
-  if (*m != 2)
-    throw("Wrong Dimensions");
-  if (*mmax < 2)
-    throw("Wrong Dimensions");
-  if (*jmax < 0)
-    throw("Wrong Dimensions");
   Int k = 0;
   v1 = x[0];
   v2 = x[1];

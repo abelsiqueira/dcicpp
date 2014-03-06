@@ -23,9 +23,7 @@ using namespace DCI;
  *
  */
 
-void COFG (Int * n, Real * x, Real * f, Real * g, Bool * grad) {
-  if (*n != 2)
-    return;
+void COFG (pInt, Int *, Real * x, Real * f, Real * g, Bool * grad) {
   Real x1 = x[0], x2 = x[1];
   Real a1 = x2 - x1*x1, a2 = 1 - x1;
   *f = 100 * a1 * a1 + a2 * a2;
@@ -35,18 +33,14 @@ void COFG (Int * n, Real * x, Real * f, Real * g, Bool * grad) {
   }
 }
 
-void CPROD (Int * n, Int * m, Bool * , Real * x, Int * mmax, Real * y, Real * p, Real * q) {
-  if ( (*n != 2) || (*m != 2) || (*mmax < *m) )
-    return;
+void CPROD (pInt, Int *, Int *, Bool *, Real * x, Real * y, Real * p, Real * q) {
   Real x1 = x[0], x2 = x[1];
   Real y1 = y[0], y2 = y[1];
   q[0] = (1200*x1*x1 - 400*x2 + 2) * p[0] + (-400*x1 + y1) * p[1];
   q[1] = (-400*x1 + y1) * p[0] + (200 + 2*y2) * p[1];
 }
 
-void CFN (Int * n, Int * m, Real * x, Real * f, Int * mmax, Real * c) {
-  if ( (*n < *m) || (*m != 2) || (*mmax < *m) )
-    throw("Error");
+void CFN (pInt, Int *, Int *, Real * x, Real * f, Real * c) {
   Real x1 = x[0], x2 = x[1];
   Real a1 = x2 - x1*x1, a2 = 1 - x1;
   *f = 100 * a1 * a1 + a2 * a2;
@@ -54,7 +48,8 @@ void CFN (Int * n, Int * m, Real * x, Real * f, Int * mmax, Real * c) {
   c[1] = x1 + x2*x2;
 }
 
-void CCFSG (Int * , Int * , Real * x, Int * , Real * c, Int * nnzJ, Int * , Real * J, Int * indvar, Int * indfun, Bool * Grad) {
+void CCFSG (pInt, Int *, Int *, Real * x, Real * c, Int * nnzJ, Int *, Real * J,
+    Int * indvar, Int * indfun, Bool * Grad) {
   Real x1 = x[0], x2 = x[1];
   c[0] = x1 * x2 - 1;
   c[1] = x1 + x2*x2;

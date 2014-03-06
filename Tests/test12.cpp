@@ -30,9 +30,7 @@ using namespace DCI;
  *
  */
 
-void COFG (Int * n, Real * x, Real * f, Real * g, Bool * grad) {
-  if (*n != 3)
-    return;
+void COFG (pInt, Int *, Real * x, Real * f, Real * g, Bool * grad) {
   Real x1 = x[0];
   *f = -x1;
   if (*grad == dciTrue) {
@@ -42,9 +40,7 @@ void COFG (Int * n, Real * x, Real * f, Real * g, Bool * grad) {
   }
 }
 
-void CPROD (Int * n, Int * m, Bool * , Real * x, Int * mmax, Real * y, Real * p, Real * q) {
-  if ( (*n != 3) || (*m != 2) || (*mmax < *m) )
-    return;
+void CPROD (pInt, Int *, Int *, Bool *, Real * x, Real * y, Real * p, Real * q) {
   Real x1 = x[0], x2 = x[1];
   Real y1 = y[0], y2 = y[1];
   q[0] = - y1 * exp(x1) * p[0];
@@ -52,14 +48,15 @@ void CPROD (Int * n, Int * m, Bool * , Real * x, Int * mmax, Real * y, Real * p,
   q[2] = 0;
 }
 
-void CFN (Int * , Int * , Real * x, Real * f, Int * , Real * c) {
+void CFN (pInt, Int *, Int *, Real * x, Real * f, Real * c) {
   Real x1 = x[0], x2 = x[1], x3 = x[2];
   *f = -x1;
   c[0] = x2 - exp(x1);
   c[1] = x3 - exp(x2);
 }
 
-void CCFSG (Int * , Int * , Real * x, Int * , Real * c, Int * nnzJ, Int * , Real * J, Int * indvar, Int * indfun, Bool * Grad) {
+void CCFSG (pInt, Int *, Int *, Real * x, Real * c, Int * nnzJ, Int *, Real * J,
+    Int * indvar, Int * indfun, Bool * Grad) {
   Real x1 = x[0], x2 = x[1], x3 = x[2];
   c[0] = x2 - exp(x1);
   c[1] = x3 - exp(x2);

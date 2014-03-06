@@ -7,7 +7,8 @@ default: all
 #VALGRINDFLAGS = --leak-check=yes -v
 GDB = gdb
 
-TESTS = test1.tst
+TESTSCPP = $(shell ls test[0-9][0-9].cpp)
+TESTS = $(TESTSCPP:.cpp=.tst)
 LOCALTEST = localtest.tst
 OLDTESTS = test1.tst test2.tst test3.tst test4.tst test5.tst test6.tst test7.tst test8.tst test9.tst test10.tst test11.tst test12.tst test13.tst test14.tst test15.tst test16.tst
 FIXEDTESTS = fixedtest1.tst fixedtest2.tst fixedtest3.tst
