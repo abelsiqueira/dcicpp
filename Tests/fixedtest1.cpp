@@ -4,7 +4,7 @@
 
 using namespace DCI;
 
-/* 
+/*
  * min x_1^2 + x_2^2 + x_3^2
  * s.t. x_1 + x_2 + x_3 = 1
  *      1 <= x_2 <= 1
@@ -44,7 +44,7 @@ void CFN (Int * n, Int * m, Real * x, Real * f, Int * mmax, Real * c) {
   c[0] = x1 + x2 + x3 - 1;
 }
 
-void CCFSG (Int * , Int * , Real * x, Int * , Real * c, Int * nnzJ, 
+void CCFSG (Int * , Int * , Real * x, Int * , Real * c, Int * nnzJ,
     Int * , Real * J, Int * indvar, Int * indfun, Bool * Grad) {
   Real x1 = x[0], x2 = x[1], x3 = x[2];
   c[0] = x1 + x2 + x3 - 1;
@@ -83,7 +83,7 @@ int main () {
   bu[0] = dciInf;
   bu[1] = 1;
   bu[2] = dciInf;
-  
+
   cl[0] = 0;
   cu[0] = 0;
   equatn[0] = dciTrue;

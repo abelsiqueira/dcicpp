@@ -113,7 +113,7 @@ int main () {
   bl[1] = -dciInf;
   bu[0] = 0.5;
   bu[1] = dciInf;
-  
+
   cl[0] = 0;
   cl[1] = 0;
   cu[0] = dciInf;

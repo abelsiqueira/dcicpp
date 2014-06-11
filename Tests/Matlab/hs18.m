@@ -12,8 +12,8 @@ h = @(x,s) c(x) - s;
 
 Diag = @(x,s) diag([
     (bu(1) - x(1))*(x(1) - bl(1));
-    (bu(2) - x(2))*(x(2) - bl(2)); 
-    s(1); 
+    (bu(2) - x(2))*(x(2) - bl(2));
+    s(1);
     s(2)]);
 A = @(x,s) jacobz(x,s)*Diag(x,s);
 

@@ -68,16 +68,16 @@ namespace DCI {
     if (paramFile.fail())
       return;
 
-    enum parameters {en_DeltaMax, en_maxrest, en_maxit, en_maxssmll, en_maxitSteih, 
+    enum parameters {en_DeltaMax, en_maxrest, en_maxit, en_maxssmll, en_maxitSteih,
       en_minitSteih, en_relitSteih, en_nfailv, en_csic, en_csig, en_rhomin, en_phi1,
-      en_phi2, en_kappa1, en_kappa2, en_kappa3, en_kappa4, en_zeta1, en_zeta2, 
+      en_phi2, en_kappa1, en_kappa2, en_kappa3, en_kappa4, en_zeta1, en_zeta2,
       en_zeta3, en_alphaR, en_alphaI, en_alphaS, en_eta1, en_eta2, en_eta3,
       en_DeltaMin, en_DeltaTiny, en_minstep, en_Delta0, en_thetaR, en_LbdMax,
       en_eps1, en_eps2, en_eps3, en_epsmu, en_epsgap, en_bfgsupd, en_c1, en_c2,
       en_max_time, en_minBk, en_use_conjugate_gradient, en_partial_penalization, en_project_dcp,
       en_project_bfgs, en_trustWorstdn, en_trustConvexBox, en_penal_trust,
       en_penal_bfgs, en_scale_normal, en_display_level, en_debug_level,
-      en_verbosity_level, en_MaxDiag, en_MinDiag, 
+      en_verbosity_level, en_MaxDiag, en_MinDiag,
       en_use_objective_scaling, en_objfun_count, en_use_constraint_scaling,
       en_max_objective_scaling, en_use_variable_scaling, en_table_print_level,
       en_max_constraint_scaling, en_use_soc,
@@ -171,7 +171,7 @@ namespace DCI {
       if (debug_level > 0) {
         std::cout << param << " = " << value << std::endl;
       }
-      
+
       switch (choice) {
         case en_normal_fail_reboot: aux >> normal_fail_reboot; break;
         case en_MaxDiag: aux >> MaxDiag; break;
@@ -469,7 +469,7 @@ namespace DCI {
     DeltaH = DeltaV;
 
     running = dciFalse;
-      
+
   }
 
 }

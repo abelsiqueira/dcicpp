@@ -6,7 +6,7 @@
 #define UNUSED(x) (void)(x)
 
 namespace DCI {
-  
+
   typedef int Int;
   typedef bool Bool;
   typedef double     Real;

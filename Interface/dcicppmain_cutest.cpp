@@ -37,7 +37,7 @@ int MAINENTRY () {
         y, cl, cu, equatn, linear, &efirst, &lfirst, &nvfirst);
     CUTEST_cdimsj (&status, &amax);
     amax *= 2;
-  
+
     dci.set_cofg (CUTEST_cofg);
     dci.set_cprod (CUTEST_chprod);
     dci.set_cfn (CUTEST_cfn);

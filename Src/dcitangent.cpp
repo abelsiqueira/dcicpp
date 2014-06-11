@@ -10,7 +10,7 @@ namespace DCI {
    * This function finds the Tangent step. It is
    * supposed to find a miniminum to an approximation
    * of f around the current point, with the conditions
-   * of being in a trust region, doesn't leave the 
+   * of being in a trust region, doesn't leave the
    * cylinder 2*rho, and is in the null space of the
    * Jacobian matrix.
    */
@@ -42,9 +42,9 @@ namespace DCI {
 #endif
 
     current_time = getTime() - start_time;
-    while ( (!fail) && 
-            ( (newnormc > zeta1*rho) || 
-              (DLH > eta1*qd) ) && 
+    while ( (!fail) &&
+            ( (newnormc > zeta1*rho) ||
+              (DLH > eta1*qd) ) &&
             (current_time < max_time) ) {
 
       SteihFlag = innerTangentStep (d, qd, gtd);
@@ -66,7 +66,7 @@ namespace DCI {
 
 #ifdef VERBOSE
       if (verbosity_level > 1) {
-        std::cout << "SteihFlag = " << SteihFlag 
+        std::cout << "SteihFlag = " << SteihFlag
                   << ", nSteih = " << nSteih << std::endl;
       }
       if ( (nvar + ncon <= 5) && (verbosity_level > 1) ) {
@@ -102,9 +102,9 @@ namespace DCI {
       else
         normd = d.norm (0);
 
-      if ( first && use_soc && 
-         ( (newnormc > Min (zeta1*rho, zeta1*normc + zeta2*rho) ) || 
-           ( (normc <= csic) && 
+      if ( first && use_soc &&
+         ( (newnormc > Min (zeta1*rho, zeta1*normc + zeta2*rho) ) ||
+           ( (normc <= csic) &&
              (newnormc > Max (csic, zeta3*normc) ) ) ) ) {
 
         pReal ptmp_c = tmp_c.get_doublex();

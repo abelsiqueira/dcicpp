@@ -38,7 +38,7 @@ void CPROD (pInt, Int * n, Int *, Bool *, Real *, Real * , Real * p, Real * q) {
 
 void CFN (pInt, Int * n, Int *, Real * x, Real * f, Real * c) {
   Real xi = 0;
-  
+
   *f = 0;
   c[0] = -1;
   for (Int i = 0; i < *n; i++) {
@@ -81,7 +81,7 @@ int main () {
     bl[i] = -dciInf;
     bu[i] = dciInf;
   }
-  
+
   for (Int i = 0; i < m; i++) {
     y[i] = 0;
     cl[i] = -dciInf; // No lower bound

@@ -13,7 +13,7 @@ using namespace DCI;
  *
  * and
  *
- * cI(x) = [x(1) * x(2) - 25; 
+ * cI(x) = [x(1) * x(2) - 25;
  *          x(1)^2 + x(2)^2 - 25;
  *          x(1);
  *          x(2)]
@@ -132,7 +132,7 @@ int main () {
     bl[i] = -dciInf;
     bu[i] = dciInf;
   }
-  
+
   y[0] = 0;
   y[1] = 0;
   y[2] = 0;

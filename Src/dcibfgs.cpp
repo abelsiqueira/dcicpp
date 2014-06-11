@@ -10,7 +10,7 @@ namespace DCI {
     Vector D (*env, (nvar + nconI) * (bfgsupd + 1) );
     Vector U (*env, (nvar + nconI) * bfgsupd );
     pReal Yx = Y.get_doublex (), Dx = D.get_doublex (), Ux = U.get_doublex (),
-          gtmpx = 0, goldx = gold.get_doublex (), 
+          gtmpx = 0, goldx = gold.get_doublex (),
           px = p.get_doublex (), poldx = pold.get_doublex (),
           xoldx = xold.get_doublex (), soldx = 0;
     Real one[2] = {1,0}, zero[2] = {0,0};
@@ -108,7 +108,7 @@ namespace DCI {
     iout = lineSearch (xold, sold, d, objfun, gtd, gtmp);
 
     gtmp.sdmult (*J, 1, one, zero, *c);
-    
+
     dnorm = 0;
     for (Int i = 0; i < nvar; i++) {
       Real Dxi;
@@ -173,7 +173,7 @@ namespace DCI {
 #ifndef NDEBUG
       checkInfactibility();
 #endif
-      
+
       gtmp.sdmult (*J, 1, one, zero, *c);
 
       ibfgs++;
@@ -338,7 +338,7 @@ namespace DCI {
           scx[i] = clx[i] + dciEps;
       }
 
-      
+
 #ifndef NDEBUG
       checkInfactibility();
 #endif
@@ -413,7 +413,7 @@ namespace DCI {
         lambda = interpolate (f0, gtd0, flo, fhi, lbdlo, lbdhi, zoomfirst);
 
       Real diff = fabs(lbdlo - lbdhi);
-      lambda = Max (Min (lbdlo, lbdhi) + 0.01*diff, 
+      lambda = Max (Min (lbdlo, lbdhi) + 0.01*diff,
                Min (lambda, Max(lbdlo, lbdhi) - 0.01*diff) );
 
       for (Int i = 0; i < nvar; i++) {

@@ -74,18 +74,18 @@ namespace DCI {
     gap = 1;
     Real ydif = 0;
 
-    while ( ( (cnormi > csic) || 
-              ( (normgp > csig) && 
-                (ngp > csig*1e-2) ) || 
-              (mu > epsmu) || 
-              (gap > epsgap) || 
-              (ydif > 1e-6) ) && 
-            (iter <= maxit) && 
-            (tRest <= maxrest) && 
-            (itssmll <= maxssmll) && 
-            (NormalFlag == 0) && 
-            (rhomax >= rhomin) && 
-            (!is_unlimited) && 
+    while ( ( (cnormi > csic) ||
+              ( (normgp > csig) &&
+                (ngp > csig*1e-2) ) ||
+              (mu > epsmu) ||
+              (gap > epsgap) ||
+              (ydif > 1e-6) ) &&
+            (iter <= maxit) &&
+            (tRest <= maxrest) &&
+            (itssmll <= maxssmll) &&
+            (NormalFlag == 0) &&
+            (rhomax >= rhomin) &&
+            (!is_unlimited) &&
             (current_time < max_time) ) {
 
       calcYdif ();
@@ -194,16 +194,16 @@ namespace DCI {
 
       current_time = getTime() - start_time;
 
-      if ( ( (cnormi > csic) || 
-             ( (normgp > csig) && 
-               (ngp > csig*1e-2) ) ) && 
-           (NormalFlag == 0) && 
-           (rhomax >= rhomin) && 
-           (!is_unlimited) && 
+      if ( ( (cnormi > csic) ||
+             ( (normgp > csig) &&
+               (ngp > csig*1e-2) ) ) &&
+           (NormalFlag == 0) &&
+           (rhomax >= rhomin) &&
+           (!is_unlimited) &&
            (current_time < max_time) ) {
 
         updateScaling_xc();
-        tangentStep (norms); 
+        tangentStep (norms);
 #ifndef NDEBUG
         checkInfactibility();
 #endif
@@ -296,7 +296,7 @@ namespace DCI {
         std::cout << "ekpp/ek = " << ekpp/ek << std::endl;
       }
 #endif
-      
+
     } //End
 
     if (NormalFlag == 2)

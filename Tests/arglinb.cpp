@@ -5,9 +5,9 @@
 using namespace DCI;
 
 /* Let's make the problem ARGLINB
- * min sum_{i = 1}^M 
+ * min sum_{i = 1}^M
  *      ( sum_{j = 1}^N   x_j * i * j - 1.0 )^2
- *     
+ *
  * with N = 10 and M = 20
  *
  */

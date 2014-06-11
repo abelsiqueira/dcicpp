@@ -114,7 +114,7 @@ LAPACK = -llapack
 BLAS = -L$(HOME)/Libraries/GotoBLAS2/ -lgoto2 -lgfortran -lgfortranbegin -lpthread
 \end{verbatim}
   \item Edit the variable \verb+METIS_PATH+ and \verb+METIS+ to reflect your configurations. In our case
-    \begin{verbatim} 
+    \begin{verbatim}
 METIS_PATH = $(HOME)/Libraries/metis-5.0.2
 METIS = /usr/local/lib/libmetis.a
     \end{verbatim}
@@ -123,7 +123,7 @@ METIS = /usr/local/lib/libmetis.a
 \begin{verbatim}
 $ make all
 \end{verbatim}
- \item {\bf base\_matrices} add the lines from the file in the \verb+addtobash.rc+ to your configuration file 
+ \item {\bf base\_matrices} add the lines from the file in the \verb+addtobash.rc+ to your configuration file
 
 \verb+$HOME/.bashrc+
 
@@ -164,7 +164,7 @@ $ tar -zxf mastsif_small.tar.gz
 $ tar -zxf mastsif_large.tar.gz
 \end{verbatim}
 We need to add some lines to \verb+$HOME/.bashrc+ that depend on your configuration.
-We will use the following options with CUTEr, if you need to change them, then the lines could change too. 
+We will use the following options with CUTEr, if you need to change them, then the lines could change too.
 \begin{itemize}
 \item PC
 \item Linux

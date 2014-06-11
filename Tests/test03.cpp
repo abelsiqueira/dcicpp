@@ -64,7 +64,7 @@ void CFN (pInt, Int * n, Int *, Real * x, Real * f, Real * c) {
   }
 }
 
-void CCFSG (pInt, Int * n, Int *, Real * x, Real * c, Int * nnzJ, Int *, 
+void CCFSG (pInt, Int * n, Int *, Real * x, Real * c, Int * nnzJ, Int *,
     Real * J, Int * indvar, Int * indfun, Bool * Grad) {
   c[0] = r*r;
   for (Int i = 0; i < *n; i++) {
@@ -103,7 +103,7 @@ int main () {
     bl[i] = -dciInf;
     bu[i] = dciInf;
   }
-  
+
   for (Int i = 0; i < m; i++) {
     y[i] = 0;
     cl[i] = -dciInf;

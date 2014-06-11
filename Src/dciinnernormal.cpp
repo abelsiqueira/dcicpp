@@ -12,7 +12,7 @@ namespace DCI {
     Real zero[2] = {0,0};
     Int iout, naflag;
     Bool dnavail;
-    Vector gtmp (*env); 
+    Vector gtmp (*env);
     Vector xtmp (*xc), ctmp (*c), stmp (*env);
     Real normgtmp = 0;
     Real beta1 = 0.1, beta2 = 0.25;
@@ -51,12 +51,12 @@ namespace DCI {
       Real zi = xcx[i], li = l_bndx[i], ui = u_bndx[i];
       lower[i] = Max( -DeltaV, (li > -dciInf ? (li - zi) * (1 - epsmu) :
             -dciInf) );
-      upper[i] = Min(  DeltaV, (ui <  dciInf ? (ui - zi) * (1 - epsmu) : 
+      upper[i] = Min(  DeltaV, (ui <  dciInf ? (ui - zi) * (1 - epsmu) :
              dciInf) );
     }
     Vector aux(*env);
     d = gtmp;
-    pReal dx = 0; 
+    pReal dx = 0;
     gtmpx = gtmp.get_doublex();
     dx = d.get_doublex();
     for (Int i = 0; i < nvar + nconI; i++) {
@@ -138,10 +138,10 @@ namespace DCI {
     }
 
     /* ||a + b||^2 = <a+b,a+b> = <a,a> + 2*<a,b> + <b,b> */
-    /* m(d) = 0.5*||J*d + h||^2 
-     * dtr = t*dn + (1 - t)*dcp 
-     * m(dtr) = 0.5*||J*(t*dn + (1-t)*dcp) + h||^2 
-     *   = 0.5*||J*dcp + h + t*J*(dn - dcp)||^2 
+    /* m(d) = 0.5*||J*d + h||^2
+     * dtr = t*dn + (1 - t)*dcp
+     * m(dtr) = 0.5*||J*(t*dn + (1-t)*dcp) + h||^2
+     *   = 0.5*||J*dcp + h + t*J*(dn - dcp)||^2
      *   = 0.5*||J*dcp + h||^2 + t*(J*dcp + h)'*J*(dn - dcp) + 0.5*t^2*||J*(dn - dcp)||^2 */
     Vector Adcph(*c), difdcdn(dn), Adif(*env);
     Adcph.sdmult(*J, 0, one, one, dcp);
@@ -177,7 +177,7 @@ namespace DCI {
       else if (xcx[i] <= l_bndx[i])
         xcx[i] = l_bndx[i] + dciEps;
     }
-    
+
 #ifndef NDEBUG
     checkInfactibility();
 #endif
@@ -211,7 +211,7 @@ namespace DCI {
     Int oldAcnt = 0;
 
     while ( (normc > rho) && (nRest <= maxrest) && (NormalFlag == 0) && (current_time < max_time) ) {
-      
+
 #ifdef VERBOSE
       if (verbosity_level > 1) {
         std::cout << "Going to innerNormalStep: nRest " << nRest << std::endl
@@ -274,7 +274,7 @@ namespace DCI {
           GDBSTOP ();
         }
 #endif
-      
+
         call_ccfsg_xc (dciTrue, dciFalse);
         if (normc > 0 && infeasible_gradient/normc < 1e-6)
           NormalFlag = 2;
@@ -328,7 +328,7 @@ namespace DCI {
           }
           normc = c->norm();
         }
-      } else if ( ( (normc > thetaR*oldnormc) && (oldAcnt > 0) ) || 
+      } else if ( ( (normc > thetaR*oldnormc) && (oldAcnt > 0) ) ||
                   (oldAcnt > 5) ) {
         // Failed. Recompute A
 

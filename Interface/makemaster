@@ -1,4 +1,4 @@
-#!/usr/bin/make 
+#!/usr/bin/make
 CXX = g++
 
 all: dcicpp_main.o
@@ -9,5 +9,5 @@ all: dcicpp_main.o
 clean:
 	rm -f dcicpp_main.o
 
-tools: 
+tools:
 	echo "No tools"

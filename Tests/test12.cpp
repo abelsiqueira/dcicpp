@@ -21,7 +21,7 @@ using namespace DCI;
  * l = [0; 0; 0]
  * u = [100; 100; 10]
  *
- * Expected solution: 
+ * Expected solution:
  *
  * sol = [log(log(10)), log(10), 10]
  *     ~ [0.83403, 2.3026, 10]
@@ -102,7 +102,7 @@ int main () {
   bu[0] = 100;
   bu[1] = 100;
   bu[2] = 10;
-  
+
   cl[0] = 0;
   cl[1] = 0;
   cl[2] = 0;

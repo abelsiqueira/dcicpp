@@ -111,7 +111,7 @@ int main () {
   cu[0] = 0;
   cl[1] = 0;
   cu[1] = dciInf;
-  
+
   dci.set_x (n, x);
   dci.set_bl (n, bl);
   dci.set_bu (n, bu);

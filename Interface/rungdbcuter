@@ -43,7 +43,7 @@ Initialize_Settings() {
     # RECOMPILE = 1 -> force recompilation
     let RECOMPILE=0
 
-    # DEBUG = 0 (normal execution), 
+    # DEBUG = 0 (normal execution),
     # DEBUG = 1 (keep the load module and do *not* execute it)
     let DEBUG=0
 
@@ -101,7 +101,7 @@ Display_Usage() {
     printf '  -D  or --decode  \tspecify problem to decode and compile\n'
     printf '  -u  or --uncons  \tspecify unconstrained problem (Matlab---deprecated)\n'
     printf '  -Lpath           \tadd path to libraries path\n'
-    printf '  -lrary           \tlink in library.a or library.so\n' 
+    printf '  -lrary           \tlink in library.a or library.so\n'
     printf '        --command \tdisplay compilation commands\n'
     printf '        --config  \tdisplay current settings\n'
     printf 'All other options are passed unchanged to sifdecode\n'

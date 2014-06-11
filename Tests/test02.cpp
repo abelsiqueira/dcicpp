@@ -38,7 +38,7 @@ void COFG (pInt, Int * n, Real * x, Real * f, Real * g, Bool * grad) {
 
 //H(x,y) = 2*I
 void CPROD (pInt, Int *, Int *, Bool *, Real * x, Real * y, Real * p,
-    Real * q) { 
+    Real * q) {
   q[0] = (1 - 6*y[0]*x[0])*p[0];
   q[1] = p[1];
 }
@@ -53,7 +53,7 @@ void CFN (pInt, Int * n, Int *, Real * x, Real * f, Real * c) {
   c[0] = x[1] - x[0]*x[0]*x[0] + x[0];
 }
 
-void CCFSG (pInt, Int *, Int *, Real * x, Real * c, Int * nnzJ, Int *, 
+void CCFSG (pInt, Int *, Int *, Real * x, Real * c, Int * nnzJ, Int *,
     Real * J, Int * indvar, Int * indfun, Bool * Grad) {
   c[0] = x[1] - x[0]*x[0]*x[0] + x[0];
   if (*Grad == dciFalse)
@@ -90,7 +90,7 @@ int main () {
     bl[i] = -dciInf;
     bu[i] = dciInf;
   }
-  
+
   for (int i = 0; i < m; i++) {
     y[i] = 0;
     cl[i] = -dciInf;

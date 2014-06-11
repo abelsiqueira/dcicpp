@@ -93,7 +93,7 @@ int main () {
     cu[i] = 0;
     equatn[i] = dciTrue;
   }
-  
+
   dci.set_x (n, x);
   dci.set_bl (n, bl);
   dci.set_bu (n, bu);

@@ -19,24 +19,24 @@ ARGLINTESTS = arglinb.tst
 PIS = points_in_space1.tst points_in_space2.tst
 ALLTESTS = $(TESTS) $(OLDTESTS) $(EQTESTS) $(UNCTESTS) $(LOCALTEST) $(INFEASTESTS) $(ARGLINTESTS) $(PIS) $(FIXEDTESTS)
 
-all: library $(TESTS) 
+all: library $(TESTS)
 	@for i in $(TESTS); do $(VALGRIND) $(VALGRINDFLAGS) ./$$i; done
 
 arglin: library $(ARGLINTESTS)
 	$(VALGRIND) $(VALGRINDFLAGS) ./arglinb.tst
 
 fixedtests: $(FIXEDTESTS)
-	$(VALGRIND) $(VALGRINDFLAGS) ./fixedtest1.tst 
-	$(VALGRIND) $(VALGRINDFLAGS) ./fixedtest2.tst 
-	$(VALGRIND) $(VALGRINDFLAGS) ./fixedtest3.tst 
+	$(VALGRIND) $(VALGRINDFLAGS) ./fixedtest1.tst
+	$(VALGRIND) $(VALGRINDFLAGS) ./fixedtest2.tst
+	$(VALGRIND) $(VALGRINDFLAGS) ./fixedtest3.tst
 
 eqtests: $(EQTESTS)
-	$(VALGRIND) $(VALGRINDFLAGS) ./eqtest1.tst 
-	$(VALGRIND) $(VALGRINDFLAGS) ./eqtest2.tst 
-	$(VALGRIND) $(VALGRINDFLAGS) ./eqtest3.tst 
-	$(VALGRIND) $(VALGRINDFLAGS) ./eqtest4.tst 
-	$(VALGRIND) $(VALGRINDFLAGS) ./eqtest5.tst 
-	$(VALGRIND) $(VALGRINDFLAGS) ./test3eq.tst 
+	$(VALGRIND) $(VALGRINDFLAGS) ./eqtest1.tst
+	$(VALGRIND) $(VALGRINDFLAGS) ./eqtest2.tst
+	$(VALGRIND) $(VALGRINDFLAGS) ./eqtest3.tst
+	$(VALGRIND) $(VALGRINDFLAGS) ./eqtest4.tst
+	$(VALGRIND) $(VALGRINDFLAGS) ./eqtest5.tst
+	$(VALGRIND) $(VALGRINDFLAGS) ./test3eq.tst
 
 unctests: $(UNCTESTS)
 	$(VALGRIND) $(VALGRINDFLAGS) ./unctest1.tst

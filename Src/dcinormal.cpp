@@ -11,7 +11,7 @@ namespace DCI {
    *
    * This function finds the normal step. It is supposed
    * to find a point x such that
-   * 
+   *
    * ||h(x)|| <= rho
    *
    * To do this, we will sucessively apply Powell's dogleg
@@ -138,7 +138,7 @@ namespace DCI {
         normg = g->norm ();
         ngp = normgp/(normg + 1);
       }
-      
+
       if (rho > 2*rhomax*ngp)
         rho = Min (phi1*rhomax*ngp, Max (1e-4*rhomax*ngp, 0.75*rhomax) );
       else

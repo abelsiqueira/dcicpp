@@ -42,7 +42,7 @@ namespace DCI {
     Bool tmpTrue = dciTrue;
 
     feasOpt->reset(nvar, 0.0);
-    
+
     for (Int i = 1; i <= ncon; i++) {
       if (!equatn[i-1])
         continue;
@@ -93,7 +93,7 @@ namespace DCI {
   }
 
   void Interface::leastSquaresCG (Bool transp, const Vector & rhs, Vector & sol, Vector & res) {
-    /* Solves 
+    /* Solves
      * min 0.5 * || J*sol - rhs ||^2
      * or
      * min 0.5 * || J'*sol - rhs ||^2
@@ -171,7 +171,7 @@ namespace DCI {
     }
     Real mufactor = 1.0;
     Real minmuthisiter = Max (0.1*mu, 1e-24);
-    Real minother = 100*Min (rho, rho*rho); 
+    Real minother = 100*Min (rho, rho*rho);
 //    minother = Min (minother, calcYdif() + lagrgap + infacgap);
     minother = Min (minother, mufactor * mu);
     minother = Min (minother, 100*normck);
@@ -391,7 +391,7 @@ namespace DCI {
         gap += Max(0.0,  yineqx[i]) * (bui - xi);
     }
     gap /= (nvar + nconI);
-    
+
     return gap;
   }
 
@@ -410,7 +410,7 @@ namespace DCI {
     for (Int i = 0; i < nvar+nconI; i++) {
       if (l_bndx[i] - u_bndx[i] > - dciTiny)
         continue;
-      if ( (partial_penalization) && 
+      if ( (partial_penalization) &&
            (l_bndx[i] > -dciInf) && (u_bndx[i] < dciInf) ) {
         if ( (xx[i] - l_bndx[i]) < (u_bndx[i] - xx[i]) )
           val += log (xx[i] - l_bndx[i]);

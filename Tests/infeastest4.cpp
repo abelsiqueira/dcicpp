@@ -131,7 +131,7 @@ int main () {
   cl[2] = 0;
   cu[2] = 0;
   equatn[2] = dciTrue;
-  
+
   dci.set_x (n, x);
   dci.set_bl (n, bl);
   dci.set_bu (n, bu);

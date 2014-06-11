@@ -134,7 +134,7 @@ int main () {
     bl[i] = -dciInf;
     bu[i] = dciInf;
   }
-  
+
   y[0] = 0;
   y[1] = 0;
   cl[0] = 0;

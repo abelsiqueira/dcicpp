@@ -3,13 +3,13 @@
 
 namespace DCI {
 
-  template < typename T > 
+  template < typename T >
   void delpointer (T * p) {
     if (p != 0)
       delete p;
   }
 
-  template < typename T > 
+  template < typename T >
   void delarray (T * p) {
     if (p != 0)
       delete []p;
@@ -27,7 +27,7 @@ namespace DCI {
   T Min (T a, T b) {
     if (a > b)
       return b;
-    else 
+    else
       return a;
   }
 

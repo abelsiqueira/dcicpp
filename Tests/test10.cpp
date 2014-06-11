@@ -96,7 +96,7 @@ int main () {
   bl[1] = 0;
   bu[0] = 50;
   bu[1] = dciInf;
-  
+
   y[0] = 0;
   cl[0] = 0;
   cu[0] = dciInf;

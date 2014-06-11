@@ -39,7 +39,7 @@ int MAINENTRY () {
     CSETUP ((&funit), (&fout), (&nvar), (&ncon), x, bl, bu, (&nmax), equatn, linear, y, cl, cu, (&mmax), (&efirst), (&lfirst), (&nvfirst));
     CDIMSJ ((&amax));
     amax *= 2;
-  
+
     dci.set_cofg (COFG);
     dci.set_cprod (CPROD);
     dci.set_cfn (CFN);

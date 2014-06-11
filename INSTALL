@@ -166,14 +166,14 @@ $ tar -zxf mastsif_small.tar.gz
 $ tar -zxf mastsif_large.tar.gz
 
 We need to add some lines to $HOME/.bashrc
-We will use the following options with CUTEr, if you need to change them, then the lines could change too. 
+We will use the following options with CUTEr, if you need to change them, then the lines could change too.
   - PC
   - Linux
   - gfortran
   - gnu g++
   - double
   - large
- 
+
 In file $HOME/.bashrc, add BEFORE the last part
 
 -------------------------------------------------

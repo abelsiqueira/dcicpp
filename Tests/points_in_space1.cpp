@@ -24,7 +24,7 @@ void COFG (Int * n, Real * x, Real * f, Real * g, Bool * grad) {
 
   for (Int i = 0; i < npt - 1; i++) {
     for (Int j = i+1; j < npt; j++) {
-      sum = pow(x[2*i] - x[2*j], 2) + 
+      sum = pow(x[2*i] - x[2*j], 2) +
             pow(x[2*i+1] - x[2*j+1], 2);
       *f += 1/sum;
       sum *= sum;
@@ -99,7 +99,7 @@ void CFN (Int * n, Int * m, Real * x, Real * f, Int * mmax, Real * c) {
 
   for (Int i = 0; i < npt; i++) {
     for (Int j = i+1; j < npt; j++) {
-      sum = 1/( pow(x[2*i] - x[2*j], 2) + 
+      sum = 1/( pow(x[2*i] - x[2*j], 2) +
                 pow(x[2*i+1] - x[2*j+1], 2) );
       *f += sum;
     }
@@ -174,7 +174,7 @@ int main () {
 //    cl[2*i] = -dciInf;
 //    cu[2*i] = 0;
   }
-  
+
   dci.set_x (n, x);
   dci.set_bl (n, bl);
   dci.set_bu (n, bu);

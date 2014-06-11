@@ -65,7 +65,7 @@ namespace DCI {
     delpointer (J);
     delpointer (Jtrip);
     delpointer (LJ);
-    delpointer (env); 
+    delpointer (env);
     delpointer (scaling_matrix);
     delpointer (variable_scaling);
   }
@@ -157,7 +157,7 @@ namespace DCI {
       out << "Problem name: " << problemName << std::endl
           << std::endl
           << "Number of Variables: " << nvar << std::endl
-          << "Number of Constraints: " << ncon << std::endl 
+          << "Number of Constraints: " << ncon << std::endl
           << "             Equality: " << nconE << std::endl
           << "           has_inequality: " << nconI << std::endl
           << std::endl;
@@ -200,7 +200,7 @@ namespace DCI {
           break;
       }
       matlab_filename += ".m";
-      matlab_filename.erase( remove_if(matlab_filename.begin(), 
+      matlab_filename.erase( remove_if(matlab_filename.begin(),
             matlab_filename.end(), isspace), matlab_filename.end());
       std::ofstream matlab_file(matlab_filename.c_str());
       J->print_matlab(matlab_file);
@@ -292,7 +292,7 @@ namespace DCI {
 
   }
 
-  /* 
+  /*
    * If (table_print_level == 0)
    * Problem name & nvar & ncon & iters & time & converged
    * If (table_print_level == 1)
@@ -347,7 +347,7 @@ namespace DCI {
     } else
       latex_name = filename;
     file.open (latex_name.c_str(), std::ios_base::app);
-    
+
     file << problemName << " & "
          << nvar << " & "
          << ncon << " & ";
@@ -358,7 +358,7 @@ namespace DCI {
     }
     file << iter << " & "
          << (current_time > 0 ? current_time : 0) << " & "
-         << ((ncon > 0) ? "con" : "unc") 
+         << ((ncon > 0) ? "con" : "unc")
          << "\\\\ \\hline\n";
 
     file.close ();
@@ -393,7 +393,7 @@ namespace DCI {
       variable_scaling[i] = 1.0;
   }
 
-  void Interface::con_setup (Int n, Real * x, Real * bl, Real * bu, 
+  void Interface::con_setup (Int n, Real * x, Real * bl, Real * bu,
       Int m, Real * y, Real * cl, Real * cu, Bool * equatn) {
     set_nvar(n);
     set_ncon(m);
@@ -564,7 +564,7 @@ namespace DCI {
       }
       for (Int i = 0; i < nvar+nconI; i++) {
         Real xi = px[i], li = l_bndx[i], ui = u_bndx[i];
-        if (li - ui > - dciTiny) 
+        if (li - ui > - dciTiny)
           gx[i] = 0;
         else if (li > -dciInf || ui < dciInf) {
           if ( (xi - li) < (ui - xi) ) {
@@ -639,7 +639,7 @@ namespace DCI {
             Jx[k] /= constraint_scaling[i];
           }
         }
-        if (scale) { 
+        if (scale) {
           for (Int k = 0; k < *nnzj; k++) {
             Int j = Jvar[k];
             Jx[k] *= scaling_matrix[j];
@@ -697,7 +697,7 @@ namespace DCI {
     }
     delete nnzj;
   }
-  
+
   void Interface::call_ccfsg_xc (Bool grad, Bool scale) {
     updateScaling_xc();
     pInt nnzj = new Int(0);
@@ -898,7 +898,7 @@ namespace DCI {
   }
 
   void Interface::analyzeJacobian () {
-    if (LJ == 0) 
+    if (LJ == 0)
       LJ = new Factor (*env);
     LJ->analyze (*J);
   }
@@ -920,7 +920,7 @@ namespace DCI {
     timespec ts;
 
     clock_gettime(CLOCK_REALTIME, &ts);
-    return static_cast<Real>(ts.tv_nsec)/static_cast<double>(1e9) + 
+    return static_cast<Real>(ts.tv_nsec)/static_cast<double>(1e9) +
            static_cast<Real>(ts.tv_sec);
   }
 

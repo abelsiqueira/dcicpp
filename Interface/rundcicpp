@@ -146,7 +146,7 @@ Parse_Arguments() {
                            let architecture_set=1
                            shift
                            ;;
-            -p|--package)  
+            -p|--package)
               echo "This modification is supposed to be used only by dcicpp. Use runcutest instead"
                            exit 1
                            ;;

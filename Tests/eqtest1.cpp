@@ -102,7 +102,7 @@ int main () {
     bl[i] = -dciInf;
     bu[i] = dciInf;
   }
-  
+
   for (Int i = 0; i < m; i++) {
     y[i] = 0;
     cl[i] = -dciInf;

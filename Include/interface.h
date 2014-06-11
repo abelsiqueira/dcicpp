@@ -166,7 +166,7 @@ namespace DCI {
       Real normck;
       Real ngp; // normgp / (normg + 1)
       Real engp;
-      
+
       // The environment variables
       Environment * env;
       Int nmax, mmax, amax;

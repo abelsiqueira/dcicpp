@@ -14,8 +14,8 @@ using namespace DCI;
  *
  * and
  *
- * cE(x) = [x(1)^2 + x(2)^2 - 1;   
- *          x(1)^2 + x(2)^2 - 4]   
+ * cE(x) = [x(1)^2 + x(2)^2 - 1;
+ *          x(1)^2 + x(2)^2 - 4]
  *
  *
  */
@@ -110,7 +110,7 @@ int main () {
     cl[i] = 0;
     cu[i] = 0;
   }
-  
+
   dci.set_x (n, x);
   dci.set_bl (n, bl);
   dci.set_bu (n, bu);
