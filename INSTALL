@@ -1,8 +1,11 @@
-To install dcicpp:
+Last update: 2014/06/11
 
-Download everything here in the same place. We used the folder Libraries in the home folder. You can add a variable in your bashrc to this place or add the library path manually.
+To install dcicpp
 
--------------------------------------------------
+Download everything here in the same place. We used the folder Libraries
+in the home folder. You can add a variable in your bashrc to this place
+or add the library path manually.
+
 -------------------------------------------------
 - base_matrices
 git clone git://github.com/abelsiqueira/base_matrices.git
@@ -16,33 +19,32 @@ http://www.cise.ufl.edu/research/sparse/ccolamd/current/CCOLAMD.tar.gz
 http://www.cise.ufl.edu/research/sparse/SuiteSparse_config/current/SuiteSparse_config.tar.gz
 
 - Metis
-http://glaros.dtc.umn.edu/gkhome/fetch/sw/metis/metis-5.0.2.tar.gz
+http://glaros.dtc.umn.edu/gkhome/fetch/sw/metis/OLD/metis-4.0.3.tar.gz
 
-- Goto BLAS
-Go to the site
-http://www.tacc.utexas.edu/tacc-projects/gotoblas2
-and download
+- OpenBLAS
+http://github.com/xianyi/OpenBLAS/tarball/v0.2.9
 
 -------------------------------------------------
-Uncompres everything. Install everything in 32 bits.
+Uncompress and install everything.
 -------------------------------------------------
-INSTALL Goto BLAS First:
+INSTALL OpenBLAS first:
 
 $ make
 
-if needed use TARGET option too. We needed to set to CORE2, because our processor is not supported.
+if needed use TARGET option too. We needed to set to CORE2, because
+our processor is not supported.
 
 $ make TARGET=CORE2
 
 -------------------------------------------------
-INSTALL Metis:
+INSTALL Metis 4
 
-$ make config
 $ make
-# make install
 
 -------------------------------------------------
 INSTALL CHOLMOD and dependencies
+
+You will need gfortran
 
 Edit SuiteSparse_config/SuiteSparse_config.mk
 
@@ -51,95 +53,21 @@ Edit SuiteSparse_config/SuiteSparse_config.mk
     LAPACK = -llapack
 
 - Add line
-    BLAS = -L$(HOME)/Libraries/GotoBLAS2/ -lgoto2 -lgfortran -lgfortranbegin -lpthread
+    BLAS = $(HOME)/Libraries/GotoBLAS2/libgoto2.a -lgfortran -lgfortranbegin -lpthread
 
 - Edit the variables METIS_PATH and METIS to reflect your configurations. In our case
-    METIS_PATH = $(HOME)/Libraries/metis-5.0.2/Lib
-    METIS = /usr/local/lib/libmetis.a
+    METIS_PATH = $(HOME)/Libraries/metis-4.0.3
+    METIS = $(METIS_PATH)/libmetis.a
 
 Go to the folders CHOLMOD, CAMD and CCOLAMD and enter
 
 $ make all
-
 -------------------------------------------------
 - base_matrices
 
-add the following lines, editing to reflect your configuration, to the file $HOME/.bashrc
-These lines are in the file addtobash.rc
-
--------------------------------------------------
-ROOTCUTER="$HOME/Libraries"
-
-export CUTER="$ROOTCUTER/cuter2"
-export MYCUTER="$CUTER/CUTEr.large.pc.lnx.gfo"
-export SIFDEC="$ROOTCUTER/sifdec2"
-export MYSIFDEC="$SIFDEC/SifDec.large.pc.lnx.gfo"
-export MASTSIF="$ROOTCUTER/mastsif"
-export MANPATH="$CUTER/common/man:$SIFDEC/common/man:$MANPATH"
-export PATH="$MYCUTER/bin:$MYSIFDEC/bin:$PATH"
-
-export GOTOBLASDIR="$HOME/Libraries/GotoBLAS2"
-export GOTOBLASLIBS="$GOTOBLASDIR/libgoto2.a $GOTOBLASDIR/libgoto2.so -lgfortran -lgfortranbegin -lpthread"
-
-LIBSDIR="$HOME/Libraries"
-METISDIR="${LIBSDIR}/metis-5.0.2"
-TIMDAVISDIR="${LIBSDIR}"
-CHOLMODDIR="$TIMDAVISDIR/CHOLMOD"
-AMDDIR="$TIMDAVISDIR/AMD"
-CAMDDIR="$TIMDAVISDIR/CAMD"
-COLAMDDIR="$TIMDAVISDIR/COLAMD"
-CCOLAMDDIR="$TIMDAVISDIR/CCOLAMD"
-SSCONFIG="$TIMDAVISDIR/SuiteSparse_config"
-BMDIR="$LIBSDIR/base_matrices"
-DCICPPDIR="$LIBSDIR/dcicpp"
-MUMPSDIR="$LIBSDIR/MUMPS_4.10.0"
-
-TIMDAVISLIB="$CHOLMODDIR/Lib:$AMDDIR/Lib:$CAMDDIR/Lib:$COLAMDDIR/Lib:$CCOLAMDDIR/Lib:$SSCONFIGDIR"
-METISLIB="$METISDIR"
-BMLIB="$BMDIR/Lib"
-CUTERLIB="$MYCUTER/double/lib"
-DCICPPLIB="$DCICPPDIR/Lib"
-MUMPSLIB="$MUMPSDIR/lib:$MUMPSDIR/PORD/lib:$MUMPSDIR/libseq"
-
-TIMDAVISI="$CHOLMODDIR/Include:$SUITESPARSEDIR"
-METISI="$METISDIR/Lib"
-BMI="$BMDIR/Include"
-CUTERI="$CUTER/common/include"
-DCICPPI="$DCICPPDIR/Include"
-MUMPSI="$MUMPSDIR/libseq:$MUMPSDIR/PORD/include:$MUMPSDIR/include"
-
-export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/usr/local/lib:$TIMDAVISLIB:$METISLIB:$BMLIB:$CUTERLIB:$GOTOBLASDIR:$DCICPPLIB:$MUMPSLIB"
-export LIBRARY_PATH="$LIBRARY_PATH:/usr/local/lib:$TIMDAVISLIB:$METISLIB:$BMLIB:$CUTERLIB:$GOTOBLASDIR:$DCICPPLIB:$MUMPSLIB"
-export LIBPATH="$LIBPATH:/usr/local/lib:$TIMDAVISLIB:$METISLIB:$BMLIB:$CUTERLIB:$GOTOBLASDIR:$DCICPPLIB"
-export CPLUS_INCLUDE_PATH="$CPLUS_INCLUDE_PATH:$TIMDAVISI:$METISI:$BMI:$CUTERI:$DCICPPI:$MUMPSI"
-export C_INCLUDE_PATH="$C_INCLUDE_PATH:$TIMDAVISI:$METISI:$BMI:$CUTERI:$DCICPPI:$MUMPSI"
-export INCLUDE_PATH="$INCLUDE_PATH:$TIMDAVISI:$METISI:$BMI:$CUTERI:$DCICPPI:$MUMPSI"
--------------------------------------------------
-Remove the CUTER parts, if you do not intend to use CUTEr.
-
-Open a new terminal or use the command
-$ source $HOME/.bashrc
-
-If needed, edit make.inc and do
+Edit make.all to reflect your configuration, then
 
 $ make all
-
-------------------------------------------------
-- MUMPS
-
-Copy Make.inc/Makefile.gfortran.SEQ to Makefile.inc with the command
-
-$ cp Make.inc/Makefile.gfortran.SEQ Makefile.inc
-
-Then edit the file and change the LIBBLAS to reflect your BLAS. In our case, after including
-the lines at .bashrc, we can simply put
-
-LIBBLAS = -lgoto2 -lgfortran -lgfortranbegin -lpthread
-
-Then, simply enter
-
-$ make all
-
 -------------------------------------------------
 - dcicpp
 
@@ -148,74 +76,18 @@ If needed, edit make.inc and do
 $ make all
 
 -------------------------------------------------
-- CUTEr (for testing and comparing)
+- CUTEst
 
-Download CUTEr using svn
+Follow instructions from
+http://ccpforge.cse.rl.ac.uk/gf/project/cutest/wiki/
+then do
 
-$ svn co https://magi-trac-svn.mathappl.polymtl.ca/SVN/cuter/sifdec/branches/SifDec2 ./sifdec2
-$ svn co https://magi-trac-svn.mathappl.polymtl.ca/SVN/cuter/cuter/branches/cuter64 ./cuter2
+$ make cutest
 
-Download SIF problems
+to run a problem, run
 
-$ wget ftp://ftp.numerical.rl.ac.uk/pub/cuter/mastsif_small.tar.gz
-$ wget ftp://ftp.numerical.rl.ac.uk/pub/cuter/mastsif_large.tar.gz
+$ rundcicpp -D PROBLEM
 
-Uncompress the files
+For instance,
 
-$ tar -zxf mastsif_small.tar.gz
-$ tar -zxf mastsif_large.tar.gz
-
-We need to add some lines to $HOME/.bashrc
-We will use the following options with CUTEr, if you need to change them, then the lines could change too.
-  - PC
-  - Linux
-  - gfortran
-  - gnu g++
-  - double
-  - large
-
-In file $HOME/.bashrc, add BEFORE the last part
-
--------------------------------------------------
-ROOTCUTER="$HOME/Libraries"
-
-export CUTER="$ROOTCUTER/cuter2"
-export MYCUTER="$CUTER/CUTEr.large.pc.lnx.gfo"
-export SIFDEC="$ROOTCUTER/sifdec2"
-export MYSIFDEC="$SIFDEC/SifDec.large.pc.lnx.gfo"
-export MASTSIF="$ROOTCUTER/mastsif"
-export MANPATH="$CUTER/common/man:$SIFDEC/common/man:$MANPATH"
-export PATH="$MYCUTER/bin:$MYSIFDEC/bin:$PATH"
--------------------------------------------------
-Open a new terminal or use the command
-$ source $HOME/.bashrc
--------------------------------------------------
-
-Back in the sifdec2 directory, enter
-
-$ ./install_sifdec
-
-When asked if you want to run install_mysifdec, press enter (if you modified .bashrc, otherwise, do it now, as proposed by the installer).
-When asked if you want to 'make all', press enter (unless same as above)
-
--------------------------------------------------
-Now go to the file $CUTER/common/include/cuter.h
-There, change the definition os integer and logical to long int, i.e.
-typedef int integer
-typedef int logical
-
-Finally, go to the cuter2 directory and enter
-
-$ ./install_cuter
-
-and follow the same instruction as above.
--------------------------------------------------
-Create a directory and test cuter with the command
-$ runcuter -p gen -D ROSENBR
-
-Now, compile dcicpp for cuter. In the dcicpp folder, enter
-$ make cuter
-
--------------------------------------------------
-See TESTING.cuter to proceed with testing dcicpp with CUTEr
-
+$ rundcicpp -D HS35
