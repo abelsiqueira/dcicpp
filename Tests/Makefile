@@ -8,25 +8,25 @@ default: all
 GDB = gdb
 
 TESTSCPP = $(shell ls *test[0-9][0-9].cpp)
+FIXEDTESTSCPP = $(shell ls fixedtest*.cpp)
+EQTESTSCPP = $(shell ls eqtest*.cpp)
+UNCTESTSCPP = $(shell ls unctest*.cpp)
+INFEASTESTSCPP = $(shell ls infeastest*.cpp)
+ALLTESTSCPP = $(shell ls *test*.cpp)
 TESTS = $(TESTSCPP:.cpp=.tst)
-LOCALTEST = localtest.tst
-FIXEDTESTS = fixedtest1.tst fixedtest2.tst
-EQTESTS = eqtest1.tst eqtest2.tst eqtest3.tst eqtest4.tst eqtest5.tst eqtest6.tst
-UNCTESTS = unctest1.tst unctest2.tst
-INFEASTESTS = infeastest1.tst infeastest2.tst infeastest3.tst infeastest3e.tst infeastest4.tst infeastest5.tst infeastest6.tst
-ARGLINTESTS = arglinb.tst
-PIS = points_in_space1.tst points_in_space2.tst
-ALLTESTS = $(TESTS) $(OLDTESTS) $(EQTESTS) $(UNCTESTS) $(LOCALTEST) $(INFEASTESTS) $(ARGLINTESTS) $(PIS) $(FIXEDTESTS)
+FIXEDTESTS = $(FIXEDTESTSCPP:.cpp=.tst)
+EQTESTS = $(EQTESTSCPP:.cpp=.tst)
+UNCTESTS = $(UNCTESTSCPP:.cpp=.tst)
+INFEASTESTS = $(INFEASTESTSCPP:.cpp=.tst)
+ALLTESTS = $(ALLTESTSCPP:.cpp=.tst)
 
 all: library $(TESTS)
 	@for i in $(TESTS); do $(VALGRIND) $(VALGRINDFLAGS) ./$$i; done
 
-arglin: library $(ARGLINTESTS)
-	$(VALGRIND) $(VALGRINDFLAGS) ./arglinb.tst
-
 fixedtests: $(FIXEDTESTS)
 	$(VALGRIND) $(VALGRINDFLAGS) ./fixedtest1.tst
 	$(VALGRIND) $(VALGRINDFLAGS) ./fixedtest2.tst
+	$(VALGRIND) $(VALGRINDFLAGS) ./fixedtest3.tst
 
 eqtests: $(EQTESTS)
 	@for i in $(EQTESTS); do $(VALGRIND) $(VALGRINDFLAGS) ./$$i; done
@@ -37,13 +37,6 @@ unctests: $(UNCTESTS)
 
 infeastests: $(INFEASTESTS)
 	@for i in $(INFEASTESTS); do $(VALGRIND) $(VALGRINDFLAGS) ./$$i; done
-
-pis: $(PIS)
-	$(VALGRIND) $(VALGRINDFLAGS) ./points_in_space1.tst
-	$(VALGRIND) $(VALGRINDFLAGS) ./points_in_space2.tst
-
-localtest: $(LOCALTEST)
-	$(VALGRIND) $(VALGRINDFLAGS) ./localtest.tst
 
 library: ../Lib/$(DCILIBNAME)
 
