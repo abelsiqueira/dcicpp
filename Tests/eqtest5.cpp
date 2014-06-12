@@ -22,49 +22,31 @@ using namespace DCI;
 
 Real rosencst = 100;
 
-void COFG (Int * n, Real * x, Real * f, Real * g, Bool * grad) {
-  if (*n != 2)
-    return;
+void COFG (pInt, Int *, Real * x, Real * f, Real * g, Bool * grad) {
   Real x1 = x[0], x2 = x[1];
   *f = pow (1 - x1, 2) + rosencst * pow (x2 - x1*x1, 2);
-  g[0] = 2*(x1 - 1) - 4 * rosencst * x1 * (x2 - x1*x1);
-  g[1] = 2 * rosencst * (x2 - x1*x1);
-}
-
-void CPROD (Int * n, Int * m, Bool * getder, Real * x, Int * mmax, Real * y, Real * p, Real * q) {
-  if (*n != 2)
-    return;
-  if ( (*getder == 0) || (*getder == 1) ) {
-    if ( (*m != 1) || (*mmax < *m) )
-      return;
-    q[0] = (2 - 4 * rosencst*(x[1] - x[0]*x[0]) + 8 * rosencst *x[0]*x[0] + y[0]*(-2 + M_PI*M_PI*sin(M_PI*x[0])) )*p[0] - 4 * rosencst * x[0] * p[1];
-    q[1] = -4 * rosencst*x[0]*p[0] + 2 * rosencst *p[1];
+  if (*grad) {
+    g[0] = 2*(x1 - 1) - 4 * rosencst * x1 * (x2 - x1*x1);
+    g[1] = 2 * rosencst * (x2 - x1*x1);
   }
 }
 
-void CFN (Int * n, Int * m, Real * x, Real * f, Int * mmax, Real * c) {
+void CPROD (pInt, Int *, Int *, Bool *, Real * x, Real * y, Real * p, Real * q) {
+  q[0] = (2 - 4 * rosencst*(x[1] - x[0]*x[0]) + 8 * rosencst *x[0]*x[0] + y[0]*(-2 + M_PI*M_PI*sin(M_PI*x[0])) )*p[0] - 4 * rosencst * x[0] * p[1];
+  q[1] = -4 * rosencst*x[0]*p[0] + 2 * rosencst *p[1];
+}
+
+void CFN (pInt, Int *, Int *, Real * x, Real * f, Real * c) {
   Real x1 = x[0], x2 = x[1];
   *f = pow (1 - x1, 2) + rosencst * pow (x2 - x1*x1, 2);
-  if (*m != 1)
-    return;
-  if (*mmax < 1)
-    return;
   c[0] = x2 - x1*x1 - sin(M_PI*x1);
 }
 
-void CCFSG (Int * n, Int * m, Real * x, Int * mmax, Real * c, Int * nnzJ, Int * jmax, Real * J, Int * indvar, Int * indfun, Bool * Grad) {
-  if (*n != 2)
-    return;
-  if (*m != 1)
-    return;
+void CCFSG (pInt, Int *, Int *, Real * x, Real * c, Int * nnzJ, Int *, Real * J, Int * indvar, Int * indfun, Bool * Grad) {
 
   c[0] = x[1] - x[0]*x[0] - sin(M_PI*x[0]);
 
   if (*Grad == dciFalse)
-    return;
-  if (*mmax < 1)
-    return;
-  if (*jmax < 0)
     return;
 
   Int k = 0;
@@ -89,6 +71,7 @@ int main () {
   DCI::Interface dci;
   Real x[n], bl[n], bu[n];
   Real y[m], cl[m], cu[m];
+  Bool equatn[m];
 
   dci.set_cofg (COFG);
   dci.set_cprod (CPROD);
@@ -105,14 +88,11 @@ int main () {
     y[i] = 0;
     cl[i] = -dciInf;
     cu[i] = dciInf;
+    equatn[i] = dciTrue;
   }
 
-  dci.set_x (n, x);
-  dci.set_bl (n, bl);
-  dci.set_bu (n, bu);
-  dci.set_lambda (m, y);
-  dci.set_cl (m, cl);
-  dci.set_cu (m, cu);
+
+  dci.con_setup(n, x, bl, bu, m, y, cl, cu, equatn);
 
   dci.start ();
   dci.solve ();

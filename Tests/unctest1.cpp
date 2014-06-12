@@ -10,7 +10,7 @@ using namespace DCI;
  */
 
 //g(x) = 2*(x - e)
-void UOFG (Int * n, Real * x, Real * f, Real * g, Bool * grad) {
+void UOFG (pInt, Int * n, Real * x, Real * f, Real * g, Bool * grad) {
   Real xi = 0, xi2 = 0;
   *f = 0;
   for (Int i = 0; i < *n; i++) {
@@ -23,7 +23,7 @@ void UOFG (Int * n, Real * x, Real * f, Real * g, Bool * grad) {
 }
 
 //H(x,y) = 2*I
-void UPROD (Int * n, Bool * getder, Real * x, Real * p, Real * q) {
+void UPROD (pInt, Int * n, Bool *, Real * x, Real * p, Real * q) {
   Real xi = 0;
   for (Int i = 0; i < *n; i++) {
     xi = x[i] - 1;
@@ -31,7 +31,7 @@ void UPROD (Int * n, Bool * getder, Real * x, Real * p, Real * q) {
   }
 }
 
-void UFN (Int * n, Real * x, Real * f) {
+void UFN (pInt, Int * n, Real * x, Real * f) {
   Real xi = 0, xi2 = 0;
   *f = 0;
   for (Int i = 0; i < *n; i++) {
@@ -56,9 +56,8 @@ int main () {
     bu[i] = dciInf;
   }
 
-  dci.set_x (n, x);
-  dci.set_bl (n, bl);
-  dci.set_bu (n, bu);
+
+  dci.unc_setup(n, x, bl, bu);
 
   dci.start ();
   dci.solve ();

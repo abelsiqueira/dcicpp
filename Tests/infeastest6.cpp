@@ -32,7 +32,7 @@ Real rand_between (Real a, Real b) {
   return (b - a)*x + a;
 }
 
-void COFG (Int * n, Real * x, Real * f, Real * g, Bool * grad) {
+void COFG (pInt, Int * n, Real * x, Real * f, Real * g, Bool * grad) {
   *f = 0.0;
   for (Int i = 0; i < *n; i++)
     *f += v[i] * x[i];
@@ -42,13 +42,13 @@ void COFG (Int * n, Real * x, Real * f, Real * g, Bool * grad) {
   }
 }
 
-void CPROD (Int * n, Int * m, Bool * getder, Real * x, Int * mmax, Real * y, Real * p, Real * q) {
+void CPROD (pInt, Int * n, Int *, Bool *, Real *, Real * y, Real * p, Real * q) {
   Real y1 = y[0], y2 = y[1];
   for (Int i = 0; i < *n; i++)
     q[i] = 2*(y1 + y2)*p[i];
 }
 
-void CFN (Int * n, Int * m, Real * x, Real * f, Int * mmax, Real * c) {
+void CFN (pInt, Int * n, Int *, Real * x, Real * f, Real * c) {
   *f = 0.0;
   c[0] = -1.0;
   for (Int i = 0; i < *n; i++) {
@@ -58,7 +58,7 @@ void CFN (Int * n, Int * m, Real * x, Real * f, Int * mmax, Real * c) {
   c[1] = c[0] - 3;
 }
 
-void CCFSG (Int * n, Int * m, Real * x, Int * mmax, Real * c, Int * nnzJ, Int * jmax, Real * J, Int * indvar, Int * indfun, Bool * Grad) {
+void CCFSG (pInt, Int * n, Int *, Real * x, Real * c, Int * nnzJ, Int *, Real * J, Int * indvar, Int * indfun, Bool * Grad) {
   c[0] = -1.0;
   for (Int i = 0; i < *n; i++) {
     c[0] += x[i] * x[i];
@@ -112,13 +112,8 @@ int main () {
   cl[1] = 0;
   cu[1] = dciInf;
 
-  dci.set_x (n, x);
-  dci.set_bl (n, bl);
-  dci.set_bu (n, bu);
-  dci.set_lambda (m, y);
-  dci.set_cl (m, cl);
-  dci.set_cu (m, cu);
-  dci.set_equatn (m, equatn);
+
+  dci.con_setup(n, x, bl, bu, m, y, cl, cu, equatn);
 
   dci.start ();
   dci.solve ();

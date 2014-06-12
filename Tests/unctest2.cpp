@@ -36,8 +36,7 @@ void Hiprod (Real * x, Int i, Real * p, Real * q) {
   q[1] = etix2 * t[i] * ( p[0] + t[i] * x[0] * p[1] );
 }
 
-void UOFG (Int * n, Real * x, Real * f, Real * g, Bool * grad) {
-  Real xi = 0, xi2 = 0;
+void UOFG (pInt, Int *, Real * x, Real * f, Real * g, Bool * grad) {
   *f = 0;
   for (Int i = 0; i < m; i++)
     *f += 0.5*pow( hi(x, i), 2);
@@ -55,8 +54,7 @@ void UOFG (Int * n, Real * x, Real * f, Real * g, Bool * grad) {
   }
 }
 
-void UPROD (Int * n, Bool * getder, Real * x, Real * p, Real * q) {
-  Real xi = 0;
+void UPROD (pInt, Int *, Bool *, Real * x, Real * p, Real * q) {
   q[0] = 0.0;
   q[1] = 0.0;
   Real aux[2], auxdot, auxhi;
@@ -72,8 +70,7 @@ void UPROD (Int * n, Bool * getder, Real * x, Real * p, Real * q) {
   }
 }
 
-void UFN (Int * n, Real * x, Real * f) {
-  Real xi = 0, xi2 = 0;
+void UFN (pInt, Int *, Real * x, Real * f) {
   *f = 0;
   for (Int i = 0; i < m; i++)
     *f += 0.5 * pow( hi(x, i), 2);
@@ -97,9 +94,8 @@ int main () {
   x[0] = 0.001;
   x[1] = 2.1;
 
-  dci.set_x (n, x);
-  dci.set_bl (n, bl);
-  dci.set_bu (n, bu);
+
+  dci.unc_setup(n, x, bl, bu);
 
   dci.start ();
   dci.solve ();

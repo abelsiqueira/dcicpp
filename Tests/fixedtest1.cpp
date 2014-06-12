@@ -15,9 +15,7 @@ using namespace DCI;
  *
  */
 
-void COFG (Int * n, Real * x, Real * f, Real * g, Bool * grad) {
-  if (*n != 3)
-    return;
+void COFG (pInt, Int *, Real * x, Real * f, Real * g, Bool * grad) {
   Real x1 = x[0], x2 = x[1], x3 = x[2];
   *f = x1 * x1 + x2 * x2 + x3 * x3;
   if (*grad == dciTrue) {
@@ -27,25 +25,20 @@ void COFG (Int * n, Real * x, Real * f, Real * g, Bool * grad) {
   }
 }
 
-void CPROD (Int * n, Int * m, Bool * , Real * , Int * mmax, Real * y, Real * p, Real * q) {
-  if ( (*n != 3) || (*m != 1) || (*mmax < *m) )
-    return;
-  Real y1 = y[0];
+void CPROD (pInt, Int *, Int *, Bool * , Real * , Real *, Real * p, Real * q) {
   q[0] =  2 * p[0];
   q[1] =  2 * p[1];
   q[2] =  2 * p[2];
 }
 
-void CFN (Int * n, Int * m, Real * x, Real * f, Int * mmax, Real * c) {
-  if ( (*n != 3) || (*m != 1) || (*mmax < *m) )
-    throw("Error");
+void CFN (pInt, Int *, Int *, Real * x, Real * f, Real * c) {
   Real x1 = x[0], x2 = x[1], x3 = x[2];
   *f = x1 * x1 + x2 * x2 + x3 * x3;
   c[0] = x1 + x2 + x3 - 1;
 }
 
-void CCFSG (Int * , Int * , Real * x, Int * , Real * c, Int * nnzJ,
-    Int * , Real * J, Int * indvar, Int * indfun, Bool * Grad) {
+void CCFSG (pInt, Int *, Int *, Real * x, Real * c, Int * nnzJ, Int *,
+      Real * J, Int * indvar, Int * indfun, Bool * Grad) {
   Real x1 = x[0], x2 = x[1], x3 = x[2];
   c[0] = x1 + x2 + x3 - 1;
   if (*Grad == dciFalse)
@@ -88,13 +81,7 @@ int main () {
   cu[0] = 0;
   equatn[0] = dciTrue;
 
-  dci.set_x (n, x);
-  dci.set_bl (n, bl);
-  dci.set_bu (n, bu);
-  dci.set_lambda (m, y);
-  dci.set_cl (m, cl);
-  dci.set_cu (m, cu);
-  dci.set_equatn (m, equatn);
+  dci.con_setup(n, x, bl, bu, m, y, cl, cu, equatn);
 
   dci.start ();
   dci.solve ();
