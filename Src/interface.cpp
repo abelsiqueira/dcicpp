@@ -301,40 +301,41 @@ namespace DCI {
   void Interface::printLatex (char * filename) const {
     std::ofstream file;
     std::string latex_name("latex_");
+    std::string flagname;
     if (filename == 0) {
       switch (exit_flag) {
         case -1:
-          latex_name += "assert";
+          flagname = "assert";
           break;
         case 0:
-          latex_name += "convergence";
+          flagname = "convergence";
           break;
         case 1:
-          latex_name += "rhomax";
+          flagname = "rhomax";
           break;
         case 2:
-          latex_name += "maxiter";
+          flagname = "maxiter";
           break;
         case 3:
-          latex_name += "maxrest";
+          flagname = "maxrest";
           break;
         case 4:
-          latex_name += "restfali";
+          flagname = "restfali";
           break;
         case 5:
-          latex_name += "shortstep";
+          flagname = "shortstep";
           break;
         case 6:
-          latex_name += "unlimited";
+          flagname = "unlimited";
           break;
         case 7:
-          latex_name += "timelimit";
+          flagname = "timelimit";
           break;
         case 8:
-          latex_name += "infeasible";
+          flagname = "infeasible";
           break;
         case 9:
-          latex_name += "nan";
+          flagname = "nan";
           break;
         default:
           std::stringstream aux;
@@ -342,6 +343,7 @@ namespace DCI {
           throw(aux.str());
           break;
       }
+      latex_name += flagname;
       if (cholesky_failed)
         latex_name += "_cholfail";
     } else
@@ -362,6 +364,23 @@ namespace DCI {
          << "\\\\ \\hline\n";
 
     file.close ();
+
+    if (table_print_level > 1) {
+      size_t endpos = problemName.find_last_not_of(" \t");
+      file.open((problemName.substr(0,endpos+1)+".tab").c_str(),
+          std::ios_base::out | std::ios_base::trunc);
+      file << problemName << " "
+        << flagname << " "
+        << std::scientific << std::setprecision(6)
+          << (current_time > 0 ? current_time : 1e-6) << " "
+        << std::scientific << std::setprecision(6) << *f << " "
+        << std::scientific << std::setprecision(6) << normgp << " "
+        << std::scientific << std::setprecision(6) << normc << " "
+        << (cholesky_failed ? "cholfail" : "cholok")
+        << std::endl;
+
+      file.close ();
+    }
   }
 
   void Interface::unc_setup (Int n, Real * x, Real * bl, Real * bu) {
