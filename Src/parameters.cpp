@@ -354,8 +354,9 @@ namespace DCI {
     maxitSteih = Max (minitSteih, Min(maxitSteih, Int(nvar*relitSteih+5) ) );
     minstep *= Min (csig, csic);
 
-    std::vector<Int> fixed_vector;
+    fixed = new Bool[nvar+nconI];
     for (Int i = 0; i < nvar; i++) {
+      fixed[i] = false;
       Real bli = l_bndx[i], bui = u_bndx[i];
       variable_scaling[i] = 1.0;
       if ( (xx[i] > bli) && (xx[i] < bui) ) {
@@ -365,7 +366,8 @@ namespace DCI {
       if (bli - bui > dciTiny) {
         throw("Infeasible bounds");
       } else if (bli - bui > - dciTiny) {
-        fixed_vector.push_back(i);
+        nfix++;
+        fixed[i] = true;
         xx[i] = (bli + bui)/2;
         xcx[i] = xx[i];
       } else {
@@ -376,14 +378,8 @@ namespace DCI {
         assert (xx[i] < bui);
       }
     }
-
-    nfix = fixed_vector.size();
-    if (nfix > 0) {
-      fixed_index = new Int[nfix];
-      for (Int i = 0; i < nfix; i++) {
-        fixed_index[i] = fixed_vector[i];
-      }
-    }
+    for (Int i = nvar; i < nvar+nconI; i++)
+      fixed[i] = false;
 
     // Calculating the function value and c without the barrier.
     objective_scaling = 1.0;

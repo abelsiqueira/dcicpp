@@ -621,12 +621,12 @@ namespace DCI {
       }
       // Fixed variables fix
       for (Int k = 0; k < *nnzj; k++) {
-        Real bli = l_bndx[Jvar[k]], bui = u_bndx[Jvar[k]];
-        if (bli - bui > - dciTiny) {
+        if (fixed[Jvar[k]]) {
           Jx[k]   = Jx[*nnzj-1];
           Jvar[k] = Jvar[*nnzj-1];
           Jfun[k] = Jfun[*nnzj-1];
           (*nnzj)--;
+          k--;
         }
       }
 
@@ -723,12 +723,12 @@ namespace DCI {
       }
       // Fixed variables fix
       for (Int k = 0; k < *nnzj; k++) {
-        Real bli = l_bndx[Jvar[k]], bui = u_bndx[Jvar[k]];
-        if (bli - bui > - dciTiny) {
+        if (fixed[Jvar[k]]) {
           Jx[k]   = Jx[*nnzj-1];
           Jvar[k] = Jvar[*nnzj-1];
           Jfun[k] = Jfun[*nnzj-1];
           (*nnzj)--;
+          k--;
         }
       }
 

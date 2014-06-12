@@ -221,6 +221,7 @@ namespace DCI {
       Bool use_soc;
       Int  objfun_count;
       Int  nfix, *fixed_index;
+      Bool *fixed;
       Int  cuter_status;
   };
 }

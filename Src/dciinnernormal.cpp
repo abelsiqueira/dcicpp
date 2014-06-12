@@ -24,7 +24,9 @@ namespace DCI {
     pReal gtmpx = gtmp.get_doublex();
     for (Int i = 0; i < nvar+nconI; i++) {
       Real gi = gtmpx[i], zi = xcx[i], ui = u_bndx[i], li = l_bndx[i];
-      if ( (gi < 0) && (ui < dciInf) ) {
+      if (fixed[i])
+        scalingMatrix[i] = 1.0;
+      else if ( (gi < 0) && (ui < dciInf) ) {
         scalingMatrix[i] = 1.0/sqrt(ui - zi);
       } else if ( (gi > 0) && (li > -dciInf) ) {
         scalingMatrix[i] = 1.0/sqrt(zi - li);
@@ -49,10 +51,15 @@ namespace DCI {
     Real lower[nvar + nconI], upper[nvar + nconI];
     for (Int i = 0; i < nvar+nconI; i++) {
       Real zi = xcx[i], li = l_bndx[i], ui = u_bndx[i];
-      lower[i] = Max( -DeltaV, (li > -dciInf ? (li - zi) * (1 - epsmu) :
-            -dciInf) );
-      upper[i] = Min(  DeltaV, (ui <  dciInf ? (ui - zi) * (1 - epsmu) :
-             dciInf) );
+      if (fixed[i]) {
+        lower[i] = -dciInf;
+        upper[i] = dciInf;
+      } else {
+        lower[i] = Max( -DeltaV, (li > -dciInf ? (li - zi) * (1 - epsmu) :
+              -dciInf) );
+        upper[i] = Min(  DeltaV, (ui <  dciInf ? (ui - zi) * (1 - epsmu) :
+               dciInf) );
+      }
     }
     Vector aux(*env);
     d = gtmp;
@@ -60,8 +67,13 @@ namespace DCI {
     gtmpx = gtmp.get_doublex();
     dx = d.get_doublex();
     for (Int i = 0; i < nvar + nconI; i++) {
-      gtmpx[i] /= scalingMatrix[i];
-      dx[i] = -dx[i]/pow(scalingMatrix[i], 2);
+      if (fixed[i]) {
+        gtmpx[i] = 0.0;
+        dx[i] = 0.0;
+      } else {
+        gtmpx[i] /= scalingMatrix[i];
+        dx[i] = -dx[i]/pow(scalingMatrix[i], 2);
+      }
     }
 
     aux.sdmult(*J, 0, one, zero, d);
@@ -74,7 +86,7 @@ namespace DCI {
     alpha = 1.0;
     for (int i = 0; i < nvar + nconI; i++) {
       Real di = dcpx[i], ui = upper[i], li = lower[i];
-      if (li - ui > -dciEps) {
+      if (fixed[i]) {
         dcpx[i] = 0;
         continue;
       }
@@ -114,7 +126,7 @@ namespace DCI {
       alpha = 1.0;
       for (Int i = 0; i < nvar + nconI; i++) {
         Real di = dnx[i], ui = upper[i], li = lower[i];
-        if (li - ui > -dciEps) {
+        if (fixed[i]) {
           dnx[i] = 0;
           continue;
         }

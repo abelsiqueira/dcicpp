@@ -57,7 +57,7 @@ void CCFSG (pInt, Int *n, Int *, Real * x, Real * c, Int * nnzJ, Int *,
 }
 
 int main () {
-  Int n = 10000, m = 1;
+  Int n = 100000, m = 1;
   DCI::Interface dci;
   Real x[n], bl[n], bu[n];
   Real y[m], cl[m], cu[m];
