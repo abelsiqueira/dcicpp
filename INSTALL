@@ -53,7 +53,7 @@ Edit SuiteSparse_config/SuiteSparse_config.mk
     LAPACK = -llapack
 
 - Add line
-    BLAS = $(HOME)/Libraries/GotoBLAS2/libgoto2.a -lgfortran -lgfortranbegin -lpthread
+    BLAS = -L$(HOME)/Libraries/OpenBLAS -lgfortran -lgfortranbegin -lpthread
 
 - Edit the variables METIS_PATH and METIS to reflect your configurations. In our case
     METIS_PATH = $(HOME)/Libraries/metis-4.0.3
@@ -70,8 +70,8 @@ Edit make.all to reflect your configuration, then
 $ make all
 -------------------------------------------------
 - dcicpp
-
-If needed, edit make.inc and do
+Edit your .bashrc including the contents of addtobash.rc. Alternatively, modify
+make.inc to reflect that.
 
 $ make all
 
