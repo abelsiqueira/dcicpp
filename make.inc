@@ -21,6 +21,10 @@ MV = mv -f
 
 DCILIBNAME = libdcicpp.a
 
-DCILIB = $(DCIDIR)/Lib/$(DCILIBNAME) -lbasematrices -lcholmod -lamd \
+DCILIB = $(DCIDIR)/Lib/$(DCILIBNAME) \
+      $(HOME)/libraries/preprocessor/preprocessor.o \
+      -lbasematrices -lcholmod -lamd \
       -lcolamd -lccolamd -lcamd -lsuitesparseconfig -lmetis -lopenblas \
       -lgfortran -lgfortranbegin -lpthread -lrt
+
+I = -I$(HOME)/libraries/preprocessor/

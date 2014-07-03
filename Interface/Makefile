@@ -29,7 +29,7 @@ cutest: dcicppmain_cutest.o
 	$(CP) rundcicpp $(CUTEST)/bin/
 
 %.o: %.cpp
-	$(CXX) -c -o $@ $< $(DCII) $(CXXFLAGS) -I$(CUTER)/common/include \
+	$(CXX) -c -o $@ $< $(DCII) $(CXXFLAGS) $(I) -I$(CUTER)/common/include \
 		-I$(CUTEST)/include
 
 clean:

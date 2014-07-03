@@ -4,7 +4,8 @@ CXX = g++
 all: dcicpp_main.o
 
 %.o: %.cpp
-	$(CXX) -c -o $@ $< $(DCII) -Wall -Wextra -I$(CUTEST)/include
+	$(CXX) -c -o $@ $< $(DCII) -Wall -Wextra -I$(CUTEST)/include \
+		-I$(HOME)/libraries/preprocessor
 
 clean:
 	rm -f dcicpp_main.o
