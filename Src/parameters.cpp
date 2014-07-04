@@ -366,6 +366,7 @@ namespace DCI {
       if (bli - bui > dciTiny) {
         throw("Infeasible bounds");
       } else if (bli - bui > - dciTiny) {
+        throw("Fixed variables not allowed");
         nfix++;
         fixed[i] = true;
         xx[i] = (bli + bui)/2;

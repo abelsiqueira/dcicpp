@@ -54,19 +54,21 @@ int MAINENTRY () {
   prep = initializePreprocessor();
 
   FORTRAN_open (&funit, fname, &ierr);
-  CUTEST_cdimen (&status, &funit, &nvar, &ncon);
+  setFuncs(prep, CUTEST_cdimen, CUTEST_usetup, CUTEST_ufn,
+      CUTEST_uofg, CUTEST_uhprod, CUTEST_csetup, CUTEST_cfn,
+      CUTEST_cofg, CUTEST_chprod, CUTEST_ccfsg);
+  runPreprocessor(prep);
+  ppDIMEN(prep, &nvar, &ncon);
 
   dci.cuter ();
 
   Real x[nvar], bl[nvar], bu[nvar];
 
   if (ncon == 0) {
-    setUncFuncs(prep, CUTEST_usetup, CUTEST_ufn, CUTEST_uofg,
-        CUTEST_uhprod);
     dci.set_ufn(ufn);
     dci.set_uofg(uofg);
     dci.set_uprod(uhprod);
-    dci.set_unames(CUTEST_unames);
+//    dci.set_unames(CUTEST_unames);
 
     runUncSetup(prep, &nvar, x, bl, bu);
     dci.unc_setup(nvar, x, bl, bu);
@@ -74,8 +76,6 @@ int MAINENTRY () {
     Real y[ncon], cl[ncon], cu[ncon];
     Bool equatn[ncon], linear[ncon];
 
-    setConFuncs(prep, CUTEST_csetup, CUTEST_cfn, CUTEST_cofg,
-        CUTEST_chprod, CUTEST_ccfsg);
     dci.set_cfn(cfn);
     dci.set_cofg(cofg);
     dci.set_cprod(chprod);
@@ -91,15 +91,17 @@ int MAINENTRY () {
     dci.con_setup (nvar, x, bl, bu, ncon, y, cl, cu, equatn);
   }
 
-  dci.start ();
   try {
+    dci.start ();
     dci.solve ();
     dci.show ();
     dci.printLatex ();
   } catch (const char * ex) {
     std::cout << ex << std::endl;
+    return 1;
   } catch (...) {
     std::cout << "Unhandled exception caught" << std::endl;
+    return 1;
   }
 
   Real calls[7], time[2];
