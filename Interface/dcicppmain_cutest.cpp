@@ -80,12 +80,10 @@ int MAINENTRY () {
     dci.set_cofg(cofg);
     dci.set_cprod(chprod);
     dci.set_ccfsg(ccfsg);
-    CUTEST_cdimsj (&status, &amax);
-    amax *= 2;
 
 //    dci.set_ccifg (CUTEST_ccifg);
 
-    runConSetup(prep, &nvar, x, bl, bu, &ncon, y, cl, cu, equatn, linear);
+    runConSetup(prep, &nvar, x, bl, bu, &ncon, y, cl, cu, equatn, linear, &amax);
     dci.set_linear (ncon, linear);
     dci.set_amax (amax);
     dci.con_setup (nvar, x, bl, bu, ncon, y, cl, cu, equatn);
