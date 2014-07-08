@@ -56,7 +56,7 @@ int MAINENTRY () {
   FORTRAN_open (&funit, fname, &ierr);
   setFuncs(prep, CUTEST_cdimen, CUTEST_usetup, CUTEST_ufn,
       CUTEST_uofg, CUTEST_uhprod, CUTEST_csetup, CUTEST_cfn,
-      CUTEST_cofg, CUTEST_chprod, CUTEST_ccfsg);
+      CUTEST_cofg, CUTEST_chprod, CUTEST_ccfsg, CUTEST_cdimsj);
   runPreprocessor(prep);
   ppDIMEN(prep, &nvar, &ncon);
 
