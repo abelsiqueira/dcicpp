@@ -59,6 +59,8 @@ namespace DCI {
     MinDiag = 0;
     max_objective_scaling = 1e6;
     max_constraint_scaling = 1e6;
+    nvarshowmax = 10;
+    nconshowmax = 10;
 
     readParameters();
   }
@@ -80,7 +82,7 @@ namespace DCI {
       en_verbosity_level, en_MaxDiag, en_MinDiag,
       en_use_objective_scaling, en_objfun_count, en_use_constraint_scaling,
       en_max_objective_scaling, en_use_variable_scaling, en_table_print_level,
-      en_max_constraint_scaling, en_use_soc,
+      en_max_constraint_scaling, en_use_soc, en_nvarshowmax, en_nconshowmax,
       en_normal_fail_reboot
     };
     std::map<std::string, int> paramMap;
@@ -150,6 +152,8 @@ namespace DCI {
     paramMap["c2"] = en_c2;
     paramMap["max_time"] = en_max_time;
     paramMap["minBk"] = en_minBk;
+    paramMap["nvarshowmax"] = en_nvarshowmax;
+    paramMap["nconshowmax"] = en_nconshowmax;
 
     std::string param, value;
 
@@ -238,6 +242,8 @@ namespace DCI {
         case en_penal_trust: aux >> penal_trust; break;
         case en_penal_bfgs: aux >> penal_bfgs; break;
         case en_scale_normal: aux >> scale_normal; break;
+        case en_nvarshowmax: aux >> nvarshowmax; break;
+        case en_nconshowmax: aux >> nconshowmax; break;
       }
     }
   }

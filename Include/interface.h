@@ -223,6 +223,7 @@ namespace DCI {
       Int  nfix, *fixed_index;
       Bool *fixed;
       Int  cuter_status;
+      Int nvarshowmax, nconshowmax;
   };
 }
 

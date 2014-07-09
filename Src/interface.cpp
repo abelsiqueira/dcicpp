@@ -274,12 +274,12 @@ namespace DCI {
         }
       }
       if (display_level > 1) {
-        if (nvar <= 10) {
+        if (nvar <= nvarshowmax) {
           out << "x: " << std::endl;
           x->print_more ();
         } else
           out << "Number of Variables is too big to show: Increase nvarshowmax" << std::endl;
-        if ( (ncon > 0) && (ncon <= 10) ) {
+        if ( (ncon > 0) && (ncon <= nconshowmax) ) {
           out << "c: " << std::endl;
           c->print_more ();
           out << "y: " << std::endl;
