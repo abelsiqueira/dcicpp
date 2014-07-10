@@ -131,6 +131,12 @@ int main () {
 
   Real x[n], bl[n], bu[n];
 
+  if (n == 0) {
+    printf("After processing, number of variables is 0");
+    destroyPreprocessor(prep);
+    return 0;
+  }
+
   if (m == 0) {
     dci.set_ufn(ufn);
     dci.set_uofg(uofg);
