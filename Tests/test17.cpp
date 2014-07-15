@@ -1,7 +1,7 @@
 #include <iostream>
 #include "dci.h"
 extern "C" {
-#include "preprocessor.h"
+#include "nope.h"
 }
 
 using namespace DCI;
@@ -15,8 +15,8 @@ using namespace DCI;
  *
  */
 
-Preprocessor *prep;
-#include "prep_interface.c"
+Nope *nope;
+#include "nope_interface.c"
 
 Int nvar = 10;
 Int ncon = nvar - 1;
@@ -118,31 +118,31 @@ void core_cdimsj(Int *, Int *nnzj) {
 
 int main () {
   Int n = 0, m = 0;
+  nope = initializeNope();
+
+  setFuncs(nope, core_cdimen, 0, core_ufn, core_uofg, core_uhprod,
+      core_csetup, core_cfn, core_cofg, core_chprod, core_ccfsg,
+      core_cdimsj);
+  runNope(nope);
+  ppDIMEN(nope, &n, &m);
+
+  if (n == 0) {
+    printf("After processing, number of variables is 0\n");
+    destroyNope(nope);
+    return 0;
+  }
+
+  Real x[n], bl[n], bu[n];
   DCI::Interface dci;
 
   dci.cuter();
-  prep = initializePreprocessor();
-
-  setFuncs(prep, core_cdimen, 0, core_ufn, core_uofg, core_uhprod,
-      core_csetup, core_cfn, core_cofg, core_chprod, core_ccfsg,
-      core_cdimsj);
-  runPreprocessor(prep);
-  ppDIMEN(prep, &n, &m);
-
-  Real x[n], bl[n], bu[n];
-
-  if (n == 0) {
-    printf("After processing, number of variables is 0");
-    destroyPreprocessor(prep);
-    return 0;
-  }
 
   if (m == 0) {
     dci.set_ufn(ufn);
     dci.set_uofg(uofg);
     dci.set_uprod(uhprod);
 
-    runUncSetup(prep, &n, x, bl, bu);
+    runUncSetup(nope, &n, x, bl, bu);
     dci.unc_setup(n, x, bl, bu);
   } else {
     Real y[m], cl[m], cu[m];
@@ -154,7 +154,7 @@ int main () {
     dci.set_cprod(chprod);
     dci.set_ccfsg(ccfsg);
 
-    runConSetup(prep, &n, x, bl, bu, &m, y, cl, cu, equatn, linear, &jmax);
+    runConSetup(nope, &n, x, bl, bu, &m, y, cl, cu, equatn, linear, &jmax);
     dci.set_linear(m, linear);
     dci.set_amax(jmax);
     dci.con_setup(n, x, bl, bu, m, y, cl, cu, equatn);
@@ -164,6 +164,6 @@ int main () {
   dci.solve ();
   dci.show();
 
-  destroyPreprocessor(prep);
+  destroyNope(nope);
 
 }

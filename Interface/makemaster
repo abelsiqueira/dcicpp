@@ -5,7 +5,7 @@ all: dcicpp_main.o
 
 %.o: %.cpp
 	$(CXX) -c -o $@ $< $(DCII) -Wall -Wextra -I$(CUTEST)/include \
-		-I$(HOME)/libraries/preprocessor
+		-I$(HOME)/Libraries/nope/include
 
 clean:
 	rm -f dcicpp_main.o

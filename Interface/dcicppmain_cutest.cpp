@@ -1,14 +1,14 @@
 #include <iostream>
 #include "dci.h"
 extern "C" {
-#include "preprocessor.h"
+#include "nope.h"
 #include "cutest.h"
 }
 
 using namespace DCI;
 
-Preprocessor *prep;
-#include "prep_interface.c"
+Nope *nope;
+#include "nope_interface.c"
 
 int MAINENTRY () {
   DCI::Interface dci;
@@ -16,14 +16,14 @@ int MAINENTRY () {
   Int nvar = 0, ncon = 0, amax = 0;
   Int funit = 42, ierr = 0, status;
 
-  prep = initializePreprocessor();
+  nope = initializeNope();
 
   FORTRAN_open (&funit, fname, &ierr);
-  setFuncs(prep, CUTEST_cdimen, CUTEST_usetup, CUTEST_ufn,
+  setFuncs(nope, CUTEST_cdimen, CUTEST_usetup, CUTEST_ufn,
       CUTEST_uofg, CUTEST_uhprod, CUTEST_csetup, CUTEST_cfn,
       CUTEST_cofg, CUTEST_chprod, CUTEST_ccfsg, CUTEST_cdimsj);
-  runPreprocessor(prep);
-  ppDIMEN(prep, &nvar, &ncon);
+  runNope(nope);
+  ppDIMEN(nope, &nvar, &ncon);
 
   dci.cuter ();
 
@@ -35,7 +35,7 @@ int MAINENTRY () {
     dci.set_uprod(uhprod);
 //    dci.set_unames(CUTEST_unames);
 
-    runUncSetup(prep, &nvar, x, bl, bu);
+    runUncSetup(nope, &nvar, x, bl, bu);
     dci.unc_setup(nvar, x, bl, bu);
   } else {
     Real y[ncon], cl[ncon], cu[ncon];
@@ -48,7 +48,7 @@ int MAINENTRY () {
 
 //    dci.set_ccifg (CUTEST_ccifg);
 
-    runConSetup(prep, &nvar, x, bl, bu, &ncon, y, cl, cu, equatn, linear, &amax);
+    runConSetup(nope, &nvar, x, bl, bu, &ncon, y, cl, cu, equatn, linear, &amax);
     dci.set_linear (ncon, linear);
     dci.set_amax (amax);
     dci.con_setup (nvar, x, bl, bu, ncon, y, cl, cu, equatn);
@@ -76,7 +76,7 @@ int MAINENTRY () {
             << "Execution time: " << time[1] << std::endl;
   FORTRAN_close ((&funit), (&ierr));
 
-  destroyPreprocessor(prep);
+  destroyNope(nope);
 
   return 0;
 
