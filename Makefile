@@ -60,3 +60,7 @@ purge:
 	(cd Lib; make purge )
 	(cd Tests; make purge )
 	(cd Interface; make purge )
+
+install: library
+	$(CP) Lib/$(DCILIBNAME) $(PREFIX)/lib/
+	$(CP) Include/*.h $(PREFIX)/include
