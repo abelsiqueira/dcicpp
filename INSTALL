@@ -27,24 +27,37 @@ http://github.com/xianyi/OpenBLAS/tarball/v0.2.9
 -------------------------------------------------
 Uncompress and install everything.
 -------------------------------------------------
-INSTALL OpenBLAS first:
+Rename v0.2.9 to OpenBLAS.tar.gz, and use
+
+$ tar -zxf OpenBLAS.tar.gz
+
+to uncompress. Enter the folder and enter
 
 $ make
 
-if needed use TARGET option too. We needed to set to CORE2, because
-our processor is not supported.
+to install.
+If required, use the TARGET option too. We needed to set to CORE2, because our
+processor was not supported.
 
 $ make TARGET=CORE2
+
+Then install it to /usr (reaching /usr/lib and /usr/include)
+
+$ sudo make PREFIX=/usr install
 
 -------------------------------------------------
 INSTALL Metis 4
 
+Uncompress metis and rename the folder to metis. Then cd into the folder and
+enter
+
 $ make
+$ sudo cp libmetis.a /usr/lib/
 
 -------------------------------------------------
 INSTALL CHOLMOD and dependencies
 
-You will need gfortran
+Install gfortran, if you haven't.
 
 Edit SuiteSparse_config/SuiteSparse_config.mk
 
@@ -56,24 +69,30 @@ Edit SuiteSparse_config/SuiteSparse_config.mk
     BLAS = -L$(HOME)/Libraries/OpenBLAS -lgfortran -lgfortranbegin -lpthread
 
 - Edit the variables METIS_PATH and METIS to reflect your configurations. In our case
-    METIS_PATH = $(HOME)/Libraries/metis-4.0.3
-    METIS = $(METIS_PATH)/libmetis.a
+    METIS_PATH = $(HOME)/Libraries/metis
+    METIS = -lmetis
 
-Go to the folders CHOLMOD, CAMD and CCOLAMD and enter
+Go to the folders CHOLMOD, AMD, CAMD, COLAMD, CCOLAMD and SuiteSparse_config and
+enter
 
 $ make all
+$ sudo make install
+
 -------------------------------------------------
 - base_matrices
 
-Edit make.all to reflect your configuration, then
+Edit make.inc to reflect your configuration, then
 
 $ make all
+$ sudo make install
+
 -------------------------------------------------
 - dcicpp
-Edit your .bashrc including the contents of addtobash.rc. Alternatively, modify
-make.inc to reflect that.
+
+Edit make.inc if you need to change your configuration, then
 
 $ make all
+$ sudo make install
 
 -------------------------------------------------
 - CUTEst

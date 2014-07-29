@@ -2,6 +2,7 @@
 # Read the INSTALL and define the variables in the $HOME/.bashrc
 
 CXX = g++
+PREFIX = /usr
 
 DCIVERBOSE = -DVERBOSE
 #PRINTMATLAB = -DPRINT_MATLAB
@@ -24,3 +25,5 @@ DCILIBNAME = libdcicpp.a
 DCILIB = $(DCIDIR)/Lib/$(DCILIBNAME) -lbasematrices -lcholmod -lamd \
       -lcolamd -lccolamd -lcamd -lsuitesparseconfig -lmetis -lopenblas \
       -lgfortran -lgfortranbegin -lpthread -lrt
+
+I = -I$(DCIDIR)/Include/
