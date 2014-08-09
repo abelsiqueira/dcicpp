@@ -33,7 +33,7 @@ int MAINENTRY () {
     dci.set_ufn(ufn);
     dci.set_uofg(uofg);
     dci.set_uprod(uhprod);
-//    dci.set_unames(CUTEST_unames);
+    dci.set_unames(CUTEST_unames);
 
     runUncSetup(nope, &nvar, x, bl, bu);
     dci.unc_setup(nvar, x, bl, bu);
@@ -45,6 +45,7 @@ int MAINENTRY () {
     dci.set_cofg(cofg);
     dci.set_cprod(chprod);
     dci.set_ccfsg(ccfsg);
+    dci.set_cnames(CUTEST_cnames);
 
 //    dci.set_ccifg (CUTEST_ccifg);
 
