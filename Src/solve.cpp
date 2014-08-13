@@ -102,9 +102,16 @@ namespace DCI {
       updateScaling_x();
       normalStep (); //Recalculates f, g and c
       updateScaling_xc();
+
+      Bool update_lref = false;
       if (use_objective_scaling && (objfun_count > 0)) {
-        objective_scaling = Min( Max(Max(objective_scaling, g->norm()), AbsValue(*f)), max_objective_scaling );
+        Real new_scal = Min( Max(Max(objective_scaling, g->norm()), AbsValue(*f)), max_objective_scaling );
         objfun_count--;
+        if (objective_scaling != new_scal) {
+          call_ofg_xc(true);
+          objective_scaling = new_scal;
+          update_lref = true;
+        }
       }
 
 #ifdef LOCALTEST
@@ -133,6 +140,8 @@ namespace DCI {
         Lc = *fxc;
       DLV = Lc - Ln;
 
+      if (update_lref)
+        Lref = Lc;
       if (DLV >= 0.5*(Lref - Ln))
         rhomax = rhomax/2;
       if (DLV > -0.5*DLH)

@@ -59,6 +59,7 @@ namespace DCI {
     MinDiag = 0;
     max_objective_scaling = 1e6;
     max_constraint_scaling = 1e6;
+    max_variable_scaling = 1e6;
     nvarshowmax = 10;
     nconshowmax = 10;
 
@@ -82,8 +83,8 @@ namespace DCI {
       en_verbosity_level, en_MaxDiag, en_MinDiag,
       en_use_objective_scaling, en_objfun_count, en_use_constraint_scaling,
       en_max_objective_scaling, en_use_variable_scaling, en_table_print_level,
-      en_max_constraint_scaling, en_use_soc, en_nvarshowmax, en_nconshowmax,
-      en_normal_fail_reboot
+      en_max_constraint_scaling, en_max_variable_scaling, en_use_soc,
+      en_nvarshowmax, en_nconshowmax, en_normal_fail_reboot
     };
     std::map<std::string, int> paramMap;
 
@@ -102,6 +103,7 @@ namespace DCI {
     paramMap["objfun_count"] = en_objfun_count;
     paramMap["max_objective_scaling"] = en_max_objective_scaling;
     paramMap["max_constraint_scaling"] = en_max_constraint_scaling;
+    paramMap["max_variable_scaling"] = en_max_variable_scaling;
     paramMap["use_variable_scaling"] = en_use_variable_scaling;
     paramMap["partial_penalization"] = en_partial_penalization;
     paramMap["project_dcp"] = en_project_dcp;
@@ -233,6 +235,7 @@ namespace DCI {
         case en_objfun_count: aux >> objfun_count; break;
         case en_max_objective_scaling: aux >> max_objective_scaling; break;
         case en_max_constraint_scaling: aux >> max_constraint_scaling; break;
+        case en_max_variable_scaling: aux >> max_variable_scaling; break;
         case en_use_variable_scaling: aux >> use_variable_scaling; break;
         case en_partial_penalization: aux >> partial_penalization; break;
         case en_project_dcp: aux >> project_dcp; break;
@@ -361,6 +364,8 @@ namespace DCI {
     minstep *= Min (csig, csic);
 
     fixed = new Bool[nvar+nconI];
+    if (use_variable_scaling)
+      variable_scaling = new Real[nvar];
     for (Int i = 0; i < nvar; i++) {
       fixed[i] = false;
       Real bli = l_bndx[i], bui = u_bndx[i];

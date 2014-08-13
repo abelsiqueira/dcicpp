@@ -512,8 +512,8 @@ namespace DCI {
     else if (*f < -dciInf)
       *f = -dciInf;
     if (running) {
-      *f /= objective_scaling;
       *f -= mu*calcPen ();
+      *f /= objective_scaling;
       Int numI = nvar;
       for (Int i = 0; i < ncon; i++) {
         if (equatn[i] == dciFalse) {
@@ -545,8 +545,8 @@ namespace DCI {
     else if (*fxc < -dciInf)
       *fxc = -dciInf;
     if (running) {
-      *fxc /= objective_scaling;
       *fxc -= mu*calcPen_xc ();
+      *fxc /= objective_scaling;
       Int numI = nvar;
       for (Int i = 0; i < ncon; i++) {
         if (equatn[i] == dciFalse) {
@@ -572,14 +572,9 @@ namespace DCI {
       *f = -dciInf;
     if (running) {
       Real val = 0.0;
-      if (objective_scaling != 1) {
-        *f /= objective_scaling;
-        if (grad) {
-          for (Int i = 0; i < nvar; i++)
-            gx[i] /= objective_scaling;
-          for (Int i = nvar; i < nvar + nconI; i++)
-            gx[i] = 0;
-        }
+      if (grad) {
+        for (Int i = nvar; i < nvar + nconI; i++)
+          gx[i] = 0;
       }
       for (Int i = 0; i < nvar+nconI; i++) {
         Real xi = px[i], li = l_bndx[i], ui = u_bndx[i];
@@ -604,6 +599,13 @@ namespace DCI {
           gx[i] *= variable_scaling[i];
       }
       *f -= mu*val;
+      if (objective_scaling != 1) {
+        *f /= objective_scaling;
+        if (grad) {
+          for (Int i = 0; i < nvar; i++)
+            gx[i] /= objective_scaling;
+        }
+      }
     }
   }
 
@@ -686,7 +688,9 @@ namespace DCI {
         if (use_variable_scaling) {
           for (Int k = 0; k < *nnzj; k++){
             Int i = Jvar[k];
-            variable_scaling[i] = Max(variable_scaling[i], Jx[k]);
+            if (i < nvar)
+              variable_scaling[i] = Min(Max(1.0/variable_scaling[i], Jx[k]),
+                  max_variable_scaling);
           }
           updateScaling_x();
         }

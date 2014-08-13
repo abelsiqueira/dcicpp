@@ -28,7 +28,7 @@ alphaR 0.75
 alphaI 2.5
 alphaS 0.0625
 use_objective_scaling 1
-use_variable_scaling 0
+use_variable_scaling 1
 use_constraint_scaling 0
 max_constraint_scaling 1e6
 normal_fail_reboot 1
