@@ -63,7 +63,7 @@ sudo make install
 cd ..
 
 #cutest
-cmd="svn checkout -q --username anonymous --non-interactive"
+cmd="svn checkout -q --username anonymous --password "" --non-interactive"
 url="http://ccpforge.cse.rl.ac.uk/svn/cutest/"
 for name in archdefs sifdecode cutest sif
 do
