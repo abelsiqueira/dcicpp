@@ -62,4 +62,35 @@ make all
 sudo make install
 cd ..
 
-#cutest - todo
+#cutest
+cmd="svn checkout -q --username anonymous --non-interactive"
+url="http://ccpforge.cse.rl.ac.uk/svn/cutest/"
+for name in archdefs sifdecode cutest sif
+do
+  echo "Downloading $name"
+  $cmd $url/$name/trunk ./$name
+done
+
+cat >> $HOME/.bashrc << EOF
+LIBS=$install_dir
+export ARCHDEFS="\$LIBS/archdefs"
+export SIFDECODE="\$LIBS/sifdecode"
+export CUTEST="\$LIBS/cutest"
+export MASTSIF="\$LIBS/sif"
+export PATH="\$CUTEST/bin:\$SIFDECODE/bin:\$PATH"
+export MANPATH="\$CUTEST/man:\$SIFDECODE/man:\$MANPATH"
+export MYARCH="pc64.lnx.gfo"
+EOF
+source $HOME/.bashrc
+
+cd $ARCHDEFS
+# The reading in cutest uses -n 1, which means spaces are considered as input,
+# except for the numbers
+cat >> cutest_answers << EOF
+nyn6
+2
+n2
+n3
+nyyd
+EOF
+./install_optsuite < cutest_answers

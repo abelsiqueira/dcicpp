@@ -1,0 +1,9 @@
+language: cpp
+before_install:
+  - sudo apt-get update -qq
+  - sudo apt-get install -y subversion git gawk gfortran
+install: ./install-dependencies.sh
+script: make test cutest && ./test-cutest.sh
+notifications:
+  email:
+    on_success: always
