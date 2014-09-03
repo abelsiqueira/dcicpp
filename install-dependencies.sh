@@ -1,5 +1,6 @@
 #!/bin/bash
 
+set -v
 install_dir=$(pwd)/..
 cd $install_dir
 #openblas
@@ -83,7 +84,7 @@ export MYARCH="pc64.lnx.gfo"
 EOF
 source $HOME/.bashrc
 
-cd $ARCHDEFS
+cd $install_dir/archdefs
 # The reading in cutest uses -n 1, which means spaces are considered as input,
 # except for the numbers
 cat >> cutest_answers << EOF
