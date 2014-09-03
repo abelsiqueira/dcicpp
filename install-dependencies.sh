@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -v
+set -ev
 install_dir=$(pwd)/..
 cd $install_dir
 #openblas
