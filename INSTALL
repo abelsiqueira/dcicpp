@@ -69,7 +69,7 @@ Edit SuiteSparse_config/SuiteSparse_config.mk
     LAPACK = -llapack
 
 - Add line
-    BLAS = -L$(HOME)/Libraries/OpenBLAS -lgfortran -lgfortranbegin -lpthread
+    BLAS = -lopenblas -lgfortran -lgfortranbegin -lpthread
 
 - Edit the variables METIS_PATH and METIS to reflect your configurations. In our case
     METIS_PATH = $(HOME)/Libraries/metis
