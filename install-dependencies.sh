@@ -72,7 +72,7 @@ do
   $cmd $url/$name/trunk ./$name
 done
 
-cat >> $HOME/.bashrc << EOF
+cat >> ~/.bashrc << EOF
 LIBS=$install_dir
 export ARCHDEFS="\$LIBS/archdefs"
 export SIFDECODE="\$LIBS/sifdecode"
@@ -83,16 +83,9 @@ export MANPATH="\$CUTEST/man:\$SIFDECODE/man:\$MANPATH"
 export MYARCH="pc64.lnx.gfo"
 EOF
 
-# source .bashrc does not work?
-
-LIBS=$install_dir
-ARCHDEFS="$LIBS/archdefs"
-SIFDECODE="$LIBS/sifdecode"
-CUTEST="$LIBS/cutest"
-MASTSIF="$LIBS/sif"
-PATH="$CUTEST/bin:$SIFDECODE/bin:$PATH"
-MANPATH="$CUTEST/man:$SIFDECODE/man:$MANPATH"
-MYARCH="pc64.lnx.gfo"
+# Sourcing .bashrc
+. ~/.bashrc
+# End of .bashrc
 
 cd $install_dir/archdefs
 # The reading in cutest uses -n 1, which means spaces are considered as input,
