@@ -72,20 +72,16 @@ do
   $cmd $url/$name/trunk ./$name
 done
 
-cat >> ~/.bashrc << EOF
 LIBS=$install_dir
-export ARCHDEFS="\$LIBS/archdefs"
-export SIFDECODE="\$LIBS/sifdecode"
-export CUTEST="\$LIBS/cutest"
-export MASTSIF="\$LIBS/sif"
-export PATH="\$CUTEST/bin:\$SIFDECODE/bin:\$PATH"
-export MANPATH="\$CUTEST/man:\$SIFDECODE/man:\$MANPATH"
+export ARCHDEFS="$LIBS/archdefs"
+export SIFDECODE="$LIBS/sifdecode"
+export CUTEST="$LIBS/cutest"
+export MASTSIF="$LIBS/sif"
+export PATH="$CUTEST/bin:$SIFDECODE/bin:$PATH"
+export MANPATH="$CUTEST/man:$SIFDECODE/man:$MANPATH"
 export MYARCH="pc64.lnx.gfo"
-EOF
 
-# Sourcing .bashrc
-. ~/.bashrc
-# End of .bashrc
+echo $CUTEST
 
 cd $install_dir/archdefs
 # The reading in cutest uses -n 1, which means spaces are considered as input,
