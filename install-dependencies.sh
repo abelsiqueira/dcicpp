@@ -72,6 +72,7 @@ do
   $cmd $url/$name/trunk ./$name
 done
 
+cat >> cutest_variables << EOF
 LIBS=$install_dir
 export ARCHDEFS="$LIBS/archdefs"
 export SIFDECODE="$LIBS/sifdecode"
@@ -80,6 +81,9 @@ export MASTSIF="$LIBS/sif"
 export PATH="$CUTEST/bin:$SIFDECODE/bin:$PATH"
 export MANPATH="$CUTEST/man:$SIFDECODE/man:$MANPATH"
 export MYARCH="pc64.lnx.gfo"
+EOF
+
+source cutest_variables
 
 echo $CUTEST
 
