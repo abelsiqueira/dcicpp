@@ -26,7 +26,7 @@ mv metis-4.0.3 metis
 # Install
 # openblas
 cd openblas
-make
+make -s
 sudo make PREFIX=/usr install
 cd ..
 
