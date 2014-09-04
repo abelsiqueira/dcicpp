@@ -82,7 +82,17 @@ export PATH="\$CUTEST/bin:\$SIFDECODE/bin:\$PATH"
 export MANPATH="\$CUTEST/man:\$SIFDECODE/man:\$MANPATH"
 export MYARCH="pc64.lnx.gfo"
 EOF
-source $HOME/.bashrc
+
+# source .bashrc does not work?
+
+LIBS=$install_dir
+ARCHDEFS="$LIBS/archdefs"
+SIFDECODE="$LIBS/sifdecode"
+CUTEST="$LIBS/cutest"
+MASTSIF="$LIBS/sif"
+PATH="$CUTEST/bin:$SIFDECODE/bin:$PATH"
+MANPATH="$CUTEST/man:$SIFDECODE/man:$MANPATH"
+MYARCH="pc64.lnx.gfo"
 
 cd $install_dir/archdefs
 # The reading in cutest uses -n 1, which means spaces are considered as input,
