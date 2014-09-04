@@ -12,7 +12,7 @@ MaxDiag 1e9
 MinDiag 0
 debug_level 0
 verbosity_level 0
-display_level 2
+display_level 0
 table_print_level 1
 scale_normal 0
 csic 1e-6
