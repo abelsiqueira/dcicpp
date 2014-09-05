@@ -98,3 +98,9 @@ n3
 nyyd
 EOF
 ./install_optsuite < cutest_answers
+
+mkdir tmpdir
+cd tmpdir
+runcutest -p genc -D HS35
+runcutest -p gen77 -D HS35
+runcutest -p gen90 -D HS35
