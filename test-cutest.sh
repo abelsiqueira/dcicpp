@@ -17,4 +17,4 @@ do
 done
 
 echo "Convergence count: $c"
-[ $c -lt 100 ] && exit 1
+[ $c -lt 100 ] && exit 1 || exit 0
