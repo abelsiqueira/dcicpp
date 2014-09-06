@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -ev
+set -v
 
 tmpdir=tmpdir
 mkdir -p $tmpdir
