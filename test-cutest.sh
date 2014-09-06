@@ -8,7 +8,7 @@ mkdir -p $tmpdir
 cp Tests/dcicpp.spc $tmpdir
 cd $tmpdir
 c=0
-for problem in $(ls $MASTSIF/*.SIF)
+for problem in $(ls $MASTSIF/HS*.SIF)
 do
   g=$(rundcicpp -D $problem -lgfortran -lgfortranbegin | grep Converged)
   if [ ! -z "$g" ]; then
@@ -17,4 +17,4 @@ do
 done
 
 echo "Convergence count: $c"
-[ $c -lt 700 ] && exit 1
+[ $c -lt 100 ] && exit 1
