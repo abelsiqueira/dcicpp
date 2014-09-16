@@ -6,7 +6,7 @@ cd $install_dir
 #openblas
 wget http://github.com/xianyi/OpenBLAS/tarball/v0.2.9 -O openblas.tar.gz
 #SuiteSparse
-url=http://faculty.cse.tamu/davis/SuiteSparse
+url=http://faculty.cse.tamu.edu/davis/SuiteSparse
 suitesparsename=$(curl $url | awk 'match($0, /href=[^>]*/) {\
   print substr($0, RSTART+5, RLENGTH-5)}' | tail -1)
 wget $url/$suitesparsename -O SuiteSparse.tar.gz
