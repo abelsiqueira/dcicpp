@@ -4,7 +4,7 @@ set -ev
 install_dir=$(pwd)/..
 cd $install_dir
 #openblas
-wget http://github.com/xianyi/OpenBLAS/tarball/v0.2.9 -O openblas.tar.gz
+git clone http://github.com/xianyi/OpenBLAS/
 #SuiteSparse
 url=http://faculty.cse.tamu.edu/davis/SuiteSparse/
 suitesparsename=$(curl $url | awk 'match($0, /href=[^>]*/) {\
@@ -18,12 +18,11 @@ git clone https://github.com/abelsiqueira/nope.git
 
 # Uncompress
 for i in *.tar.gz; do tar -zxf $i; done
-mv xianyi-OpenBLAS-* openblas
 mv metis-4.0.3 metis
 
 # Install
 # openblas
-cd openblas
+cd OpenBLAS
 make -s
 sudo make PREFIX=/usr install
 cd ..
@@ -84,6 +83,7 @@ export MYARCH="pc64.lnx.gfo"
 EOF
 
 source cutest_variables
+cat cutest_variables >> ~/.bashrc
 
 echo $CUTEST
 
