@@ -308,6 +308,7 @@ namespace DCI {
 
     } //End
 
+
     if (NormalFlag == 2)
       exit_flag = 8;
     else if (NormalFlag > 0)
@@ -333,6 +334,13 @@ namespace DCI {
     //Calculating the real function value
     call_fn();
     current_time = getTime() - start_time;
+
+#ifdef VERBOSE
+    if (print_A_at_end) {
+      call_ccfsg();
+      full(*J).print_matlab();
+    }
+#endif
 
 #ifndef NDEBUG
     checkInfactibility();

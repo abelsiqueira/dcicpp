@@ -179,6 +179,7 @@ namespace DCI {
       Bool has_ineq, is_linear, is_bounded;
       Bool is_unlimited;
       Int display_level, debug_level, verbosity_level, table_print_level;
+      Bool print_A_at_end;
       Int exit_flag;
       Real max_time, current_time, start_time;
 

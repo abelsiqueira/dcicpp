@@ -55,6 +55,7 @@ namespace DCI {
     debug_level = 0;
     verbosity_level = 0;
     table_print_level = 0;
+    print_A_at_end = false;
     MaxDiag = 1e20;
     MinDiag = 0;
     max_objective_scaling = 1e6;
@@ -80,7 +81,7 @@ namespace DCI {
       en_max_time, en_minBk, en_use_conjugate_gradient, en_partial_penalization, en_project_dcp,
       en_project_bfgs, en_trustWorstdn, en_trustConvexBox, en_penal_trust,
       en_penal_bfgs, en_scale_normal, en_display_level, en_debug_level,
-      en_verbosity_level, en_MaxDiag, en_MinDiag,
+      en_verbosity_level, en_print_A_at_end, en_MaxDiag, en_MinDiag,
       en_use_objective_scaling, en_objfun_count, en_use_constraint_scaling,
       en_max_objective_scaling, en_use_variable_scaling, en_table_print_level,
       en_max_constraint_scaling, en_max_variable_scaling, en_use_soc,
@@ -95,6 +96,7 @@ namespace DCI {
     paramMap["verbosity_level"] = en_verbosity_level;
     paramMap["display_level"] = en_display_level;
     paramMap["table_print_level"] = en_table_print_level;
+    paramMap["print_A_at_end"] = en_print_A_at_end;
     paramMap["scale_normal"] = en_scale_normal;
     paramMap["use_conjugate_gradient"] = en_use_conjugate_gradient;
     paramMap["use_objective_scaling"] = en_use_objective_scaling;
@@ -186,6 +188,7 @@ namespace DCI {
         case en_verbosity_level: aux >> verbosity_level; break;
         case en_display_level: aux >> display_level; break;
         case en_table_print_level: aux >> table_print_level; break;
+        case en_print_A_at_end: aux >> print_A_at_end; break;
         case en_DeltaMax: aux >> DeltaMax; break;
         case en_maxrest: aux >> maxrest; break;
         case en_maxit: aux >> maxit; break;
