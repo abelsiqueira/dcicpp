@@ -933,7 +933,10 @@ namespace DCI {
     cholFacs++;
     if (!env->IsPosDef()) {
       cholesky_failed = dciTrue;
-      cholesky_correction = 1e-12;
+      if (cholesky_correction < cholesky_base_correction)
+        cholesky_correction = cholesky_base_correction;
+      else
+        cholesky_correction *= chol_correction_increase;
       LJ->factorize (*J, cholesky_correction);
       cholFacs++;
     }

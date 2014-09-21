@@ -212,7 +212,8 @@ namespace DCI {
       Bool normal_fail_reboot;
       Bool partial_penalization, project_dcp, project_dn, project_bfgs;
       Bool trustWorstdn, trustConvexBox, penal_trust, penal_bfgs;
-      Real cholesky_correction;
+      Real cholesky_correction, chol_correction_increase,
+           cholesky_base_correction;
       Bool cholesky_failed;
       Real MaxDiag, MinDiag;
       Real infeasible_gradient;

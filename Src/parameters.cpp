@@ -85,11 +85,14 @@ namespace DCI {
       en_use_objective_scaling, en_objfun_count, en_use_constraint_scaling,
       en_max_objective_scaling, en_use_variable_scaling, en_table_print_level,
       en_max_constraint_scaling, en_max_variable_scaling, en_use_soc,
-      en_nvarshowmax, en_nconshowmax, en_normal_fail_reboot
+      en_nvarshowmax, en_nconshowmax, en_normal_fail_reboot,
+      en_chol_correction_increase, en_cholesky_base_correction
     };
     std::map<std::string, int> paramMap;
 
     paramMap["normal_fail_reboot"] = en_normal_fail_reboot;
+    paramMap["chol_correction_increase"] = en_chol_correction_increase;
+    paramMap["cholesky_base_correction"] = en_cholesky_base_correction;
     paramMap["MaxDiag"] = en_MaxDiag;
     paramMap["MinDiag"] = en_MinDiag;
     paramMap["debug_level"] = en_debug_level;
@@ -182,6 +185,8 @@ namespace DCI {
 
       switch (choice) {
         case en_normal_fail_reboot: aux >> normal_fail_reboot; break;
+        case en_chol_correction_increase: aux >> chol_correction_increase; break;
+        case en_cholesky_base_correction: aux >> cholesky_base_correction; break;
         case en_MaxDiag: aux >> MaxDiag; break;
         case en_MinDiag: aux >> MinDiag; break;
         case en_debug_level: aux >> debug_level; break;
@@ -354,6 +359,8 @@ namespace DCI {
     penal_bfgs = dciTrue;
     scale_normal = dciTrue;
     normal_fail_reboot = dciTrue;
+    chol_correction_increase = 10;
+    cholesky_base_correction = 1e-12;
 
     //Program properties
     has_ineq = dciFalse; //Has some inequalities
