@@ -336,7 +336,7 @@ namespace DCI {
     current_time = getTime() - start_time;
 
 #ifdef VERBOSE
-    if (print_A_at_end) {
+    if (ncon > 0 && print_A_at_end) {
       call_ccfsg();
       full(*J).print_matlab();
     }
