@@ -10,8 +10,8 @@ namespace DCI {
 
   void Interface::defineParameters () {
     DeltaMax = 1e6;
-    maxrest = 200;
-    maxit = 200;
+    maxrest = 200000;
+    maxit = 200000;
     maxssmll = 5;
     maxitSteih = 100000;
     minitSteih = 100;
@@ -20,8 +20,8 @@ namespace DCI {
     csic = 1e-6;
     csig = 1e-6;
     rhomin = 1e-8;
-    phi1 = 1;
-    phi2 = 0.95;
+    phi1 = 1.0;
+    phi2 = 0.1;
     kappa1 = 1e-4;
     kappa2 = 0.25;
     kappa3 = 0.7;
@@ -29,17 +29,17 @@ namespace DCI {
     zeta1 = 2;
     zeta2 = 1;
     zeta3 = 5;
-    alphaR = 0.25;
+    alphaR = 0.75;
     alphaI = 2.5;
     alphaS = 6.25e-2;
-    eta1 = 1e-4;
-    eta2 = 0.7;
-    eta3 = 0.1;
+    eta1 = 1e-3;
+    eta2 = 0.2;
+    eta3 = 0.9;
     DeltaMin = 1e-4;
     DeltaTiny = 1e-10;
     minstep = 1e-3;
-    Delta0 = 1e5;
-    thetaR = 0.9;
+    Delta0 = 1e6;
+    thetaR = 0.99;
     LbdMax = 1e6;
     eps1 = 1e-6;
     eps2 = 1e-14;
@@ -56,7 +56,7 @@ namespace DCI {
     verbosity_level = 0;
     table_print_level = 0;
     print_A_at_end = false;
-    MaxDiag = 1e20;
+    MaxDiag = 1e9;
     MinDiag = 0;
     max_objective_scaling = 1e6;
     max_constraint_scaling = 1e6;
@@ -69,8 +69,7 @@ namespace DCI {
 
   void Interface::readParameters () {
     std::ifstream paramFile("dcicpp.spc");
-    if (paramFile.fail())
-      return;
+    bool has_param_file = !(paramFile.fail());
 
     enum parameters {en_DeltaMax, en_maxrest, en_maxit, en_maxssmll, en_maxitSteih,
       en_minitSteih, en_relitSteih, en_nfailv, en_csic, en_csig, en_rhomin, en_phi1,
@@ -85,8 +84,9 @@ namespace DCI {
       en_use_objective_scaling, en_objfun_count, en_use_constraint_scaling,
       en_max_objective_scaling, en_use_variable_scaling, en_table_print_level,
       en_max_constraint_scaling, en_max_variable_scaling, en_use_soc,
-      en_nvarshowmax, en_nconshowmax, en_normal_fail_reboot,
-      en_chol_correction_increase, en_cholesky_base_correction
+      en_use_normal_safe_guard, en_nvarshowmax, en_nconshowmax,
+      en_normal_fail_reboot, en_chol_correction_increase,
+      en_cholesky_base_correction
     };
     std::map<std::string, int> paramMap;
 
@@ -104,6 +104,7 @@ namespace DCI {
     paramMap["use_conjugate_gradient"] = en_use_conjugate_gradient;
     paramMap["use_objective_scaling"] = en_use_objective_scaling;
     paramMap["use_soc"] = en_use_soc;
+    paramMap["use_normal_safe_guard"] = en_use_normal_safe_guard;
     paramMap["use_constraint_scaling"] = en_use_constraint_scaling;
     paramMap["objfun_count"] = en_objfun_count;
     paramMap["max_objective_scaling"] = en_max_objective_scaling;
@@ -161,6 +162,9 @@ namespace DCI {
     paramMap["minBk"] = en_minBk;
     paramMap["nvarshowmax"] = en_nvarshowmax;
     paramMap["nconshowmax"] = en_nconshowmax;
+
+    if (!has_param_file)
+      return;
 
     std::string param, value;
 
@@ -239,6 +243,7 @@ namespace DCI {
         case en_use_conjugate_gradient: aux >> use_conjugate_gradient; break;
         case en_use_objective_scaling: aux >> use_objective_scaling; break;
         case en_use_soc: aux >> use_soc; break;
+        case en_use_normal_safe_guard: aux >> use_normal_safe_guard; break;
         case en_use_constraint_scaling: aux >> use_constraint_scaling; break;
         case en_objfun_count: aux >> objfun_count; break;
         case en_max_objective_scaling: aux >> max_objective_scaling; break;
@@ -347,6 +352,7 @@ namespace DCI {
     use_conjugate_gradient = dciFalse;
     use_objective_scaling = dciTrue;
     use_soc = dciFalse;
+    use_normal_safe_guard = dciFalse;
     use_constraint_scaling = dciTrue;
     use_variable_scaling = dciTrue;
     partial_penalization = dciTrue;
@@ -355,9 +361,9 @@ namespace DCI {
     project_bfgs = dciTrue;
     trustWorstdn = dciFalse;
     trustConvexBox = dciFalse;
-    penal_trust = dciTrue;
-    penal_bfgs = dciTrue;
-    scale_normal = dciTrue;
+    penal_trust = dciFalse;
+    penal_bfgs = dciFalse;
+    scale_normal = dciFalse;
     normal_fail_reboot = dciTrue;
     chol_correction_increase = 10;
     cholesky_base_correction = 1e-12;

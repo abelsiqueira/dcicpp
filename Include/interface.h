@@ -221,7 +221,7 @@ namespace DCI {
            max_variable_scaling;
       Real *constraint_scaling;
       Bool use_objective_scaling, use_variable_scaling, use_constraint_scaling;
-      Bool use_soc;
+      Bool use_soc, use_normal_safe_guard;
       Int  objfun_count;
       Int  nfix, *fixed_index;
       Bool *fixed;

@@ -291,39 +291,41 @@ namespace DCI {
         if (normc > 0 && infeasible_gradient/normc < 1e-6)
           NormalFlag = 2;
 
-        Vector ssoc(*env, nvar + nconI);
-        Real asoc;
-        call_ccfsg_xc(dciTrue, dciTrue);
-        cholesky();
-        StepFlag = naStep (*c, ssoc);
-        scale_xc (ssoc);
+        if (use_normal_safe_guard) {
+          Vector ssoc(*env, nvar + nconI);
+          Real asoc;
+          call_ccfsg_xc(dciTrue, dciTrue);
+          cholesky();
+          StepFlag = naStep (*c, ssoc);
+          scale_xc (ssoc);
 
-        // Arrumar tamanho do ssoc a partir do x
-        Real alphassoc = 1;
-        pReal ssocx = ssoc.get_doublex();
-        for (Int i = 0; i < nvar+nconI; i++) {
-          Real xi = xcx[i], bli = l_bndx[i], bui = u_bndx[i], di = ssocx[i];
-          if (di == 0)
-            continue;
-          if (di < 0) {
-            Real val = (bli - xi)*(1 - epsmu)/di;
-              alphassoc = Min (alphassoc, val);
-          } else {
-            Real val = (bui - xi)*(1 - epsmu)/di;
-              alphassoc = Min (alphassoc, val);
+          // Arrumar tamanho do ssoc a partir do x
+          Real alphassoc = 1;
+          pReal ssocx = ssoc.get_doublex();
+          for (Int i = 0; i < nvar+nconI; i++) {
+            Real xi = xcx[i], bli = l_bndx[i], bui = u_bndx[i], di = ssocx[i];
+            if (di == 0)
+              continue;
+            if (di < 0) {
+              Real val = (bli - xi)*(1 - epsmu)/di;
+                alphassoc = Min (alphassoc, val);
+            } else {
+              Real val = (bui - xi)*(1 - epsmu)/di;
+                alphassoc = Min (alphassoc, val);
+            }
           }
+          if (alphassoc < 1)
+            ssoc.scale (alphassoc);
+
+          asoc = ssoc.norm (0);
+          if (asoc > DeltaV)
+            xc->saxpy(ssoc, DeltaV/asoc);
+          else
+            xc->saxpy(ssoc, 1.0);
+
+          call_fn ();
+          normc = c->norm ();
         }
-        if (alphassoc < 1)
-          ssoc.scale (alphassoc);
-
-        asoc = ssoc.norm (0);
-        if (asoc > DeltaV)
-          xc->saxpy(ssoc, DeltaV/asoc);
-        else
-          xc->saxpy(ssoc, 1.0);
-
-        call_fn ();
-        normc = c->norm ();
         fail = 0;
 
         if (normal_fail_reboot && normc > rho && NormalFlag == 0) {
