@@ -62,9 +62,9 @@ trustConvexBox 0
 trustWorstdn 0
 use_conjugate_gradient 0
 use_constraint_scaling 0
-use_normal_safe_guard 0
+use_normal_safe_guard 1
 use_objective_scaling 1
-use_soc 0
+use_soc 1
 use_variable_scaling 1
 verbosity_level 0
 zeta1 2
