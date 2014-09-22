@@ -49,7 +49,7 @@ namespace DCI {
     bfgsupd = 5;
     c1 = 0.5;
     c2 = 5e-1;
-    max_time = 5 * 60; // 5 minutes
+    max_time = 300; // 5 minutes
     minBk = 1e-12;
     display_level = 1;
     debug_level = 0;
@@ -353,7 +353,7 @@ namespace DCI {
     use_objective_scaling = dciTrue;
     use_soc = dciFalse;
     use_normal_safe_guard = dciFalse;
-    use_constraint_scaling = dciTrue;
+    use_constraint_scaling = dciFalse;
     use_variable_scaling = dciTrue;
     partial_penalization = dciTrue;
     project_dcp = dciFalse;
