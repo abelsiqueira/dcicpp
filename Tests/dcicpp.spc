@@ -51,7 +51,7 @@ partial_penalization 1
 penal_bfgs 0
 penal_trust 0
 phi1 1.0
-phi2 0.1
+phi2 0.99
 print_A_at_end false
 project_bfgs 1
 project_dcp 0

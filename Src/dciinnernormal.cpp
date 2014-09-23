@@ -286,7 +286,6 @@ namespace DCI {
         }
 #endif
 
-        call_ccfsg_xc (dciTrue, dciFalse);
         if (normc > 0 && infeasible_gradient/normc < 1e-6)
           NormalFlag = 2;
 

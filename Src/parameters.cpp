@@ -21,7 +21,7 @@ namespace DCI {
     csig = 1e-6;
     rhomin = 1e-8;
     phi1 = 1.0;
-    phi2 = 0.1;
+    phi2 = 0.9;
     kappa1 = 1e-4;
     kappa2 = 0.25;
     kappa3 = 0.7;
