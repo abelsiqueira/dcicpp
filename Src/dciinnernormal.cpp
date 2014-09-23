@@ -15,7 +15,6 @@ namespace DCI {
     Vector gtmp (*env);
     Vector xtmp (*xc), ctmp (*c), stmp (*env);
     Real normgtmp = 0;
-    Real beta1 = 0.1, beta2 = 0.25;
 
     Aavail = dciFalse;
 

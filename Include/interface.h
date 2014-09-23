@@ -195,6 +195,7 @@ namespace DCI {
       Real phi1, phi2;
       Real csic, csig;
       Real zeta1, zeta2, zeta3;
+      Real beta1, beta2;
       Real kappa1, kappa2, kappa3, kappa4;
       Real thetaR, LbdMax;
       Bool GotH, first;

@@ -1,6 +1,8 @@
 alphaI 2.5
 alphaR 0.75
 alphaS 6.25e-2
+beta1 0.1
+beta2 0.25
 bfgsupd 5
 c1 0.5
 c2 5e-1

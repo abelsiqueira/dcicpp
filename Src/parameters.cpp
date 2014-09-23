@@ -26,6 +26,8 @@ namespace DCI {
     kappa2 = 0.25;
     kappa3 = 0.7;
     kappa4 = 2.5;
+    beta1 = 0.1;
+    beta2 = 0.25;
     zeta1 = 2;
     zeta2 = 1;
     zeta3 = 5;
@@ -71,13 +73,14 @@ namespace DCI {
     std::ifstream paramFile("dcicpp.spc");
     bool has_param_file = !(paramFile.fail());
 
-    enum parameters {en_DeltaMax, en_maxrest, en_maxit, en_maxssmll, en_maxitSteih,
-      en_minitSteih, en_relitSteih, en_nfailv, en_csic, en_csig, en_rhomin, en_phi1,
-      en_phi2, en_kappa1, en_kappa2, en_kappa3, en_kappa4, en_zeta1, en_zeta2,
-      en_zeta3, en_alphaR, en_alphaI, en_alphaS, en_eta1, en_eta2, en_eta3,
-      en_DeltaMin, en_DeltaTiny, en_minstep, en_Delta0, en_thetaR, en_LbdMax,
-      en_eps1, en_eps2, en_eps3, en_epsmu, en_epsgap, en_bfgsupd, en_c1, en_c2,
-      en_max_time, en_minBk, en_use_conjugate_gradient, en_partial_penalization, en_project_dcp,
+    enum parameters {en_DeltaMax, en_maxrest, en_maxit, en_maxssmll,
+      en_maxitSteih, en_minitSteih, en_relitSteih, en_nfailv, en_csic, en_csig,
+      en_rhomin, en_phi1, en_phi2, en_kappa1, en_kappa2, en_kappa3, en_kappa4,
+      en_zeta1, en_zeta2, en_beta1, en_beta2, en_zeta3, en_alphaR, en_alphaI,
+      en_alphaS, en_eta1, en_eta2, en_eta3, en_DeltaMin, en_DeltaTiny,
+      en_minstep, en_Delta0, en_thetaR, en_LbdMax, en_eps1, en_eps2, en_eps3,
+      en_epsmu, en_epsgap, en_bfgsupd, en_c1, en_c2, en_max_time, en_minBk,
+      en_use_conjugate_gradient, en_partial_penalization, en_project_dcp,
       en_project_bfgs, en_trustWorstdn, en_trustConvexBox, en_penal_trust,
       en_penal_bfgs, en_scale_normal, en_display_level, en_debug_level,
       en_verbosity_level, en_print_A_at_end, en_MaxDiag, en_MinDiag,
@@ -135,6 +138,8 @@ namespace DCI {
     paramMap["kappa2"] = en_kappa2;
     paramMap["kappa3"] = en_kappa3;
     paramMap["kappa4"] = en_kappa4;
+    paramMap["beta1"] = en_beta1;
+    paramMap["beta2"] = en_beta2;
     paramMap["zeta1"] = en_zeta1;
     paramMap["zeta2"] = en_zeta2;
     paramMap["zeta3"] = en_zeta3;
@@ -215,6 +220,8 @@ namespace DCI {
         case en_kappa2: aux >> kappa2; break;
         case en_kappa3: aux >> kappa3; break;
         case en_kappa4: aux >> kappa4; break;
+        case en_beta1: aux >> beta1; break;
+        case en_beta2: aux >> beta2; break;
         case en_zeta1: aux >> zeta1; break;
         case en_zeta2: aux >> zeta2; break;
         case en_zeta3: aux >> zeta3; break;
@@ -351,8 +358,8 @@ namespace DCI {
     //Strategy choices
     use_conjugate_gradient = dciFalse;
     use_objective_scaling = dciTrue;
-    use_soc = dciFalse;
-    use_normal_safe_guard = dciFalse;
+    use_soc = dciTrue;
+    use_normal_safe_guard = dciTrue;
     use_constraint_scaling = dciFalse;
     use_variable_scaling = dciTrue;
     partial_penalization = dciTrue;
