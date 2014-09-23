@@ -43,7 +43,7 @@ MinDiag 0
 minitSteih 100
 minstep 1e-3
 nconshowmax 10
-nfailv 3
+nfailv 5
 normal_fail_reboot 1
 nvarshowmax 10
 objfun_count 0

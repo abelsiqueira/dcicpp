@@ -3,6 +3,7 @@
 set -v
 
 tmpdir=tmpdir
+rm -rf $tmpdir
 mkdir -p $tmpdir
 
 cp Tests/dcicpp.spc $tmpdir

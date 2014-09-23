@@ -16,7 +16,7 @@ namespace DCI {
     maxitSteih = 100000;
     minitSteih = 100;
     relitSteih = 10;
-    nfailv = 3;
+    nfailv = 5;
     csic = 1e-6;
     csig = 1e-6;
     rhomin = 1e-8;
