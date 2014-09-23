@@ -289,7 +289,7 @@ namespace DCI {
         if (normc > 0 && infeasible_gradient/normc < 1e-6)
           NormalFlag = 2;
 
-        if (use_normal_safe_guard) {
+        if (use_normal_safe_guard && NormalFlag == 0) {
           Vector ssoc(*env, nvar + nconI);
           Real asoc;
           call_ccfsg_xc(dciTrue, dciTrue);
