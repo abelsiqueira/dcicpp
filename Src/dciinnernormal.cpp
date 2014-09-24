@@ -286,7 +286,7 @@ namespace DCI {
         }
 #endif
 
-        if (normc > 0 && infeasible_gradient/normc < 1e-6)
+        if (normc > 0 && infeasible_gradient/normc < infeasibility_tol)
           NormalFlag = 2;
 
         if (use_normal_safe_guard && NormalFlag == 0) {

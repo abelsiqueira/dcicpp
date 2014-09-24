@@ -21,7 +21,7 @@ namespace DCI {
     csig = 1e-6;
     rhomin = 1e-8;
     phi1 = 1.0;
-    phi2 = 0.9;
+    phi2 = 0.99;
     kappa1 = 1e-4;
     kappa2 = 0.25;
     kappa3 = 0.7;
@@ -89,7 +89,7 @@ namespace DCI {
       en_max_constraint_scaling, en_max_variable_scaling, en_use_soc,
       en_use_normal_safe_guard, en_nvarshowmax, en_nconshowmax,
       en_normal_fail_reboot, en_chol_correction_increase,
-      en_cholesky_base_correction
+      en_cholesky_base_correction, en_infeasibility_tol
     };
     std::map<std::string, int> paramMap;
 
@@ -110,6 +110,7 @@ namespace DCI {
     paramMap["use_normal_safe_guard"] = en_use_normal_safe_guard;
     paramMap["use_constraint_scaling"] = en_use_constraint_scaling;
     paramMap["objfun_count"] = en_objfun_count;
+    paramMap["infeasibility_tol"] = en_infeasibility_tol;
     paramMap["max_objective_scaling"] = en_max_objective_scaling;
     paramMap["max_constraint_scaling"] = en_max_constraint_scaling;
     paramMap["max_variable_scaling"] = en_max_variable_scaling;
@@ -253,6 +254,7 @@ namespace DCI {
         case en_use_normal_safe_guard: aux >> use_normal_safe_guard; break;
         case en_use_constraint_scaling: aux >> use_constraint_scaling; break;
         case en_objfun_count: aux >> objfun_count; break;
+        case en_infeasibility_tol: aux >> infeasibility_tol; break;
         case en_max_objective_scaling: aux >> max_objective_scaling; break;
         case en_max_constraint_scaling: aux >> max_constraint_scaling; break;
         case en_max_variable_scaling: aux >> max_variable_scaling; break;
@@ -354,6 +356,7 @@ namespace DCI {
     cholesky_correction = 0;
     cholesky_failed = dciFalse;
     objfun_count = 10;
+    infeasibility_tol = 1e-6;
 
     //Strategy choices
     use_conjugate_gradient = dciFalse;

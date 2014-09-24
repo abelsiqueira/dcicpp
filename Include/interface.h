@@ -224,6 +224,7 @@ namespace DCI {
       Bool use_objective_scaling, use_variable_scaling, use_constraint_scaling;
       Bool use_soc, use_normal_safe_guard;
       Int  objfun_count;
+      Real infeasibility_tol;
       Int  nfix, *fixed_index;
       Bool *fixed;
       Int  cuter_status;
