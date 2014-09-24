@@ -353,7 +353,7 @@ namespace DCI {
     scaling_matrix = 0;
     cholesky_correction = 0;
     cholesky_failed = dciFalse;
-    objfun_count = 0;
+    objfun_count = 10;
 
     //Strategy choices
     use_conjugate_gradient = dciFalse;

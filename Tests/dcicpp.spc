@@ -46,7 +46,7 @@ nconshowmax 10
 nfailv 5
 normal_fail_reboot 1
 nvarshowmax 10
-objfun_count 0
+objfun_count 10
 partial_penalization 1
 penal_bfgs 0
 penal_trust 0
