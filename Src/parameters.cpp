@@ -363,7 +363,7 @@ namespace DCI {
     use_objective_scaling = dciTrue;
     use_soc = dciTrue;
     use_normal_safe_guard = dciTrue;
-    use_constraint_scaling = dciFalse;
+    use_constraint_scaling = dciTrue;
     use_variable_scaling = dciTrue;
     partial_penalization = dciTrue;
     project_dcp = dciFalse;

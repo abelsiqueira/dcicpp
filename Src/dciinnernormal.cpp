@@ -334,7 +334,7 @@ namespace DCI {
           for (Int i = 0; i < ncon; i++) {
             if (equatn[i] == dciFalse) {
               if (constr[i] > clx[i] && constr[i] < cux[i])
-                xcx[numI] = constr[i];
+                xcx[numI] = constr[i]/constraint_scaling[i];
               numI++;
             }
           }
