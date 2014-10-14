@@ -638,16 +638,6 @@ namespace DCI {
           Jfun[i]--;
         }
       }
-      // Fixed variables fix
-      for (Int k = 0; k < *nnzj; k++) {
-        if (fixed[Jvar[k]]) {
-          Jx[k]   = Jx[*nnzj-1];
-          Jvar[k] = Jvar[*nnzj-1];
-          Jfun[k] = Jfun[*nnzj-1];
-          (*nnzj)--;
-          k--;
-        }
-      }
 
       if (running) {
         if (ncon > 0 && use_constraint_scaling) {
@@ -740,16 +730,6 @@ namespace DCI {
         for (Int i = 0; i < *nnzj; i++) {
           Jvar[i]--;
           Jfun[i]--;
-        }
-      }
-      // Fixed variables fix
-      for (Int k = 0; k < *nnzj; k++) {
-        if (fixed[Jvar[k]]) {
-          Jx[k]   = Jx[*nnzj-1];
-          Jvar[k] = Jvar[*nnzj-1];
-          Jfun[k] = Jfun[*nnzj-1];
-          (*nnzj)--;
-          k--;
         }
       }
 

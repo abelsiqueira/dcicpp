@@ -378,11 +378,9 @@ namespace DCI {
     maxitSteih = Max (minitSteih, Min(maxitSteih, Int(nvar*relitSteih+5) ) );
     minstep *= Min (csig, csic);
 
-    fixed = new Bool[nvar+nconI];
     if (use_variable_scaling)
       variable_scaling = new Real[nvar];
     for (Int i = 0; i < nvar; i++) {
-      fixed[i] = false;
       Real bli = l_bndx[i], bui = u_bndx[i];
       variable_scaling[i] = 1.0;
       if ( (xx[i] > bli) && (xx[i] < bui) ) {
@@ -392,11 +390,7 @@ namespace DCI {
       if (bli - bui > dciTiny) {
         throw("Infeasible bounds");
       } else if (bli - bui > - dciTiny) {
-        throw("Fixed variables not allowed");
-        nfix++;
-        fixed[i] = true;
-        xx[i] = (bli + bui)/2;
-        xcx[i] = xx[i];
+        throw("Fixed variables not allowed.\nUse http://github.com/abelsiqueira/nope");
       } else {
         Real smldelta = Min ( 1e-2, (bui - bli)/100.0);
         xx[i] = Max ( Min ( xx[i], bui - smldelta ), bli + smldelta );
@@ -405,8 +399,6 @@ namespace DCI {
         assert (xx[i] < bui);
       }
     }
-    for (Int i = nvar; i < nvar+nconI; i++)
-      fixed[i] = false;
 
     // Calculating the function value and c without the barrier.
     objective_scaling = 1.0;
@@ -492,7 +484,6 @@ namespace DCI {
     DeltaH = DeltaV;
 
     running = dciFalse;
-
   }
 
 }

@@ -223,8 +223,6 @@ namespace DCI {
       Bool use_soc, use_normal_safe_guard;
       Int  objfun_count;
       Real infeasibility_tol;
-      Int  nfix, *fixed_index;
-      Bool *fixed;
       Int  cuter_status;
       Int nvarshowmax, nconshowmax;
   };
