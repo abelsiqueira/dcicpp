@@ -28,15 +28,6 @@ namespace DCI {
    */
 
   Int Interface::normalStep () {
-//    Vector dn (*env);
-//    Int fail = 0;
-//    Int oldAcnt = 1;
-//    Real oldnormc;
-//    Real dnnorm;
-//    Int ibfgs = 0;
-//    Int iout = 0;
-//    Bool dnavail = dciFalse;
-//    Bool scaleJ = dciTrue;;
     Vector gtmp(*env);
 
     ngp = engp;
@@ -48,8 +39,6 @@ namespace DCI {
     rho = Max (rho, csic);
     updateMu ();
     nRest = 0;
-    nbfgs = 0;
-//    oldnormc = normc;
     *xc = *x;
     NormalFlag = 0;
     if (iter == 1) {

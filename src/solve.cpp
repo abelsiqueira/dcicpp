@@ -124,7 +124,6 @@ namespace DCI {
 #endif
 
       tRest += nRest;
-      tbfgs += nbfgs;
 //      assert ( (normc <= rho) || (NormalFlag != 0) || (tRest > maxrest) );
 
       call_ofg_xc (dciFalse);
@@ -174,7 +173,6 @@ namespace DCI {
           << "  tSoc   = " << tSoc << std::endl
           << "  tSteih = " << tSteih << std::endl
           << "  tRej   = " << tRej << std::endl
-          << "  tbfgs  = " << tbfgs << std::endl
           << "  tRest  = " << tRest << std::endl
           << "  itssmll= " << itssmll << std::endl
           << "  gap  = " << gap << std::endl
@@ -281,7 +279,6 @@ namespace DCI {
             << "  tSoc   = " << tSoc << std::endl
             << "  tSteih = " << tSteih << std::endl
             << "  tRej   = " << tRej << std::endl
-            << "  tbfgs  = " << tbfgs << std::endl
             << "  tRest  = " << tRest << std::endl
             << "  itssmll= " << itssmll << std::endl
             << "  gap  = " << gap << std::endl

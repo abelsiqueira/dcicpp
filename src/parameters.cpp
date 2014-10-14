@@ -48,7 +48,6 @@ namespace DCI {
     eps3 = 1e-8;
     epsmu = 1e-6;
     epsgap = 1e-4;
-    bfgsupd = 5;
     c1 = 0.5;
     c2 = 5e-1;
     max_time = 300; // 5 minutes
@@ -79,10 +78,10 @@ namespace DCI {
       en_zeta1, en_zeta2, en_beta1, en_beta2, en_zeta3, en_alphaR, en_alphaI,
       en_alphaS, en_eta1, en_eta2, en_eta3, en_DeltaMin, en_DeltaTiny,
       en_minstep, en_Delta0, en_thetaR, en_LbdMax, en_eps1, en_eps2, en_eps3,
-      en_epsmu, en_epsgap, en_bfgsupd, en_c1, en_c2, en_max_time, en_minBk,
+      en_epsmu, en_epsgap, en_c1, en_c2, en_max_time, en_minBk,
       en_use_conjugate_gradient, en_partial_penalization, en_project_dcp,
-      en_project_bfgs, en_trustWorstdn, en_trustConvexBox, en_penal_trust,
-      en_penal_bfgs, en_scale_normal, en_display_level, en_debug_level,
+      en_trustWorstdn, en_trustConvexBox, en_penal_trust,
+      en_scale_normal, en_display_level, en_debug_level,
       en_verbosity_level, en_print_A_at_end, en_MaxDiag, en_MinDiag,
       en_use_objective_scaling, en_objfun_count, en_use_constraint_scaling,
       en_max_objective_scaling, en_use_variable_scaling, en_table_print_level,
@@ -117,11 +116,9 @@ namespace DCI {
     paramMap["use_variable_scaling"] = en_use_variable_scaling;
     paramMap["partial_penalization"] = en_partial_penalization;
     paramMap["project_dcp"] = en_project_dcp;
-    paramMap["project_bfgs"] = en_project_bfgs;
     paramMap["trustWorstdn"] = en_trustWorstdn;
     paramMap["trustConvexBox"] = en_trustConvexBox;
     paramMap["penal_trust"] = en_penal_trust;
-    paramMap["penal_bfgs"] = en_penal_bfgs;
     paramMap["DeltaMax"] = en_DeltaMax;
     paramMap["maxrest"] = en_maxrest;
     paramMap["maxit"] = en_maxit;
@@ -161,7 +158,6 @@ namespace DCI {
     paramMap["eps3"] = en_eps3;
     paramMap["epsmu"] = en_epsmu;
     paramMap["epsgap"] = en_epsgap;
-    paramMap["bfgsupd"] = en_bfgsupd;
     paramMap["c1"] = en_c1;
     paramMap["c2"] = en_c2;
     paramMap["max_time"] = en_max_time;
@@ -174,9 +170,9 @@ namespace DCI {
 
     std::string param, value;
 
-    if (debug_level > 0) {
+    if (debug_level > 0)
       std::cout << "Parameters loaded:" << std::endl;
-    }
+
     while (getline(paramFile, param, ' ')) {
       getline(paramFile, value, '\n');
       std::stringstream aux;
@@ -243,7 +239,6 @@ namespace DCI {
         case en_eps3: aux >> eps3; break;
         case en_epsmu: aux >> epsmu; break;
         case en_epsgap: aux >> epsgap; break;
-        case en_bfgsupd: aux >> bfgsupd; break;
         case en_c1: aux >> c1; break;
         case en_c2: aux >> c2; break;
         case en_max_time: aux >> max_time; break;
@@ -261,11 +256,9 @@ namespace DCI {
         case en_use_variable_scaling: aux >> use_variable_scaling; break;
         case en_partial_penalization: aux >> partial_penalization; break;
         case en_project_dcp: aux >> project_dcp; break;
-        case en_project_bfgs: aux >> project_bfgs; break;
         case en_trustWorstdn: aux >> trustWorstdn; break;
         case en_trustConvexBox: aux >> trustConvexBox; break;
         case en_penal_trust: aux >> penal_trust; break;
-        case en_penal_bfgs: aux >> penal_bfgs; break;
         case en_scale_normal: aux >> scale_normal; break;
         case en_nvarshowmax: aux >> nvarshowmax; break;
         case en_nconshowmax: aux >> nconshowmax; break;
@@ -336,10 +329,8 @@ namespace DCI {
     tSteih = 0;
     tRej = 0;
     tSoc = 0;
-    tbfgs = 0;
     cholFacs = 0;
     nSoc = 0;
-    nbfgs = 0;
     nRej = 0;
     nSteih = 0;
     nHprod = 0;
@@ -368,11 +359,9 @@ namespace DCI {
     partial_penalization = dciTrue;
     project_dcp = dciFalse;
     project_dn = dciTrue;
-    project_bfgs = dciTrue;
     trustWorstdn = dciFalse;
     trustConvexBox = dciFalse;
     penal_trust = dciFalse;
-    penal_bfgs = dciFalse;
     scale_normal = dciFalse;
     normal_fail_reboot = dciTrue;
     chol_correction_increase = 10;

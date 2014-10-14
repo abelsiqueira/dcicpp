@@ -6,12 +6,12 @@ special_variables = {
   "dciInf"=>1e20
 }
 
-puts File.open("Src/parameters.cpp", "r").each_line.map { |line|
+puts File.open("src/parameters.cpp", "r").each_line.map { |line|
   if !(m = line.match(/paramMap\["(.*)"\]/)).nil?
     m[1]
   end
 }.compact.map { |var|
-  File.open("Src/parameters.cpp", "r").each_line.map { |line|
+  File.open("src/parameters.cpp", "r").each_line.map { |line|
     if !(m = line.match(/\b#{var} = (.*);/)).nil?
       if special_variables.include?(m[1])
         value = special_variables[m[1]]

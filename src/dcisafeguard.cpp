@@ -4,11 +4,9 @@
 
 namespace DCI {
 
-  // For bfgs use this
   Int Interface::normalSafeguard () {
     Vector dn (*env);
-//    Real dnnorm = 0;
-    Int iout = 0, ibfgs = 0;
+    Int iout = 0;
     Bool scaleJ = scale_normal;
 
     call_ccfsg_xc (dciTrue, scaleJ);
@@ -17,9 +15,6 @@ namespace DCI {
 
     naStep (*c, dn);
 
-//    dnnorm = dn.norm ();
-    iout = dcibfgs (dn, ibfgs);
-    nbfgs += ibfgs;
 #ifndef NDEBUG
     checkInfactibility();
 #endif

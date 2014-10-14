@@ -239,7 +239,6 @@ namespace DCI {
             << "|c(x)| = " << normc << std::endl
             << "|g(x) + J(x)'*y| = " << normgp << std::endl
             << "y offset = " << yoff << std::endl
-//            << "BFGS? " << ((tbfgs > 0) ? "yes" : "no") << std::endl
             << "Number of Iterations = " << iter << std::endl
             << "Elapsed Time = " << (current_time > 0 ? current_time : 0) << " s" << std::endl;
       }
@@ -263,7 +262,6 @@ namespace DCI {
             << "  tSoc   = " << tSoc << std::endl
             << "  tSteih = " << tSteih << std::endl
             << "  tRej   = " << tRej << std::endl
-            << "  tbfgs  = " << tbfgs << std::endl
             << "  tRest  = " << tRest << std::endl
             << "  itssmll= " << itssmll << std::endl
             << "  gap  = " << gap << std::endl

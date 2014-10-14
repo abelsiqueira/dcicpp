@@ -90,7 +90,6 @@ namespace DCI {
       void naProj (Vector &, Vector &, Vector &);
       void naProjApprox (Vector &, Vector &, Vector &);
       Int  naStep (Vector &, Vector &);
-      Int  dcibfgs (const Vector &, Int &);
       void HiProd (Int, Real, Real, pReal, pReal, pReal, pReal, pReal);
       Int  lineSearch (const Vector &, const Vector &, const Vector &, Real &,
                 Real &, Vector &);
@@ -199,20 +198,19 @@ namespace DCI {
       Real kappa1, kappa2, kappa3, kappa4;
       Real thetaR, LbdMax;
       Bool GotH, first;
-      Int  nSteih, nRej, nSoc, nfailv, nHprod, nRest, nbfgs;
-      Int  tSoc, tSteih, tRej, tbfgs, tRest;
+      Int  nSteih, nRej, nSoc, nfailv, nHprod, nRest;
+      Int  tSoc, tSteih, tRej, tRest;
       Int  TangentFlag, StepFlag, NormalFlag;
       Int  iter, maxit, maxitSteih, minitSteih, relitSteih;
       Int  minstep, itssmll, maxrest, maxssmll;
-      Int  bfgsupd;
       Int  cholFacs;
       Bool Aavail, gavail, LimLbd, FreshA;
       Real minBk;
       Bool use_conjugate_gradient;
       Bool scale_normal;
       Bool normal_fail_reboot;
-      Bool partial_penalization, project_dcp, project_dn, project_bfgs;
-      Bool trustWorstdn, trustConvexBox, penal_trust, penal_bfgs;
+      Bool partial_penalization, project_dcp, project_dn;
+      Bool trustWorstdn, trustConvexBox, penal_trust;
       Real cholesky_correction, chol_correction_increase,
            cholesky_base_correction;
       Bool cholesky_failed;

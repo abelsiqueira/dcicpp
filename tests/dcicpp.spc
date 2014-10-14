@@ -3,7 +3,6 @@ alphaR 0.75
 alphaS 6.25e-2
 beta1 0.1
 beta2 0.25
-bfgsupd 5
 c1 0.5
 c2 5e-1
 chol_correction_increase 10
@@ -49,12 +48,10 @@ normal_fail_reboot 1
 nvarshowmax 10
 objfun_count 10
 partial_penalization 1
-penal_bfgs 0
 penal_trust 0
 phi1 1.0
 phi2 0.99
 print_A_at_end false
-project_bfgs 1
 project_dcp 0
 relitSteih 10
 rhomin 1e-8
