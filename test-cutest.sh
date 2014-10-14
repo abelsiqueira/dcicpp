@@ -6,8 +6,8 @@ tmpdir=tmpdir
 rm -rf $tmpdir
 mkdir -p $tmpdir
 
-cp Tests/dcicpp.spc $tmpdir
-cp Tests/fast.list $tmpdir
+cp tests/dcicpp.spc $tmpdir
+cp tests/fast.list $tmpdir
 cd $tmpdir
 rm -f fail.list
 c=0
