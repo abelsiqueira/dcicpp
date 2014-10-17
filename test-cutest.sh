@@ -2,17 +2,20 @@
 
 set -v
 
+[ ! -z "$1" ] && list=$1 || list=tests/fast.list
+[ ! -f $list ] && echo "$list is not a file" && exit 1
+
 tmpdir=tmpdir
 rm -rf $tmpdir
 mkdir -p $tmpdir
 
 cp tests/dcicpp.spc $tmpdir
-cp tests/hs.list $tmpdir
+cp $list $tmpdir
 cd $tmpdir
 rm -f fail.list
 c=0
 T=0
-for problem in $(cat hs.list)
+for problem in $(cat $(basename $list))
 do
   echo "Running problem $problem"
   g=$(rundcicpp -D $problem -lgfortran -lgfortranbegin | grep Converged)
