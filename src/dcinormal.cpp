@@ -66,7 +66,6 @@ namespace DCI {
 //      DeltaV = gradLeastSquare.norm();
     }
 
-
     if ( (normc <= rho) && (!Aavail) ) {
       if (ncon > 0) {
         if (!is_linear)

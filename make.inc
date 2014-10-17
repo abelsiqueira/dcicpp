@@ -22,8 +22,8 @@ MV = mv -f
 
 DCILIBNAME = libdcicpp.a
 
-DCILIB = $(DCIDIR)/lib/$(DCILIBNAME) -lnope -lbasematrices -lcholmod -lamd \
-          -lcolamd -lccolamd -lcamd -lsuitesparseconfig -lmetis -lopenblas \
-          -lgfortran -lgfortranbegin -lpthread -lrt
+DCILIB = $(DCIDIR)/lib/$(DCILIBNAME) -llsmr -lnope -lbasematrices -lcholmod \
+    -lamd -lcolamd -lccolamd -lcamd -lsuitesparseconfig -lmetis -lopenblas \
+    -lgfortran -lgfortranbegin -lpthread -lrt
 
 I = -I$(DCIDIR)/include/

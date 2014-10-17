@@ -7,12 +7,12 @@ rm -rf $tmpdir
 mkdir -p $tmpdir
 
 cp tests/dcicpp.spc $tmpdir
-cp tests/fast.list $tmpdir
+cp tests/hs.list $tmpdir
 cd $tmpdir
 rm -f fail.list
 c=0
 T=0
-for problem in $(cat fast.list)
+for problem in $(cat hs.list)
 do
   echo "Running problem $problem"
   g=$(rundcicpp -D $problem -lgfortran -lgfortranbegin | grep Converged)

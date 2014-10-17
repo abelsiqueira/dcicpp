@@ -6,6 +6,8 @@
 #include <iomanip>
 //#include <cassert>
 
+DCI::Interface *global_dci;
+
 namespace DCI {
   void error (int status, const char *file, int line, const char *message) {
 #ifdef VERBOSE
@@ -37,6 +39,7 @@ namespace DCI {
   Interface::Interface () {
     //Parameters
     initialization ();
+    global_dci = this;
 
     env = new Environment;
     env->set_error_handler (&error);
@@ -986,4 +989,24 @@ namespace DCI {
   }
 #endif
 
+  void Interface::JacobMult(bool trans, pReal x, pReal y) {
+    int i, j, nnzj = *(Jtrip->get_pnnz());
+    for (int k = 0; k < nnzj; k++) {
+      i = Jfun[k];
+      j = Jvar[k];
+      if (trans)
+        x[j] += Jx[k]*y[i];
+      else
+        y[i] += Jx[k]*x[j];
+    }
+  }
+
+}
+
+void Aprod (int *, int *, double * x, double * y) {
+  global_dci->JacobMult(false, x, y);
+}
+
+void Atprod (int *, int *, double * x, double * y) {
+  global_dci->JacobMult(true, x, y);
 }

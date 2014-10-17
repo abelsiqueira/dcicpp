@@ -88,7 +88,7 @@ namespace DCI {
       en_max_constraint_scaling, en_max_variable_scaling, en_use_soc,
       en_use_normal_safe_guard, en_nvarshowmax, en_nconshowmax,
       en_normal_fail_reboot, en_chol_correction_increase,
-      en_cholesky_base_correction, en_infeasibility_tol
+      en_cholesky_base_correction, en_infeasibility_tol, en_use_lsmr
     };
     std::map<std::string, int> paramMap;
 
@@ -106,6 +106,7 @@ namespace DCI {
     paramMap["use_conjugate_gradient"] = en_use_conjugate_gradient;
     paramMap["use_objective_scaling"] = en_use_objective_scaling;
     paramMap["use_soc"] = en_use_soc;
+    paramMap["use_lsmr"] = en_use_lsmr;
     paramMap["use_normal_safe_guard"] = en_use_normal_safe_guard;
     paramMap["use_constraint_scaling"] = en_use_constraint_scaling;
     paramMap["objfun_count"] = en_objfun_count;
@@ -246,6 +247,7 @@ namespace DCI {
         case en_use_conjugate_gradient: aux >> use_conjugate_gradient; break;
         case en_use_objective_scaling: aux >> use_objective_scaling; break;
         case en_use_soc: aux >> use_soc; break;
+        case en_use_lsmr: aux >> use_lsmr; break;
         case en_use_normal_safe_guard: aux >> use_normal_safe_guard; break;
         case en_use_constraint_scaling: aux >> use_constraint_scaling; break;
         case en_objfun_count: aux >> objfun_count; break;
@@ -353,6 +355,7 @@ namespace DCI {
     use_conjugate_gradient = dciFalse;
     use_objective_scaling = dciTrue;
     use_soc = dciTrue;
+    use_soc = dciFalse;
     use_normal_safe_guard = dciTrue;
     use_constraint_scaling = dciTrue;
     use_variable_scaling = dciTrue;

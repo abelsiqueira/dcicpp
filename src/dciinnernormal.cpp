@@ -5,7 +5,7 @@
 namespace DCI {
   Int Interface::innerNormalDirection (Real & infeasible_gradient) {
     Real oldnormc = c->norm();
-    Vector d(*env), dcp(*env), dn(*env);
+    Vector d(*env), dcp(*env), dn(*xc);
     Real ndn;
     Real alpha, Ared, Pred;
     Real one[2] = {1,0};
@@ -100,11 +100,30 @@ namespace DCI {
 
     dnavail = dciFalse;
     if (!dnavail) {
-      naflag = naStep (*c, dn);
+      dnx = dn.get_doublex();
+      if (use_lsmr) {
+        Int ncol = nvar+nconI;
+        Real b[ncon];
+        for (Int i = 0; i < ncon; i++)
+          b[i] = cx[i];
+        JacobMult(false, xcx, b);
+        for (Int i = 0; i < ncon; i++)
+          b[i] = -b[i];
+        Real damp = cholesky_correction, atol = 1e-12, btol = 1e-12, conlim = 1e12;
+        Int itnlim = 200;
+        Int local_size = 0;
+        Int nout = 10;
+        Int istop, itn;
+        Real normA, condA, normr, normAr, normx;
+        lsmr(&ncon, &ncol, Aprod, Atprod, b, &damp, &atol, &btol, &conlim,
+            &itnlim, &local_size, &nout, dnx, &istop, &itn, &normA, &condA,
+            &normr, &normAr, &normx);
+      } else {
+        naflag = naStep (*c, dn);
+      }
 
       dnavail = dciTrue;
 
-      dnx = dn.get_doublex();
       //Project this step
       alpha = 1.0;
       for (Int i = 0; i < nvar + nconI; i++) {

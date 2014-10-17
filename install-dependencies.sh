@@ -15,6 +15,7 @@ wget http://glaros.dtc.umn.edu/gkhome/fetch/sw/metis/OLD/metis-4.0.3.tar.gz
 #others
 git clone https://github.com/abelsiqueira/base_matrices.git
 git clone https://github.com/abelsiqueira/nope.git
+git clone https://github.com/abelsiqueira/lsmr.git
 
 # Uncompress
 for i in *.tar.gz; do tar -zxf $i; done
@@ -58,6 +59,12 @@ cd ..
 
 #nope
 cd nope
+make all
+sudo make install
+cd ..
+
+#lsmr
+cd lsmr
 make all
 sudo make install
 cd ..

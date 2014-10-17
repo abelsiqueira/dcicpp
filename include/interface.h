@@ -2,6 +2,11 @@
 #define dci_interface_h
 
 #include "triplet.h"
+#include "lsmr.h"
+
+// For LSMR
+void Aprod (int *, int *, double *, double *);
+void Atprod (int *, int *, double *, double *);
 
 namespace DCI {
   using namespace base_matrices;
@@ -47,6 +52,11 @@ namespace DCI {
       void set_cprod (pcprod p) { cprod = p; };
       void set_ccifg (pccifg p) { ccifg = p; };
       void set_cnames (pcnames p) { cnames = p; };
+
+      // LSMR
+      void JacobMult(bool, double *, double *);
+      friend void Aprod(int *, int *, double *, double *);
+      friend void Atprod(int *, int *, double *, double *);
 
     protected:
       void GDBSTOP ();
@@ -221,6 +231,7 @@ namespace DCI {
       Real *constraint_scaling;
       Bool use_objective_scaling, use_variable_scaling, use_constraint_scaling;
       Bool use_soc, use_normal_safe_guard;
+      Bool use_lsmr;
       Int  objfun_count;
       Real infeasibility_tol;
       Int  cuter_status;
