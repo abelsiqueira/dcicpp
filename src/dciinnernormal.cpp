@@ -5,7 +5,7 @@
 namespace DCI {
   Int Interface::innerNormalDirection (Real & infeasible_gradient) {
     Real oldnormc = c->norm();
-    Vector d(*env), dcp(*env), dn(*xc);
+    Vector d(*env), dcp(*env), dn(*env);
     Real ndn;
     Real alpha, Ared, Pred;
     Real one[2] = {1,0};
@@ -100,8 +100,9 @@ namespace DCI {
 
     dnavail = dciFalse;
     if (!dnavail) {
-      dnx = dn.get_doublex();
       if (use_lsmr) {
+        dn.reset(nvar+nconI, 0.0);
+        dnx = dn.get_doublex();
         Int ncol = nvar+nconI;
         Real b[ncon];
         for (Int i = 0; i < ncon; i++)
@@ -120,6 +121,7 @@ namespace DCI {
             &normr, &normAr, &normx);
       } else {
         naflag = naStep (*c, dn);
+        dnx = dn.get_doublex();
       }
 
       dnavail = dciTrue;
