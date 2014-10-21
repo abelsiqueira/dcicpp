@@ -355,7 +355,7 @@ namespace DCI {
     use_conjugate_gradient = dciFalse;
     use_objective_scaling = dciTrue;
     use_soc = dciTrue;
-    use_soc = dciFalse;
+    use_lsmr = dciTrue;
     use_normal_safe_guard = dciTrue;
     use_constraint_scaling = dciTrue;
     use_variable_scaling = dciTrue;
