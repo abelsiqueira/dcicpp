@@ -243,7 +243,8 @@ namespace DCI {
       nRest++;
 
       call_ccfsg_xc(dciTrue, dciFalse);
-      cholesky();
+      if (!use_lsmr)
+        cholesky();
       infeasible_gradient = 1.0;
 
       innerNormalDirection(infeasible_gradient);
@@ -294,7 +295,8 @@ namespace DCI {
           Vector ssoc(*env, nvar + nconI);
           Real asoc;
           call_ccfsg_xc(dciTrue, dciTrue);
-          cholesky();
+          if (!use_lsmr)
+            cholesky();
           StepFlag = naStep (*c, ssoc);
           scale_xc (ssoc);
 

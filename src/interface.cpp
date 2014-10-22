@@ -908,6 +908,10 @@ namespace DCI {
   }
 
   void Interface::cholesky () {
+#ifndef NDEBUG
+    if (use_lsmr)
+      throw("Using cholesky with lsmr");
+#endif
     if (LJ == 0)
       std::cerr << "analyze should be called first" << std::endl;
     LJ->factorize (*J, cholesky_correction);

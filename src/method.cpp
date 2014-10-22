@@ -255,18 +255,36 @@ namespace DCI {
     Real mone[2] = {-1,0}, zero[2] = {0,0};
     Real one[2] = {1,0};
 
-    Pr.sdmult (*J, 0, mone, zero, r); // Pr = -A*r
-    tmp.solve (CHOLMOD_A, *LJ, Pr); // A * A' * tmp = Pr
-    if (LimLbd) {
+    if (use_lsmr) {
+      tmp.reset(nvar+nconI, 0.0);
       pReal tmpx = tmp.get_doublex();
-      for (Int i = 0; i < ncon; i++) {
-        Real tmpi = tmpx[i];
-        if (tmpi > LbdMax) tmpx[i] = LbdMax;
-        else if (tmpi < -LbdMax) tmpx[i] = -LbdMax;
+      Int nrow = nvar+nconI;
+      Real damp = cholesky_correction, atol = 1e-12, btol = 1e-12, conlim = 1e12;
+      Int itnlim = 200;
+      Int local_size = 0;
+      Int nout = 10;
+      Int istop, itn;
+      Real normA, condA, normr, normAr, normx;
+      pReal rx  = r.get_doublex();
+      lsmr(&nrow, &ncon, Atprod, Aprod, rx, &damp, &atol, &btol, &conlim,
+          &itnlim, &local_size, &nout, tmpx, &istop, &itn, &normA, &condA,
+          &normr, &normAr, &normx);
+      Pr = r;
+      Pr.sdmult(*J, 1, one, one, tmp);
+    } else {
+      Pr.sdmult (*J, 0, mone, zero, r); // Pr = -A*r
+      tmp.solve (CHOLMOD_A, *LJ, Pr); // A * A' * tmp = Pr
+      if (LimLbd) {
+        pReal tmpx = tmp.get_doublex();
+        for (Int i = 0; i < ncon; i++) {
+          Real tmpi = tmpx[i];
+          if (tmpi > LbdMax) tmpx[i] = LbdMax;
+          else if (tmpi < -LbdMax) tmpx[i] = -LbdMax;
+        }
       }
+      Pr = r;
+      Pr.sdmult (*J, 1, one, one, tmp); //Pr = Pr + J'*tmp => Pr = r - A'*inv(A*A')*A*r
     }
-    Pr = r;
-    Pr.sdmult (*J, 1, one, one, tmp); //Pr = Pr + J'*tmp => Pr = r - A'*inv(A*A')*A*r
   }
 
   Int Interface::naStep (Vector & r, Vector & dr) { //dr = -A'*inv(AA')*r
@@ -274,6 +292,20 @@ namespace DCI {
     if (use_conjugate_gradient) {
       linearSystemCG (0, r, dr);
       dr.sdmult (*J, 1, mone, zero, dr);
+    } else if (use_lsmr) {
+      dr.reset(nvar+nconI, 0.0);
+      pReal rx  = r.get_doublex();
+      pReal drx = dr.get_doublex();
+      Int ncol = nvar+nconI;
+      Real damp = cholesky_correction, atol = 1e-12, btol = 1e-12, conlim = 1e12;
+      Int itnlim = 200;
+      Int local_size = 0;
+      Int nout = 10;
+      Int istop, itn;
+      Real normA, condA, normr, normAr, normx;
+      lsmr(&ncon, &ncol, Aprod, Atprod, rx, &damp, &atol, &btol, &conlim,
+          &itnlim, &local_size, &nout, drx, &istop, &itn, &normA, &condA,
+          &normr, &normAr, &normx);
     } else {
       dr.solve (CHOLMOD_A, *LJ, r); // dr = inv(AA')r;
       dr.sdmult (*J, 1, mone, zero, dr);
