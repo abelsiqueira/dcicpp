@@ -116,7 +116,7 @@ namespace DCI {
         Int nout = 10;
         Int istop, itn;
         Real normA, condA, normr, normAr, normx;
-        lsmr(&ncon, &ncol, Aprod, Atprod, b, &damp, &atol, &btol, &conlim,
+        lsmr(&ncon, &ncol, Aprod1, Aprod2, b, &damp, &atol, &btol, &conlim,
             &itnlim, &local_size, &nout, dnx, &istop, &itn, &normA, &condA,
             &normr, &normAr, &normx);
       } else {
@@ -353,7 +353,7 @@ namespace DCI {
         Aavail = dciTrue;
         oldAcnt = 0;
 
-        if (!is_linear) {
+        if (!is_linear && !use_lsmr) {
           this->cholesky ();
         }
 

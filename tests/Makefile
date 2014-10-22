@@ -38,14 +38,15 @@ unctests: $(UNCTESTS)
 infeastests: $(INFEASTESTS)
 	@for i in $(INFEASTESTS); do $(VALGRIND) $(VALGRINDFLAGS) ./$$i; done
 
-library: ../Lib/$(DCILIBNAME)
+library:
+	$(MAKE) -C ../lib all
 
 ../Lib/$(DCILIBNAME):
 	( cd ..;  make library )
 
 
-gdb: test14.tst
-	$(GDB) ./$<
+gdb: library test01.tst
+	$(GDB) ./$(word 2,$^)
 
 %.tst: %.o
 	$(CXX) -o $@ $< $(DCILIB) $(CXXFLAGS) $(I)

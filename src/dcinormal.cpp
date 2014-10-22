@@ -76,7 +76,7 @@ namespace DCI {
 
         gavail = dciTrue;
 
-        if (!is_linear) {
+        if (!is_linear && !use_lsmr) {
           analyzeJacobian ();
           cholesky ();
         }
@@ -110,7 +110,8 @@ namespace DCI {
       if (!Aavail) {
         if (!is_linear) {
           call_ccfsg_xc (dciTrue); //CuterJacob
-          this->cholesky ();
+          if (!use_lsmr)
+            this->cholesky ();
         }
         Aavail = dciTrue;
       }

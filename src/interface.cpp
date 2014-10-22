@@ -1007,10 +1007,18 @@ namespace DCI {
 
 }
 
-void Aprod (int *, int *, double * x, double * y) {
+void Aprod1 (int *, int *, double * x, double * y) { // y <- y + A*x
   global_dci->JacobMult(false, x, y);
 }
 
-void Atprod (int *, int *, double * x, double * y) {
+void Aprod2 (int *, int *, double * x, double * y) { // x <- x + At*y
   global_dci->JacobMult(true, x, y);
+}
+
+void Aprod1trans (int *, int *, double * x, double * y) { // y <- y + At*y
+  global_dci->JacobMult(true, y, x);
+}
+
+void Aprod2trans (int *, int *, double * x, double * y) { // x <- x + A*x
+  global_dci->JacobMult(false, y, x);
 }

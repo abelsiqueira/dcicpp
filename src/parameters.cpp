@@ -447,8 +447,10 @@ namespace DCI {
       normc = c->norm ();
       call_ofg ();
 
-      this->analyzeJacobian ();
-      this->cholesky ();
+      if (!use_lsmr) {
+        this->analyzeJacobian ();
+        this->cholesky ();
+      }
 
       if (debug_level > 0) {
         full(*J).print_more();

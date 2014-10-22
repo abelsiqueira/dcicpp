@@ -5,8 +5,10 @@
 #include "lsmr.h"
 
 // For LSMR
-void Aprod (int *, int *, double *, double *);
-void Atprod (int *, int *, double *, double *);
+void Aprod1 (int *, int *, double *, double *);
+void Aprod2 (int *, int *, double *, double *);
+void Aprod1trans (int *, int *, double *, double *);
+void Aprod2trans (int *, int *, double *, double *);
 
 namespace DCI {
   using namespace base_matrices;

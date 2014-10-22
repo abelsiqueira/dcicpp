@@ -256,21 +256,28 @@ namespace DCI {
     Real one[2] = {1,0};
 
     if (use_lsmr) {
-      tmp.reset(nvar+nconI, 0.0);
-      pReal tmpx = tmp.get_doublex();
       Int nrow = nvar+nconI;
-      Real damp = cholesky_correction, atol = 1e-12, btol = 1e-12, conlim = 1e12;
+      tmp.reset(ncon, 0.0);
+      pReal tmpx = tmp.get_doublex();
+      Real damp = 1e-12, atol = 1e-12, btol = 1e-12, conlim = 1e12;
       Int itnlim = 200;
       Int local_size = 0;
       Int nout = 10;
       Int istop, itn;
       Real normA, condA, normr, normAr, normx;
       pReal rx  = r.get_doublex();
-      lsmr(&nrow, &ncon, Atprod, Aprod, rx, &damp, &atol, &btol, &conlim,
+      lsmr(&nrow, &ncon, Aprod1trans, Aprod2trans, rx, &damp, &atol, &btol, &conlim,
           &itnlim, &local_size, &nout, tmpx, &istop, &itn, &normA, &condA,
           &normr, &normAr, &normx);
       Pr = r;
-      Pr.sdmult(*J, 1, one, one, tmp);
+      Pr.sdmult(*J, 1, mone, one, tmp);
+
+#ifndef NDEBUG
+      Vector APr(*env);
+      APr.sdmult(*J, 0, one, zero, Pr);
+      if (APr.norm() > 1e-6)
+        throw(APr.norm());
+#endif
     } else {
       Pr.sdmult (*J, 0, mone, zero, r); // Pr = -A*r
       tmp.solve (CHOLMOD_A, *LJ, Pr); // A * A' * tmp = Pr
@@ -303,7 +310,7 @@ namespace DCI {
       Int nout = 10;
       Int istop, itn;
       Real normA, condA, normr, normAr, normx;
-      lsmr(&ncon, &ncol, Aprod, Atprod, rx, &damp, &atol, &btol, &conlim,
+      lsmr(&ncon, &ncol, Aprod1, Aprod2, rx, &damp, &atol, &btol, &conlim,
           &itnlim, &local_size, &nout, drx, &istop, &itn, &normA, &condA,
           &normr, &normAr, &normx);
     } else {
