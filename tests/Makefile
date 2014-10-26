@@ -21,7 +21,8 @@ INFEASTESTS = $(INFEASTESTSCPP:.cpp=.tst)
 ALLTESTS = $(ALLTESTSCPP:.cpp=.tst)
 
 all: library $(TESTS)
-	@for i in $(TESTS); do $(VALGRIND) $(VALGRINDFLAGS) ./$$i; done
+	@for i in $(TESTS); do echo "Running $$i"; \
+		$(VALGRIND) $(VALGRINDFLAGS) ./$$i; done
 
 fixedtests: $(FIXEDTESTS)
 	$(VALGRIND) $(VALGRINDFLAGS) ./fixedtest1.tst
@@ -45,7 +46,7 @@ library:
 	( cd ..;  make library )
 
 
-gdb: library test01.tst
+gdb: library test08.tst
 	$(GDB) ./$(word 2,$^)
 
 %.tst: %.o

@@ -107,22 +107,36 @@ namespace DCI {
         Real b[ncon];
         for (Int i = 0; i < ncon; i++)
           b[i] = cx[i];
-        JacobMult(false, xcx, b);
+//        JacobMult(false, xcx, b);
         for (Int i = 0; i < ncon; i++)
           b[i] = -b[i];
         Real damp = cholesky_correction, atol = 1e-12, btol = 1e-12, conlim = 1e12;
-        Int itnlim = 200;
+        Int itnlim = Max(200,4*ncol);
         Int local_size = 0;
         Int nout = 10;
-        Int istop, itn;
+        Int istop = -1, itn;
         Real normA, condA, normr, normAr, normx;
-        lsmr(&ncon, &ncol, Aprod1, Aprod2, b, &damp, &atol, &btol, &conlim,
-            &itnlim, &local_size, &nout, dnx, &istop, &itn, &normA, &condA,
-            &normr, &normAr, &normx);
+        while (istop == -1 && damp < cholesky_base_correction) {
+          lsmr(&ncon, &ncol, Aprod1, Aprod2, b, &damp, &atol, &btol, &conlim,
+              &itnlim, &local_size, &nout, dnx, &istop, &itn, &normA, &condA,
+              &normr, &normAr, &normx);
+          if (istop == -1) {
+            cholesky_correction = cholesky_base_correction;
+            damp = cholesky_correction;
+          }
+        }
       } else {
         naflag = naStep (*c, dn);
         dnx = dn.get_doublex();
       }
+
+#ifdef VERBOSE
+      if (verbosity_level > 3) {
+        std::cout << "dn = " << std::endl;
+        for (Int i = 0; i < nvar + nconI; i++)
+          std::cout << dnx[i] << std::endl;
+      }
+#endif
 
       dnavail = dciTrue;
 
@@ -293,16 +307,37 @@ namespace DCI {
 
         if (use_normal_safe_guard && NormalFlag == 0) {
           Vector ssoc(*env, nvar + nconI);
+          pReal ssocx;
           Real asoc;
           call_ccfsg_xc(dciTrue, dciTrue);
-          if (!use_lsmr)
+          if (use_lsmr) {
+            ssoc.reset(nvar+nconI, 0.0);
+            ssocx = ssoc.get_doublex();
+            Int ncol = nvar+nconI;
+            Real b[ncon];
+            for (Int i = 0; i < ncon; i++)
+              b[i] = cx[i];
+    //        JacobMult(false, xcx, b);
+            for (Int i = 0; i < ncon; i++)
+              b[i] = -b[i];
+            Real damp = cholesky_correction, atol = 1e-12, btol = 1e-12, conlim = 1e12;
+            Int itnlim = Max(200,4*ncol);
+            Int local_size = 0;
+            Int nout = 10;
+            Int istop, itn;
+            Real normA, condA, normr, normAr, normx;
+            lsmr(&ncon, &ncol, Aprod1, Aprod2, b, &damp, &atol, &btol, &conlim,
+                &itnlim, &local_size, &nout, ssocx, &istop, &itn, &normA, &condA,
+                &normr, &normAr, &normx);
+          } else {
             cholesky();
-          StepFlag = naStep (*c, ssoc);
+            StepFlag = naStep (*c, ssoc);
+            ssocx = ssoc.get_doublex();
+          }
           scale_xc (ssoc);
 
           // Arrumar tamanho do ssoc a partir do x
           Real alphassoc = 1;
-          pReal ssocx = ssoc.get_doublex();
           for (Int i = 0; i < nvar+nconI; i++) {
             Real xi = xcx[i], bli = l_bndx[i], bui = u_bndx[i], di = ssocx[i];
             if (di == 0)

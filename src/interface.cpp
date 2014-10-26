@@ -902,6 +902,10 @@ namespace DCI {
   }
 
   void Interface::analyzeJacobian () {
+#ifndef NDEBUG
+    if (use_lsmr)
+      throw("Using cholesky with lsmr");
+#endif
     if (LJ == 0)
       LJ = new Factor (*env);
     LJ->analyze (*J);

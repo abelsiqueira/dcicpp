@@ -60,11 +60,14 @@ int MAINENTRY () {
       dci.con_setup (nvar, x, bl, bu, ncon, y, cl, cu, equatn);
 
     }
+#ifndef FAIL_ON_EXCEPTION
     try {
+#endif
       dci.start ();
       dci.solve ();
       dci.show ();
       dci.printLatex ();
+#ifndef FAIL_ON_EXCEPTION
     } catch (const char * ex) {
       std::cout << ex << std::endl;
       return 1;
@@ -72,6 +75,7 @@ int MAINENTRY () {
       std::cout << "Unhandled exception caught" << std::endl;
       return 1;
     }
+#endif
     Real calls[7], time[2];
     if (ncon == 0)
       CUTEST_ureport(&status, calls, time);

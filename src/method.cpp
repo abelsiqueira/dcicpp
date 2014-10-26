@@ -259,25 +259,23 @@ namespace DCI {
       Int nrow = nvar+nconI;
       tmp.reset(ncon, 0.0);
       pReal tmpx = tmp.get_doublex();
-      Real damp = 1e-12, atol = 1e-12, btol = 1e-12, conlim = 1e12;
-      Int itnlim = 200;
+      Real damp = cholesky_correction, atol = 1e-12, btol = 1e-12, conlim = 1e12;
+      Int itnlim = Max(200,4*ncon);
       Int local_size = 0;
       Int nout = 10;
-      Int istop, itn;
+      Int istop = -1, itn;
       Real normA, condA, normr, normAr, normx;
       pReal rx  = r.get_doublex();
       lsmr(&nrow, &ncon, Aprod1trans, Aprod2trans, rx, &damp, &atol, &btol, &conlim,
           &itnlim, &local_size, &nout, tmpx, &istop, &itn, &normA, &condA,
           &normr, &normAr, &normx);
+      if (istop > 3) {
+        std::cout << "istop > 3" << std::endl;
+        throw("istop > 3");
+      }
+      tmp.scale(-1.0);
       Pr = r;
-      Pr.sdmult(*J, 1, mone, one, tmp);
-
-#ifndef NDEBUG
-      Vector APr(*env);
-      APr.sdmult(*J, 0, one, zero, Pr);
-      if (APr.norm() > 1e-6)
-        throw(APr.norm());
-#endif
+      Pr.sdmult(*J, 1, one, one, tmp);
     } else {
       Pr.sdmult (*J, 0, mone, zero, r); // Pr = -A*r
       tmp.solve (CHOLMOD_A, *LJ, Pr); // A * A' * tmp = Pr
@@ -305,7 +303,7 @@ namespace DCI {
       pReal drx = dr.get_doublex();
       Int ncol = nvar+nconI;
       Real damp = cholesky_correction, atol = 1e-12, btol = 1e-12, conlim = 1e12;
-      Int itnlim = 200;
+      Int itnlim = Max(200,4*ncol);
       Int local_size = 0;
       Int nout = 10;
       Int istop, itn;
@@ -313,6 +311,10 @@ namespace DCI {
       lsmr(&ncon, &ncol, Aprod1, Aprod2, rx, &damp, &atol, &btol, &conlim,
           &itnlim, &local_size, &nout, drx, &istop, &itn, &normA, &condA,
           &normr, &normAr, &normx);
+      if (istop > 3) {
+        std::cout << "istop > 3" << std::endl;
+        throw("istop > 3");
+      }
     } else {
       dr.solve (CHOLMOD_A, *LJ, r); // dr = inv(AA')r;
       dr.sdmult (*J, 1, mone, zero, dr);

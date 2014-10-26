@@ -5,16 +5,10 @@
 using namespace DCI;
 
 /*
- * min
- * s.t.
+ * min x_1^4 + ... + x_n^4
+ * s.t. (x_1+1)^2 + ... (x_n+1)^2 = n
  *
- *
- *
- *
- *
- *
- *
- *
+ * x* = [0, 0, ..., 0], f* = 0
  */
 
 void COFG (pInt, Int * n, Real * x, Real * f, Real * g, Bool * grad) {
