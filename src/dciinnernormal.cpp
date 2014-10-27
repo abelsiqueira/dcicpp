@@ -109,14 +109,9 @@ namespace DCI {
           b[i] = -cx[i];
         Int istop = -1, itn;
         Real normA, condA, normr, normAr, normx;
-        while (istop == -1 && jacob_correction < base_correction) {
-          lsmr(&ncon, &ncol, Aprod1, Aprod2, b, &jacob_correction, &atol, &btol,
-              &conlim, &itnlim, &local_size, &nout, dnx, &istop, &itn, &normA,
-              &condA, &normr, &normAr, &normx);
-          if (istop == -1) {
-            jacob_correction = base_correction;
-          }
-        }
+        lsmr(&ncon, &ncol, Aprod1, Aprod2, b, &jacob_correction, &atol, &btol,
+            &conlim, &itnlim, &local_size, &nout, dnx, &istop, &itn, &normA,
+            &condA, &normr, &normAr, &normx);
       } else {
         naflag = naStep (*c, dn);
         dnx = dn.get_doublex();

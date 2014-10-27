@@ -922,13 +922,17 @@ namespace DCI {
     cholFacs++;
     if (!env->IsPosDef()) {
       cholesky_failed = dciTrue;
-      if (jacob_correction < base_correction)
-        jacob_correction = base_correction;
-      else
-        jacob_correction *= correction_increase;
+      increaseCorrection();
       LJ->factorize (*J, jacob_correction);
       cholFacs++;
     }
+  }
+
+  void Interface::increaseCorrection () {
+    if (jacob_correction < base_correction)
+      jacob_correction = base_correction;
+    else
+      jacob_correction *= correction_increase;
   }
 
   Real Interface::getTime () {

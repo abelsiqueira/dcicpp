@@ -91,6 +91,7 @@ namespace DCI {
       void call_names ();
 
       // Internal problem solving functions
+      void increaseCorrection ();
       void analyzeJacobian ();
       void cholesky ();
       Int  normalStep ();
