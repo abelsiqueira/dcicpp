@@ -106,23 +106,15 @@ namespace DCI {
         Int ncol = nvar+nconI;
         Real b[ncon];
         for (Int i = 0; i < ncon; i++)
-          b[i] = cx[i];
-//        JacobMult(false, xcx, b);
-        for (Int i = 0; i < ncon; i++)
-          b[i] = -b[i];
-        Real damp = cholesky_correction, atol = 1e-12, btol = 1e-12, conlim = 1e12;
-        Int itnlim = Max(200,4*ncol);
-        Int local_size = 0;
-        Int nout = 10;
+          b[i] = -cx[i];
         Int istop = -1, itn;
         Real normA, condA, normr, normAr, normx;
-        while (istop == -1 && damp < cholesky_base_correction) {
-          lsmr(&ncon, &ncol, Aprod1, Aprod2, b, &damp, &atol, &btol, &conlim,
-              &itnlim, &local_size, &nout, dnx, &istop, &itn, &normA, &condA,
-              &normr, &normAr, &normx);
+        while (istop == -1 && jacob_correction < base_correction) {
+          lsmr(&ncon, &ncol, Aprod1, Aprod2, b, &jacob_correction, &atol, &btol,
+              &conlim, &itnlim, &local_size, &nout, dnx, &istop, &itn, &normA,
+              &condA, &normr, &normAr, &normx);
           if (istop == -1) {
-            cholesky_correction = cholesky_base_correction;
-            damp = cholesky_correction;
+            jacob_correction = base_correction;
           }
         }
       } else {
@@ -316,19 +308,12 @@ namespace DCI {
             Int ncol = nvar+nconI;
             Real b[ncon];
             for (Int i = 0; i < ncon; i++)
-              b[i] = cx[i];
-    //        JacobMult(false, xcx, b);
-            for (Int i = 0; i < ncon; i++)
-              b[i] = -b[i];
-            Real damp = cholesky_correction, atol = 1e-12, btol = 1e-12, conlim = 1e12;
-            Int itnlim = Max(200,4*ncol);
-            Int local_size = 0;
-            Int nout = 10;
+              b[i] = -cx[i];
             Int istop, itn;
             Real normA, condA, normr, normAr, normx;
-            lsmr(&ncon, &ncol, Aprod1, Aprod2, b, &damp, &atol, &btol, &conlim,
-                &itnlim, &local_size, &nout, ssocx, &istop, &itn, &normA, &condA,
-                &normr, &normAr, &normx);
+            lsmr(&ncon, &ncol, Aprod1, Aprod2, b, &jacob_correction, &atol,
+                &btol, &conlim, &itnlim, &local_size, &nout, ssocx, &istop,
+                &itn, &normA, &condA, &normr, &normAr, &normx);
           } else {
             cholesky();
             StepFlag = naStep (*c, ssoc);

@@ -87,14 +87,14 @@ namespace DCI {
       en_max_objective_scaling, en_use_variable_scaling, en_table_print_level,
       en_max_constraint_scaling, en_max_variable_scaling, en_use_soc,
       en_use_normal_safe_guard, en_nvarshowmax, en_nconshowmax,
-      en_normal_fail_reboot, en_chol_correction_increase,
-      en_cholesky_base_correction, en_infeasibility_tol, en_use_lsmr
+      en_normal_fail_reboot, en_correction_increase,
+      en_base_correction, en_infeasibility_tol, en_use_lsmr, en_atol, en_btol, en_conlim
     };
     std::map<std::string, int> paramMap;
 
     paramMap["normal_fail_reboot"] = en_normal_fail_reboot;
-    paramMap["chol_correction_increase"] = en_chol_correction_increase;
-    paramMap["cholesky_base_correction"] = en_cholesky_base_correction;
+    paramMap["correction_increase"] = en_correction_increase;
+    paramMap["base_correction"] = en_base_correction;
     paramMap["MaxDiag"] = en_MaxDiag;
     paramMap["MinDiag"] = en_MinDiag;
     paramMap["debug_level"] = en_debug_level;
@@ -106,6 +106,9 @@ namespace DCI {
     paramMap["use_conjugate_gradient"] = en_use_conjugate_gradient;
     paramMap["use_objective_scaling"] = en_use_objective_scaling;
     paramMap["use_soc"] = en_use_soc;
+    paramMap["atol"] = en_atol;
+    paramMap["btol"] = en_btol;
+    paramMap["conlim"] = en_conlim;
     paramMap["use_lsmr"] = en_use_lsmr;
     paramMap["use_normal_safe_guard"] = en_use_normal_safe_guard;
     paramMap["use_constraint_scaling"] = en_use_constraint_scaling;
@@ -192,8 +195,8 @@ namespace DCI {
 
       switch (choice) {
         case en_normal_fail_reboot: aux >> normal_fail_reboot; break;
-        case en_chol_correction_increase: aux >> chol_correction_increase; break;
-        case en_cholesky_base_correction: aux >> cholesky_base_correction; break;
+        case en_correction_increase: aux >> correction_increase; break;
+        case en_base_correction: aux >> base_correction; break;
         case en_MaxDiag: aux >> MaxDiag; break;
         case en_MinDiag: aux >> MinDiag; break;
         case en_debug_level: aux >> debug_level; break;
@@ -247,6 +250,9 @@ namespace DCI {
         case en_use_conjugate_gradient: aux >> use_conjugate_gradient; break;
         case en_use_objective_scaling: aux >> use_objective_scaling; break;
         case en_use_soc: aux >> use_soc; break;
+        case en_atol: aux >> atol; break;
+        case en_btol: aux >> btol; break;
+        case en_conlim: aux >> conlim; break;
         case en_use_lsmr: aux >> use_lsmr; break;
         case en_use_normal_safe_guard: aux >> use_normal_safe_guard; break;
         case en_use_constraint_scaling: aux >> use_constraint_scaling; break;
@@ -346,10 +352,16 @@ namespace DCI {
     mugap = 1;
     LimLbd = dciTrue;
     scaling_matrix = 0;
-    cholesky_correction = 0;
+    jacob_correction = 0;
     cholesky_failed = dciFalse;
     objfun_count = 10;
     infeasibility_tol = 1e-6;
+    // LSMR
+    atol = 1e-12;
+    btol = 1e-12;
+    conlim = 1e12;
+    local_size = 0;
+    nout = 10;
 
     //Strategy choices
     use_conjugate_gradient = dciFalse;
@@ -367,8 +379,8 @@ namespace DCI {
     penal_trust = dciFalse;
     scale_normal = dciFalse;
     normal_fail_reboot = dciTrue;
-    chol_correction_increase = 10;
-    cholesky_base_correction = 1e-12;
+    correction_increase = 10;
+    base_correction = 1e-12;
 
     //Program properties
     has_ineq = dciFalse; //Has some inequalities
@@ -380,6 +392,7 @@ namespace DCI {
 
     maxitSteih = Max (minitSteih, Min(maxitSteih, Int(nvar*relitSteih+5) ) );
     minstep *= Min (csig, csic);
+    itnlim = Max(Max(200, 4*ncon), 4*(nvar+nconI));
 
     if (use_variable_scaling)
       variable_scaling = new Real[nvar];

@@ -918,15 +918,15 @@ namespace DCI {
 #endif
     if (LJ == 0)
       std::cerr << "analyze should be called first" << std::endl;
-    LJ->factorize (*J, cholesky_correction);
+    LJ->factorize (*J, jacob_correction);
     cholFacs++;
     if (!env->IsPosDef()) {
       cholesky_failed = dciTrue;
-      if (cholesky_correction < cholesky_base_correction)
-        cholesky_correction = cholesky_base_correction;
+      if (jacob_correction < base_correction)
+        jacob_correction = base_correction;
       else
-        cholesky_correction *= chol_correction_increase;
-      LJ->factorize (*J, cholesky_correction);
+        jacob_correction *= correction_increase;
+      LJ->factorize (*J, jacob_correction);
       cholFacs++;
     }
   }

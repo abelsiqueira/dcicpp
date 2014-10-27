@@ -223,8 +223,7 @@ namespace DCI {
       Bool normal_fail_reboot;
       Bool partial_penalization, project_dcp, project_dn;
       Bool trustWorstdn, trustConvexBox, penal_trust;
-      Real cholesky_correction, chol_correction_increase,
-           cholesky_base_correction;
+      Real jacob_correction, correction_increase, base_correction;
       Bool cholesky_failed;
       Real MaxDiag, MinDiag;
       Real infeasible_gradient;
@@ -238,6 +237,10 @@ namespace DCI {
       Real infeasibility_tol;
       Int  cuter_status;
       Int nvarshowmax, nconshowmax;
+
+      // LSMR
+      Real atol, btol, conlim;
+      Int itnlim, local_size, nout;
   };
 }
 

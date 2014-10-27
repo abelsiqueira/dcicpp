@@ -1,12 +1,15 @@
 alphaI 2.5
 alphaR 0.75
 alphaS 6.25e-2
+atol 1e-12
+base_correction 1e-12
 beta1 0.1
 beta2 0.25
+btol 1e-12
 c1 0.5
 c2 5e-1
-chol_correction_increase 10
-cholesky_base_correction 1e-12
+conlim 1e12
+correction_increase 10
 csic 1e-6
 csig 1e-6
 debug_level 0
