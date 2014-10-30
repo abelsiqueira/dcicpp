@@ -255,20 +255,18 @@ namespace DCI {
     Real mone[2] = {-1,0}, zero[2] = {0,0};
     Real one[2] = {1,0};
 
+#ifdef VERBOSE
+    if (verbosity_level > 3) {
+      std::cout << "A = " << std::endl;
+      full(*J).print_more();
+    }
+#endif
+
     if (use_lsmr) {
-      Int nrow = nvar+nconI;
       tmp.reset(ncon, 0.0);
       pReal tmpx = tmp.get_doublex();
-      Int istop = -1, itn;
-      Real normA, condA, normr, normAr, normx;
       pReal rx  = r.get_doublex();
-      lsmr(&nrow, &ncon, Aprod1trans, Aprod2trans, rx, &jacob_correction, &atol,
-          &btol, &conlim, &itnlim, &local_size, &nout, tmpx, &istop, &itn,
-          &normA, &condA, &normr, &normAr, &normx);
-      if (istop > 3) {
-        std::cout << "istop > 3" << std::endl;
-        throw("istop > 3");
-      }
+      LSMRsolve(true, rx, tmpx);
       tmp.scale(-1.0);
       Pr = r;
       Pr.sdmult(*J, 1, one, one, tmp);
@@ -297,16 +295,7 @@ namespace DCI {
       dr.reset(nvar+nconI, 0.0);
       pReal rx  = r.get_doublex();
       pReal drx = dr.get_doublex();
-      Int ncol = nvar+nconI;
-      Int istop, itn;
-      Real normA, condA, normr, normAr, normx;
-      lsmr(&ncon, &ncol, Aprod1, Aprod2, rx, &jacob_correction, &atol, &btol,
-          &conlim, &itnlim, &local_size, &nout, drx, &istop, &itn, &normA,
-          &condA, &normr, &normAr, &normx);
-      if (istop > 3) {
-        std::cout << "istop > 3" << std::endl;
-        throw("istop > 3");
-      }
+      LSMRsolve(false, rx, drx);
     } else {
       dr.solve (CHOLMOD_A, *LJ, r); // dr = inv(AA')r;
       dr.sdmult (*J, 1, mone, zero, dr);

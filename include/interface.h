@@ -59,6 +59,7 @@ namespace DCI {
       void JacobMult(bool, double *, double *);
       friend void Aprod(int *, int *, double *, double *);
       friend void Atprod(int *, int *, double *, double *);
+      void LSMRsolve(bool, double *, double *);
 
     protected:
       void GDBSTOP ();

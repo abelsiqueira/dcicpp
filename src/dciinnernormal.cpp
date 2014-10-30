@@ -103,15 +103,10 @@ namespace DCI {
       if (use_lsmr) {
         dn.reset(nvar+nconI, 0.0);
         dnx = dn.get_doublex();
-        Int ncol = nvar+nconI;
         Real b[ncon];
         for (Int i = 0; i < ncon; i++)
           b[i] = -cx[i];
-        Int istop = -1, itn;
-        Real normA, condA, normr, normAr, normx;
-        lsmr(&ncon, &ncol, Aprod1, Aprod2, b, &jacob_correction, &atol, &btol,
-            &conlim, &itnlim, &local_size, &nout, dnx, &istop, &itn, &normA,
-            &condA, &normr, &normAr, &normx);
+        LSMRsolve(false, b, dnx);
       } else {
         naflag = naStep (*c, dn);
         dnx = dn.get_doublex();
@@ -297,24 +292,59 @@ namespace DCI {
           pReal ssocx;
           Real asoc;
           call_ccfsg_xc(dciTrue, dciTrue);
+#ifdef VERBOSE
+          if (verbosity_level > 3) {
+            std::cout << "xc = " << std::endl;
+            for (Int i = 0; i < nvar+nconI; i++)
+              std::cout << xcx[i] << std::endl;
+            std::cout << "c = " << std::endl;
+            for (Int i = 0; i < ncon; i++)
+              std::cout << cx[i] << std::endl;
+            std::cout <<  "A = " << std::endl;
+            full(*J).print_more ();
+          }
+#endif
           if (use_lsmr) {
             ssoc.reset(nvar+nconI, 0.0);
             ssocx = ssoc.get_doublex();
-            Int ncol = nvar+nconI;
             Real b[ncon];
             for (Int i = 0; i < ncon; i++)
               b[i] = -cx[i];
-            Int istop, itn;
-            Real normA, condA, normr, normAr, normx;
-            lsmr(&ncon, &ncol, Aprod1, Aprod2, b, &jacob_correction, &atol,
-                &btol, &conlim, &itnlim, &local_size, &nout, ssocx, &istop,
-                &itn, &normA, &condA, &normr, &normAr, &normx);
+            LSMRsolve(false, b, ssocx);
           } else {
             cholesky();
             StepFlag = naStep (*c, ssoc);
             ssocx = ssoc.get_doublex();
           }
+#ifdef VERBOSE
+          if (verbosity_level > 3) {
+            std::cout << "normal soc = " << std::endl;
+            for (Int i = 0; i < nvar + nconI; i++)
+              std::cout << ssocx[i] << std::endl;
+          }
+#endif
+          {
+            Real Asoc[ncon];
+            for (Int i = 0; i < ncon; i++)
+              Asoc[i] = cx[i];
+            JacobMult(false, ssocx, Asoc);
+            Real sum = 0.0;
+            std::cout << "Asoc =" << std::endl;
+            for (Int i = 0; i < ncon; i++) {
+              std::cout << Asoc[i] << std::endl;
+              sum += Asoc[i]*Asoc[i];
+            }
+            std::cout << "|Asoc|^2 = " << sum << std::endl;
+          }
           scale_xc (ssoc);
+#ifdef VERBOSE
+          if (verbosity_level > 3) {
+            std::cout << "normal soc scaled = " << std::endl;
+            for (Int i = 0; i < nvar + nconI; i++)
+              std::cout << ssocx[i] << std::endl;
+          }
+#endif
+
 
           // Arrumar tamanho do ssoc a partir do x
           Real alphassoc = 1;

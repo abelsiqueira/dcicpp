@@ -9,7 +9,7 @@ btol 1e-12
 c1 0.5
 c2 5e-1
 conlim 1e12
-correction_increase 10
+correction_increase 1
 csic 1e-6
 csig 1e-6
 debug_level 0

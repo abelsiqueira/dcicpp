@@ -929,10 +929,22 @@ namespace DCI {
   }
 
   void Interface::increaseCorrection () {
-    if (jacob_correction < base_correction)
-      jacob_correction = base_correction;
-    else
-      jacob_correction *= correction_increase;
+    if (jacob_correction < base_correction) {
+      if (use_lsmr)
+        jacob_correction = sqrt(base_correction);
+      else
+        jacob_correction = base_correction;
+    } else {
+      if (use_lsmr)
+        jacob_correction *= sqrt(correction_increase);
+      else
+        jacob_correction *= correction_increase;
+    }
+#ifdef VERBOSE
+    if (verbosity_level > 1) {
+      std::cout << "jacob_correction = " << jacob_correction << std::endl;
+    }
+#endif
   }
 
   Real Interface::getTime () {
@@ -1006,10 +1018,38 @@ namespace DCI {
     for (int k = 0; k < nnzj; k++) {
       i = Jfun[k];
       j = Jvar[k];
-      if (trans)
+      if (trans) {
         x[j] += Jx[k]*y[i];
-      else
+      } else {
         y[i] += Jx[k]*x[j];
+      }
+    }
+  }
+
+  void Interface::LSMRsolve(bool trans, pReal b, pReal x) {
+    Int nrow, ncol;
+    Aprod_pointer Axpy1, Axpy2;
+    if (!trans) {
+      nrow = ncon;
+      ncol = nvar+nconI;
+      Axpy1 = Aprod1;
+      Axpy2 = Aprod2;
+    } else {
+      nrow = nvar+nconI;
+      ncol = ncon;
+      Axpy1 = Aprod1trans;
+      Axpy2 = Aprod2trans;
+    }
+    Int istop = -1, itn;
+    Real normA, condA, normr, normAr, normx;
+    Int lsmr_iters = 0;
+    while (lsmr_iters < 2) {
+      lsmr(&nrow, &ncol, Axpy1, Axpy2, b, &jacob_correction, &atol, &btol,
+          &conlim, &itnlim, &local_size, &nout, x, &istop, &itn, &normA, &condA,
+          &normr, &normAr, &normx);
+      if (lsmr_iters < 1 && normr > 1e-6 && normAr < 1e-6)
+        increaseCorrection();
+      lsmr_iters++;
     }
   }
 
