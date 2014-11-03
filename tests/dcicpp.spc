@@ -25,7 +25,7 @@ epsgap 1e-4
 epsmu 1e-6
 eta1 1e-3
 eta2 0.2
-eta3 0.9
+eta3 0.8
 infeasibility_tol 1e-6
 kappa1 1e-4
 kappa2 0.25
