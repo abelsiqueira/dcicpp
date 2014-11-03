@@ -1049,6 +1049,7 @@ namespace DCI {
           &normr, &normAr, &normx);
       if (lsmr_iters < 1 && condA > conlim)
         increaseCorrection();
+      else break;
       lsmr_iters++;
     }
   }

@@ -118,6 +118,19 @@ namespace DCI {
         for (Int i = 0; i < nvar + nconI; i++)
           std::cout << dnx[i] << std::endl;
       }
+      if (debug_level > 1) {
+        Real Adn[ncon];
+        for (Int i = 0; i < ncon; i++)
+          Adn[i] = cx[i];
+        JacobMult(false, dnx, Adn);
+        Real sum = 0.0;
+        std::cout << "Adn =" << std::endl;
+        for (Int i = 0; i < ncon; i++) {
+          std::cout << Adn[i] << std::endl;
+          sum += Adn[i]*Adn[i];
+        }
+        std::cout << "|Adn|^2 = " << sum << std::endl;
+      }
 #endif
 
       dnavail = dciTrue;
@@ -323,19 +336,6 @@ namespace DCI {
               std::cout << ssocx[i] << std::endl;
           }
 #endif
-          {
-            Real Asoc[ncon];
-            for (Int i = 0; i < ncon; i++)
-              Asoc[i] = cx[i];
-            JacobMult(false, ssocx, Asoc);
-            Real sum = 0.0;
-            std::cout << "Asoc =" << std::endl;
-            for (Int i = 0; i < ncon; i++) {
-              std::cout << Asoc[i] << std::endl;
-              sum += Asoc[i]*Asoc[i];
-            }
-            std::cout << "|Asoc|^2 = " << sum << std::endl;
-          }
           scale_xc (ssoc);
 #ifdef VERBOSE
           if (verbosity_level > 3) {
