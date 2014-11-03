@@ -36,7 +36,7 @@ namespace DCI {
     alphaS = 6.25e-2;
     eta1 = 1e-3;
     eta2 = 0.2;
-    eta3 = 0.9;
+    eta3 = 0.8;
     DeltaMin = 1e-4;
     DeltaTiny = 1e-10;
     minstep = 1e-3;
