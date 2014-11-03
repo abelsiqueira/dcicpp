@@ -1047,7 +1047,7 @@ namespace DCI {
       lsmr(&nrow, &ncol, Axpy1, Axpy2, b, &jacob_correction, &atol, &btol,
           &conlim, &itnlim, &local_size, &nout, x, &istop, &itn, &normA, &condA,
           &normr, &normAr, &normx);
-      if (lsmr_iters < 1 && normr > 1e-6 && normAr < 1e-6)
+      if (lsmr_iters < 1 && condA > conlim)
         increaseCorrection();
       lsmr_iters++;
     }
