@@ -203,6 +203,7 @@ namespace DCI {
       Int  TangentFlag, StepFlag, NormalFlag;
       Int  iter, maxit, maxitSteih, minitSteih, relitSteih;
       Int  total_normal_iteration, max_normal_iteration;
+      Int  iter_wle_1_nit, iter_w_1_nit;
       Int  minstep, itssmll, maxrest, maxssmll;
       Int  cholFacs;
       Bool Aavail, gavail, LimLbd, FreshA;

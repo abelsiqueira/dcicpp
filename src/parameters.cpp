@@ -337,6 +337,8 @@ namespace DCI {
     nRest = 0;
     total_normal_iteration = 0;
     max_normal_iteration = 0;
+    iter_wle_1_nit = 0;
+    iter_w_1_nit = 0;
     Lref = dciInf;
     DLH = dciInf;
     DLV = 0;
