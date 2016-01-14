@@ -246,8 +246,10 @@ namespace DCI {
             << "Elapsed Time = " << (current_time > 0 ? current_time : 0) << " s" << std::endl;
         out << "Normal iterations = " << total_normal_iteration << std::endl
             << "Average number of normal iterations = " << total_normal_iteration*1.0/iter << std::endl
-            << "Maximum number of normal iterations during one iteration = " << max_normal_iteration
-            << std::endl;
+            << "Maximum number of normal iterations during one iteration = "
+            << max_normal_iteration << std::endl
+            << "Iterations with = 1 normal iterations = " << iter_w_1_nit << std::endl
+            << "Iterations with <= 1 normal iterations = " << iter_wle_1_nit << std::endl;
       }
 
       if (display_level > 2) {
