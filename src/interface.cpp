@@ -241,6 +241,10 @@ namespace DCI {
             << "y offset = " << yoff << std::endl
             << "Number of Iterations = " << iter << std::endl
             << "Elapsed Time = " << (current_time > 0 ? current_time : 0) << " s" << std::endl;
+        out << "Normal iterations = " << total_normal_iteration << std::endl
+            << "Average number of normal iterations = " << total_normal_iteration*1.0/iter << std::endl
+            << "Maximum number of normal iterations during one iteration = " << max_normal_iteration
+            << std::endl;
       }
 
       if (display_level > 2) {

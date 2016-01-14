@@ -202,6 +202,7 @@ namespace DCI {
       Int  tSoc, tSteih, tRej, tRest;
       Int  TangentFlag, StepFlag, NormalFlag;
       Int  iter, maxit, maxitSteih, minitSteih, relitSteih;
+      Int  total_normal_iteration, max_normal_iteration;
       Int  minstep, itssmll, maxrest, maxssmll;
       Int  cholFacs;
       Bool Aavail, gavail, LimLbd, FreshA;

@@ -103,6 +103,8 @@ namespace DCI {
 //      oldAcnt = 0;
     }
 
+    int normal_iteration = 0;
+
     current_time = getTime() - start_time;
     while ( (normc > rho) && (nRest <= maxrest) && (NormalFlag == 0) && (current_time < max_time) ) {
 
@@ -142,8 +144,13 @@ namespace DCI {
       }
 #endif
 
+      normal_iteration++;
       updateMu ();
     } //Fim do While
+
+    this->total_normal_iteration += normal_iteration;
+    if (normal_iteration > this->max_normal_iteration)
+      this->max_normal_iteration = normal_iteration;
 
     if (ncon > 0)
       normy = y->norm ();
