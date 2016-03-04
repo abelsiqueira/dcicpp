@@ -21,7 +21,7 @@ Nope *nope;
 Int nvar = 10;
 Int ncon = nvar - 1;
 
-void core_uofg (pInt, Int *n, Real * x, Real * f, Real * g, Bool * grad) {
+void core_uofg (pInt, const Int *n, const Real * x, Real * f, Real * g, const Bool * grad) {
   *f = 0.0;
   for (Int i = 0; i < *n; i++)
     *f += x[i]*x[i];
@@ -32,7 +32,7 @@ void core_uofg (pInt, Int *n, Real * x, Real * f, Real * g, Bool * grad) {
     g[i] = x[i];
 }
 
-void core_cofg (pInt, Int *n, Real * x, Real * f, Real * g, Bool * grad) {
+void core_cofg (pInt, const Int *n, const Real * x, Real * f, Real * g, Bool * grad) {
   *f = 0.0;
   for (Int i = 0; i < *n; i++)
     *f += x[i]*x[i];
@@ -44,25 +44,25 @@ void core_cofg (pInt, Int *n, Real * x, Real * f, Real * g, Bool * grad) {
 }
 
 //H(x,y) = 2*I
-void core_uhprod (pInt, Int *n, Bool *, Real *, Real * p, Real * q) {
+void core_uhprod (pInt, const Int *n, const Bool *, const Real *, const Real * p, Real * q) {
   for (Int i = 0; i < *n; i++)
     q[i] = p[i];
 }
 
-void core_chprod (pInt, Int *n, Int *, Bool *, Real *, Real *,
+void core_chprod (pInt, const Int *n, const Int *, const Bool *, const Real *, const Real *,
     Real * p, Real * q) {
   for (Int i = 0; i < *n; i++)
     q[i] = p[i];
 }
 
-void core_ufn (pInt, Int *n, Real * x, Real * f) {
+void core_ufn (pInt, const Int *n, const Real * x, Real * f) {
   *f = 0.0;
   for (Int i = 0; i < *n; i++)
     *f += x[i]*x[i];
   *f /= 2;
 }
 
-void core_cfn (pInt, Int *n, Int *, Real * x, Real * f, Real * c) {
+void core_cfn (pInt, const Int *n, const Int *, const Real * x, Real * f, Real * c) {
   *f = 0.0;
   for (Int i = 0; i < *n; i++)
     *f += x[i]*x[i];
@@ -71,8 +71,8 @@ void core_cfn (pInt, Int *n, Int *, Real * x, Real * f, Real * c) {
     c[i] = x[i+1] - x[i];
 }
 
-void core_ccfsg (pInt, Int *n, Int *, Real * x, Real * c, Int * nnzJ, Int *,
-    Real *Jval, Int *Jvar, Int *Jfun, Bool *grad) {
+void core_ccfsg (pInt, const Int *n, const Int *, const Real * x, Real * c, Int * nnzJ, const Int *,
+    Real *Jval, Int *Jvar, Int *Jfun, const Bool *grad) {
   for (Int i = 0; i < *n-1; i++) {
     c[i] = x[i+1] - x[i];
     if (*grad) {
@@ -87,14 +87,14 @@ void core_ccfsg (pInt, Int *n, Int *, Real * x, Real * c, Int * nnzJ, Int *,
   *nnzJ = 2*(*n-1);
 }
 
-void core_cdimen(Int *, Int *, Int *n, Int *m) {
+void core_cdimen(Int *, const Int *, Int *n, Int *m) {
   *n = nvar;
   *m = ncon;
 }
 
-void core_csetup(Int *, Int *, Int *, Int *, Int *n, Int *m, Real *x,
+void core_csetup(Int *, const Int *, const Int *, const Int *, Int *n, Int *m, Real *x,
     Real *bl, Real *bu, Real *y, Real *cl, Real *cu, Bool *equatn,
-    Bool *linear, Int *, Int *, Int *) {
+    Bool *linear, const Int *, const Int *, const Int *) {
   for (Int i = 0; i < *n; i++) {
     x[i] = 0;
     bl[i] = -dciInf;
