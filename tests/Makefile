@@ -8,6 +8,8 @@ default: all
 GDB = gdb
 
 TESTSCPP = $(shell ls *test[0-9][0-9].cpp)
+#TESTSCPP = test18.cpp
+
 FIXEDTESTSCPP = $(shell ls fixedtest*.cpp)
 EQTESTSCPP = $(shell ls eqtest*.cpp)
 UNCTESTSCPP = $(shell ls unctest*.cpp)

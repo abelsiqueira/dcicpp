@@ -3,6 +3,94 @@
 #include <cmath>
 
 namespace DCI {
+  Int Interface::doglegNormalStep (Real & infeasible_gradient) {
+    Real oldnormc = c->norm();
+    Vector d(*env), dcp(*env), dn(*env);
+    Real ndcp, ndn;
+    Real alpha, Ared, Pred;
+    Real one[2] = {1,0};
+    Real zero[2] = {0,0};
+    Int iout, naflag;
+    Bool dnavail;
+    Vector gtmp (*env), aux (*env);
+    Vector xtmp (*xc), ctmp (*c), stmp (*env);
+    Real normgtmp = 0;
+
+    Aavail = dciFalse;
+
+    gtmp.sdmult (*J, 1, one, zero, ctmp); // g = J'*c
+
+    // Computing |P(J'c)|
+    Vector gtmp_proj(*env);
+    gtmp_proj.scale(gtmp, -1.0);
+    projectBounds_xc(gtmp_proj);
+    infeasible_gradient = gtmp_proj.norm();
+
+    dcp = -1.0 * gtmp;
+    alpha = maxStepSize(*xc, dcp);
+    if (alpha < 1.0)
+      dcp.scale(alpha * 0.99);
+
+    ndcp = norm(dcp);
+    if (ndcp > DeltaV) {
+      aux.sdmult(*J, 0, one, zero, dcp); // aux = J*dcp
+      alpha = Min(dcp.dot(dcp)/aux.dot(aux), DeltaV/dcp.norm());
+      d = alpha * dcp;
+    } else {
+      // |dcp| < Delta
+      naflag = naStep (*c, dn);
+      alpha = maxStepSize(*xc, dn);
+      if (alpha < 1.0)
+        dn.scale(alpha * 0.99);
+      ndn = norm(dn);
+      if (ndn <= DeltaV)
+        d = dn;
+      else {
+        // |dcp + tau * (dn - dcp)| = Delta | u = dcp, v = dn - dcp
+        // utu = dot(dcp, dcp)
+        // utv = dot(dcp, dn) - dot(dcp, dcp)
+        // vtv = dot(dcp, dcp) - 2 * dot(dcp, dn) + dot(dn, dn)
+        Real dot_dcp = dot(dcp, dcp);
+        Real dot_dcp_dn = dot(dcp, dn);
+        Real dot_dn = dot(dn, dn);
+        Real tau = stepSizeForRadius(dot_dcp, dot_dcp_dn - dot_dcp, dot_dcp - 2*dot_dcp_dn + dot_dn, DeltaV);
+        d = (1 - tau) * dcp + tau * dn;
+      }
+    }
+
+    Vector xtemp(*xc);
+    *xc = xtemp + d;
+
+#ifndef NDEBUG
+    checkInfactibility();
+#endif
+
+    aux.sdmult(*J, 0, one, one, d);
+
+    call_ccfsg_xc(dciFalse);
+    normc = c->norm ();
+
+    Ared = 0.5*(oldnormc*oldnormc - normc*normc);
+    Pred = norm(aux + *c);
+    Pred = 0.5*(Pred * Pred - normc*normc);
+
+    if (Ared/Pred < beta2) {
+      DeltaV /= 4;
+      *xc = xtmp;
+      call_ccfsg_xc(dciFalse);
+      normc = c->norm();
+    } else if (Ared/Pred > 0.75) {
+      DeltaV *= 2;
+    }
+
+    if (normc < rho)
+      return 0;
+
+    current_time = getTime() - start_time;
+
+    return 0;
+  }
+
   Int Interface::innerNormalDirection (Real & infeasible_gradient) {
     Real oldnormc = c->norm();
     Vector d(*env), dcp(*env), dn(*env);
@@ -36,6 +124,15 @@ namespace DCI {
     gtmp_proj.scale(gtmp, -1.0);
     projectBounds_xc(gtmp_proj);
     infeasible_gradient = gtmp_proj.norm();
+    if (verbosity_level > 2) {
+      std::cout << "Inside innerNormalDirection" << std::endl;
+      std::cout << "scalingmatrix = " << std::endl;
+      for (int i = 0; i < nvar + nconI; i++)
+        std::cout << scalingMatrix[i] << " ";
+      std::cout << std::endl;
+      std::cout << "gtmp = " << std::endl;
+      gtmp.print_more();
+    }
 //    DeltaV = normgtmp;
 
     if (normgtmp < dciTiny) {
@@ -67,6 +164,10 @@ namespace DCI {
     alpha = Min(gtmp.dot(gtmp)/aux.dot(aux), DeltaV/gtmp.norm());
     dcp.scale (d, alpha);
     pReal dcpx = dcp.get_doublex();
+    if (verbosity_level > 2) {
+      std::cout << "dcp = " << std::endl;
+      dcp.print_more();
+    }
 
 //    alpha = -d.dot(gtmp)/aux.dot(aux);
 //    alpha = Min(alpha, DeltaV/d.norm());
@@ -88,6 +189,10 @@ namespace DCI {
 /*     for (Int i = 0; i < nvar + nconI; i++)
  *       dcpx[i] *= scalingMatrix[i];
  */
+    if (verbosity_level > 2) {
+      std::cout << "dcp scaled= " << std::endl;
+      dcp.print_more();
+    }
     dnavail = dciFalse;
     ndn = 0;
     Ared = 0;
@@ -101,6 +206,10 @@ namespace DCI {
     dnavail = dciFalse;
     if (!dnavail) {
       naflag = naStep (*c, dn);
+      if (verbosity_level > 2) {
+        std::cout << "dn = " << std::endl;
+        dn.print_more();
+      }
 
       dnavail = dciTrue;
 
@@ -119,6 +228,10 @@ namespace DCI {
       if (alpha < 1) {
         alpha = Max(theta, 1 - dn.norm())*alpha;
         dn.scale(alpha);
+      }
+      if (verbosity_level > 2) {
+        std::cout << "dn projected = " << std::endl;
+        dn.print_more();
       }
 
       if (naflag > 1)
@@ -215,25 +328,31 @@ namespace DCI {
           full(*J).print_more ();
           std::cout << "xc = " << std::endl;
           xc->print_more ();
+          std::cout << std::endl;
         }
       }
       GDBSTOP ();
 #endif
       nRest++;
 
-      call_ccfsg_xc(dciTrue, dciFalse);
+      if (!use_normal_safe_guard)
+        call_ccfsg_xc(dciTrue, dciFalse);
       cholesky();
       infeasible_gradient = 1.0;
 
-      innerNormalDirection(infeasible_gradient);
+      if (use_dogleg_normal_step)
+        doglegNormalStep(infeasible_gradient);
+      else
+        innerNormalDirection(infeasible_gradient);
 #ifdef ITER_MATLAB
-      iter_file << "X(:,size(X,2)+1) = [" << xcx[0] << ";" << xcx[1] << "];" << std::endl;
+      std::cout << "X(:,size(X,2)+1) = [" << xcx[0] << ";" << xcx[1] << "];" << std::endl;
 #endif
 
 #ifdef VERBOSE
       if (verbosity_level > 1) {
         std::cout << "After innerNormalStep" << std::endl;
-        std::cout << "|c| = " << normc << std::endl;
+        std::cout << "|oldc| = " << oldnormc << std::endl;
+        std::cout << "|c|    = " << normc << std::endl;
         std::cout << "rho = " << rho << std::endl;
         if ( (nvar < 10) && (ncon < 10) ) {
           std::cout << "xc = " << std::endl;
@@ -252,6 +371,10 @@ namespace DCI {
         fail = fail + 1;
       } else
         fail = 0;
+
+      if (verbosity_level > 1) {
+        std::cout << "fail = " << fail << std::endl;
+      }
 
       if (fail >= nfailv) {
 #ifdef VERBOSE
@@ -325,7 +448,8 @@ namespace DCI {
         // Failed. Recompute A
 
         if (!is_linear) {
-          call_ccfsg_xc (dciTrue, dciFalse); //CuterJacob
+          if (!use_normal_safe_guard)
+            call_ccfsg_xc(dciTrue, dciFalse);
         }
         Aavail = dciTrue;
         oldAcnt = 0;

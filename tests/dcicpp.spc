@@ -14,7 +14,7 @@ Delta0 1e6
 DeltaMax 1e6
 DeltaMin 1e-4
 DeltaTiny 1e-10
-display_level 1
+display_level 1 
 eps1 1e-6
 eps2 1e-14
 eps3 1e-8
@@ -36,7 +36,7 @@ max_variable_scaling 1e6
 MaxDiag 1e9
 maxit 200000
 maxitSteih 100000
-maxrest 200000
+maxrest 200
 maxssmll 5
 minBk 1e-12
 MinDiag 0
@@ -70,3 +70,4 @@ verbosity_level 0
 zeta1 2
 zeta2 1
 zeta3 5
+use_dogleg_normal_step 0

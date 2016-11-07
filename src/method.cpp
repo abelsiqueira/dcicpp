@@ -30,6 +30,27 @@ namespace DCI {
     }
   }
 
+  double maxStepSizeArray(size_t n, double * x, double * d, double * l, double * u) {
+    double alpha = 1e20;
+    for (size_t i = 0; i < n; i++) {
+      if (d[i] > 0)
+        alpha = Min(alpha, (u[i] - x[i])/d[i]);
+      else if (d[i] < 0)
+        alpha = Min(alpha, (l[i] - x[i])/d[i]);
+    }
+    return alpha;
+  }
+
+  // Finds tau such that |u + tau * v| = Delta, given utu, utv, vtv and Delta.
+  double stepSizeForRadius(double utu, double utv, double vtv, double Delta) {
+    double disc = sqrt(utv*utv - vtv*(utu - Delta*Delta));
+    return (-utv + disc)/vtv;
+  }
+
+  Real Interface::maxStepSize (Vector & x, Vector & d) {
+    return maxStepSizeArray(x.size(), x.get_doublex(), d.get_doublex(), l_bnd->get_doublex(), u_bnd->get_doublex());
+  }
+
   Bool Interface::calcFeasibilityOpt () {
     if (ccifg == 0)
       return 0;

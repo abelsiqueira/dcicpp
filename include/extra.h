@@ -1,6 +1,9 @@
 #ifndef dci_extra_h
 #define dci_extra_h
 
+#include<cstdio>
+#include<cmath>
+
 namespace DCI {
 
   template < typename T >

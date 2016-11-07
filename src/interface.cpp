@@ -246,7 +246,10 @@ namespace DCI {
             << "Maximum number of normal iterations during one iteration = "
             << max_normal_iteration << std::endl
             << "Iterations with = 1 normal iterations = " << iter_w_1_nit << std::endl
-            << "Iterations with <= 1 normal iterations = " << iter_wle_1_nit << std::endl;
+            << "Iterations with <= 1 normal iterations = " << iter_wle_1_nit << std::endl
+            << "Total number of inner normal steps = " << tRest << std::endl
+            << "Average number of inner normal steps = " <<
+              (total_normal_iteration > 0 ? tRest/total_normal_iteration : -1) << std::endl;
       }
 
       if (display_level > 2) {

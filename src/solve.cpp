@@ -55,7 +55,7 @@ namespace DCI {
           << "  rho    = " << rho << std::endl
           << "----------------------" << std::endl;
     }
-    if ( (nvar + ncon <= 20) && (verbosity_level > 1) ) {
+    if ( (nvar + ncon <= 20) && (verbosity_level > 0) ) {
       std::cout << "x = " << std::endl;
       x->print_more();
       std::cout << "xc = " << std::endl;
@@ -285,7 +285,7 @@ namespace DCI {
             << "  stepsize = " << (*x - *xc).norm() << std::endl
             << "----------------------" << std::endl;
       }
-      if ( (nvar + ncon <= 20) && (verbosity_level > 1) ) {
+      if ( (nvar + ncon <= 20) && (verbosity_level > 0) ) {
         std::cout << "x = " << std::endl;
         x->print_more();
         std::cout << "xc = " << std::endl;

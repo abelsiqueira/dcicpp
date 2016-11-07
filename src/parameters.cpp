@@ -88,7 +88,8 @@ namespace DCI {
       en_max_constraint_scaling, en_max_variable_scaling, en_use_soc,
       en_use_normal_safe_guard, en_nvarshowmax, en_nconshowmax,
       en_normal_fail_reboot, en_chol_correction_increase,
-      en_cholesky_base_correction, en_infeasibility_tol
+      en_cholesky_base_correction, en_infeasibility_tol,
+      en_use_dogleg_normal_step
     };
     std::map<std::string, int> paramMap;
 
@@ -164,6 +165,7 @@ namespace DCI {
     paramMap["minBk"] = en_minBk;
     paramMap["nvarshowmax"] = en_nvarshowmax;
     paramMap["nconshowmax"] = en_nconshowmax;
+    paramMap["use_dogleg_normal_step"] = en_use_dogleg_normal_step;
 
     if (!has_param_file)
       return;
@@ -262,6 +264,7 @@ namespace DCI {
         case en_scale_normal: aux >> scale_normal; break;
         case en_nvarshowmax: aux >> nvarshowmax; break;
         case en_nconshowmax: aux >> nconshowmax; break;
+        case en_use_dogleg_normal_step: aux >> use_dogleg_normal_step; break;
       }
     }
   }
@@ -370,6 +373,7 @@ namespace DCI {
     normal_fail_reboot = dciTrue;
     chol_correction_increase = 10;
     cholesky_base_correction = 1e-12;
+    use_dogleg_normal_step = dciTrue;
 
     //Program properties
     has_ineq = dciFalse; //Has some inequalities

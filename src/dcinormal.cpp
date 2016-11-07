@@ -137,10 +137,10 @@ namespace DCI {
       rho = Max (rho, csic);
 #ifdef VERBOSE
       if (verbosity_level > 1) {
-        std::cout << "After last update"
-            << std::endl
+        std::cout << "Normal iteration #" << normal_iteration << std::endl
             << "|c| = " << normc << std::endl
-            << "rho = " << rho << std::endl;
+            << "rho = " << rho << std::endl
+            << "nRest = " << nRest  << std::endl;
       }
 #endif
 

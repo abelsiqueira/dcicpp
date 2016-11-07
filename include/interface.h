@@ -83,6 +83,7 @@ namespace DCI {
       void cholesky ();
       Int  normalStep ();
       Int  innerNormalDirection (Real &);
+      Int  doglegNormalStep (Real &);
       void innerNormalPhase ();
       Int  normalSafeguard ();
       void tangentStep (Real &);
@@ -107,6 +108,7 @@ namespace DCI {
       void scale_xc (Vector &);
       void projectBounds_x (Vector &);
       void projectBounds_xc (Vector &);
+      Real maxStepSize(Vector &, Vector &);
       void update_yineq ();
       void updateMultipliers ();
       void updateMu ();
@@ -223,11 +225,16 @@ namespace DCI {
       Real *constraint_scaling;
       Bool use_objective_scaling, use_variable_scaling, use_constraint_scaling;
       Bool use_soc, use_normal_safe_guard;
+      Bool use_dogleg_normal_step;
       Int  objfun_count;
       Real infeasibility_tol;
       Int  cuter_status;
       Int nvarshowmax, nconshowmax;
   };
+
+  // Extra functions
+  double maxStepSizeArray(size_t, double *, double *, double *, double *);
+  double stepSizeForRadius(double, double, double, double);
 }
 
 #endif
