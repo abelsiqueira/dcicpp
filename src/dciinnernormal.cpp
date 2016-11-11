@@ -26,26 +26,42 @@ namespace DCI {
     projectBounds_xc(gtmp_proj);
     infeasible_gradient = gtmp_proj.norm();
 
+    std::cout << "Dogleg: Delta = " << DeltaV << std::endl;
+
     dcp = -1.0 * gtmp;
+    scale_x(dcp);
+
     alpha = maxStepSize(*xc, dcp);
+    std::cout << "Dogleg: alpha_dcp = " << alpha << std::endl;
     if (alpha < 1.0)
       dcp.scale(alpha * 0.99);
+    std::cout << "Dogleg: dcp = " << std::endl;
+    dcp.print_more();
 
     ndcp = norm(dcp);
     if (ndcp > DeltaV) {
       aux.sdmult(*J, 0, one, zero, dcp); // aux = J*dcp
       alpha = Min(dcp.dot(dcp)/aux.dot(aux), DeltaV/dcp.norm());
       d = alpha * dcp;
+      std::cout << "Dogleg: Using dcp" << std::endl;
     } else {
       // |dcp| < Delta
       naflag = naStep (*c, dn);
+      scale_x(dn);
       alpha = maxStepSize(*xc, dn);
-      if (alpha < 1.0)
+      std::cout << "Dogleg: alpha_dn = " << alpha << std::endl;
+      std::cout << "Dogleg: dn_full = " << std::endl;
+      dn.print_more();
+      if (alpha < 1.0) {
         dn.scale(alpha * 0.99);
+      }
       ndn = norm(dn);
-      if (ndn <= DeltaV)
+      std::cout << "Dogleg: dn = " << std::endl;
+      dn.print_more();
+      if (ndn <= DeltaV) {
         d = dn;
-      else {
+        std::cout << "Dogleg: Using dn" << std::endl;
+      } else {
         // |dcp + tau * (dn - dcp)| = Delta | u = dcp, v = dn - dcp
         // utu = dot(dcp, dcp)
         // utv = dot(dcp, dn) - dot(dcp, dcp)
@@ -55,11 +71,14 @@ namespace DCI {
         Real dot_dn = dot(dn, dn);
         Real tau = stepSizeForRadius(dot_dcp, dot_dcp_dn - dot_dcp, dot_dcp - 2*dot_dcp_dn + dot_dn, DeltaV);
         d = (1 - tau) * dcp + tau * dn;
+        std::cout << "Dogleg: combination: " << 1-tau << "*dcp + " << tau << "*dn" << std::endl;
       }
     }
 
     Vector xtemp(*xc);
     *xc = xtemp + d;
+    std::cout << "Dogleg: xc + d = " << std::endl;
+    xc->print_more();
 
 #ifndef NDEBUG
     checkInfactibility();
@@ -82,9 +101,6 @@ namespace DCI {
     } else if (Ared/Pred > 0.75) {
       DeltaV *= 2;
     }
-
-    if (normc < rho)
-      return 0;
 
     current_time = getTime() - start_time;
 
@@ -335,8 +351,9 @@ namespace DCI {
 #endif
       nRest++;
 
-      if (!use_normal_safe_guard)
-        call_ccfsg_xc(dciTrue, dciFalse);
+//      if (!use_dogleg_normal_step)
+//        call_ccfsg_xc(dciTrue, dciFalse);
+      call_ccfsg_xc(dciTrue);
       cholesky();
       infeasible_gradient = 1.0;
 
@@ -448,8 +465,9 @@ namespace DCI {
         // Failed. Recompute A
 
         if (!is_linear) {
-          if (!use_normal_safe_guard)
-            call_ccfsg_xc(dciTrue, dciFalse);
+//          if (!use_dogleg_normal_step)
+//            call_ccfsg_xc(dciTrue, dciFalse);
+          call_ccfsg_xc(dciTrue);
         }
         Aavail = dciTrue;
         oldAcnt = 0;

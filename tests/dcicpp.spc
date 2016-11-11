@@ -14,7 +14,7 @@ Delta0 1e6
 DeltaMax 1e6
 DeltaMin 1e-4
 DeltaTiny 1e-10
-display_level 1 
+display_level 1
 eps1 1e-6
 eps2 1e-14
 eps3 1e-8
@@ -66,8 +66,8 @@ use_normal_safe_guard 1
 use_objective_scaling 1
 use_soc 1
 use_variable_scaling 1
-verbosity_level 0
+verbosity_level 3
 zeta1 2
 zeta2 1
 zeta3 5
-use_dogleg_normal_step 0
+use_dogleg_normal_step 1
