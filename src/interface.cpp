@@ -245,8 +245,11 @@ namespace DCI {
             << "Average number of normal iterations = " << total_normal_iteration*1.0/iter << std::endl
             << "Maximum number of normal iterations during one iteration = "
             << max_normal_iteration << std::endl
-            << "Iterations with = 1 normal iterations = " << iter_w_1_nit << std::endl
-            << "Iterations with <= 1 normal iterations = " << iter_wle_1_nit << std::endl;
+            << "Iterations with 0  normal iterations = " << iter_w_0_nit << std::endl
+            << "Iterations with 1  normal iteration  = " << iter_w_1_nit << std::endl
+            << "Iterations with 2+ normal iterations = " << total_normal_iteration - iter_w_1_nit - iter_w_0_nit << std::endl
+            << "Restorations = " << tRest << std::endl
+            << "Average number of restorations per normal iteration = " << tRest/total_normal_iteration << std::endl;
       }
 
       if (display_level > 2) {

@@ -151,8 +151,8 @@ namespace DCI {
     this->total_normal_iteration += normal_iteration;
     if (normal_iteration > this->max_normal_iteration)
       this->max_normal_iteration = normal_iteration;
-    if (normal_iteration <= 1)
-      this->iter_wle_1_nit++;
+    if (normal_iteration == 0)
+      this->iter_w_0_nit++;
     if (normal_iteration == 1)
       this->iter_w_1_nit++;
 
