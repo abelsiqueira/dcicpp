@@ -1,5 +1,7 @@
 #include <iostream>
 #include "dci.h"
+#include <assert.h>
+#include <cmath>
 extern "C" {
 #include "nope.h"
 }
@@ -8,10 +10,10 @@ using namespace DCI;
 
 /* Let's make the problem
  * min  f(x) = 0.5*norm(x)^2
- * s.t. x_{i+1} = x_i
+ * s.t. x_{i+1} = x_i + 1
  *      and x_1 = 1
  *
- * Solution: x = ones(n,1), f = n/2
+ * Solution: x = [1, 2, 3, ..., n], f = 0.5*(1 + 2² + 3² + ... + n²) = n(n+1)(2n+1)/12
  *
  */
 
@@ -68,13 +70,13 @@ void core_cfn (pInt, const Int *n, const Int *, const Real * x, Real * f, Real *
     *f += x[i]*x[i];
   *f /= 2;
   for (Int i = 0; i < *n-1; i++)
-    c[i] = x[i+1] - x[i];
+    c[i] = x[i+1] - x[i] - 1;
 }
 
 void core_ccfsg (pInt, const Int *n, const Int *, const Real * x, Real * c, Int * nnzJ, const Int *,
     Real *Jval, Int *Jvar, Int *Jfun, const Bool *grad) {
   for (Int i = 0; i < *n-1; i++) {
-    c[i] = x[i+1] - x[i];
+    c[i] = x[i+1] - x[i] - 1;
     if (*grad) {
       Jval[2*i] = -1;
       Jval[2*i+1] = 1;
@@ -116,6 +118,13 @@ void core_cdimsj(Int *, Int *nnzj) {
   *nnzj = 2*ncon;
 }
 
+void print_array(size_t n, double * x, const char * name) {
+  printf("%s = \n", name);
+  for (size_t i = 0; i < n; i++) {
+    printf(" %8.1e\n", x[i]);
+  }
+}
+
 int main () {
   Int n = 0, m = 0;
   nope = initializeNope();
@@ -126,43 +135,15 @@ int main () {
   runNope(nope);
   ppDIMEN(nope, &n, &m);
 
-  if (n == 0) {
-    printf("After processing, number of variables is 0\n");
-    destroyNope(nope);
-    return 0;
-  }
-
-  Real x[n], bl[n], bu[n];
-  DCI::Interface dci;
-
-  dci.cuter();
-
-  if (m == 0) {
-    dci.set_ufn(ufn);
-    dci.set_uofg(uofg);
-    dci.set_uprod(uhprod);
-
-    runUncSetup(nope, &n, x, bl, bu);
-    dci.unc_setup(n, x, bl, bu);
-  } else {
-    Real y[m], cl[m], cu[m];
-    Bool equatn[m], linear[m];
-    Int jmax;
-
-    dci.set_cfn(cfn);
-    dci.set_cofg(cofg);
-    dci.set_cprod(chprod);
-    dci.set_ccfsg(ccfsg);
-
-    runConSetup(nope, &n, x, bl, bu, &m, y, cl, cu, equatn, linear, &jmax);
-    dci.set_linear(m, linear);
-    dci.set_amax(jmax);
-    dci.con_setup(n, x, bl, bu, m, y, cl, cu, equatn);
-  }
-
-  dci.start ();
-  dci.solve ();
-  dci.show();
+  assert(n == 0);
+  for (int i = 0; i < nvar; i++)
+    assert(nope->x[i] == i+1);
+  int st = 0;
+  double f = 0.0;
+  core_cfn(&st, &nvar, &ncon, nope->x, &f, nope->c);
+  assert(fabs(f - nvar*(nvar+1)*(2*nvar+1)/12.0) < 1e-12);
+  for (int i = 0; i < ncon; i++)
+    assert(nope->c[i] == 0.0);
 
   destroyNope(nope);
 

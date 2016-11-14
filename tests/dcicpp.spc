@@ -31,12 +31,12 @@ kappa4 2.5
 LbdMax 1e6
 max_constraint_scaling 1e6
 max_objective_scaling 1e6
-max_time 300
+max_time 30
 max_variable_scaling 1e6
 MaxDiag 1e9
-maxit 200000
+maxit 2000
 maxitSteih 100000
-maxrest 200000
+maxrest 2000
 maxssmll 5
 minBk 1e-12
 MinDiag 0

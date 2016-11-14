@@ -1,0 +1,13 @@
+#!/usr/bin/make
+CXX = g++
+
+all: dcicppclean_main.o
+
+%.o: %.cpp
+	$(CXX) -c -o $@ $< $(DCII) -Wall -Wextra -I$(CUTEST)/include
+
+clean:
+	rm -f dcicppclean_main.o
+
+tools:
+	echo "No tools"

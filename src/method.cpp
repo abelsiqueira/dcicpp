@@ -165,7 +165,7 @@ namespace DCI {
   }
 
   void Interface::updateMu () {
-    if ((nconI == 0) && (!is_bounded)) {
+    if (nconI == 0) {
       mu = 0;
       return;
     }
