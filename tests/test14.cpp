@@ -27,7 +27,7 @@ using namespace DCI;
  *
  */
 
-void COFG (pInt, Int *, Real * x, Real * f, Real * g, Bool * grad) {
+void COFG (pInt, const Int *, const Real * x, Real * f, Real * g, Bool * grad) {
   Real x1 = x[0], x2 = x[1], x4 = x[3], x5 = x[4];
   *f = x1 + 2*x2 + 4*x5 + exp(x1*x4);
   if (*grad == dciTrue) {
@@ -40,7 +40,7 @@ void COFG (pInt, Int *, Real * x, Real * f, Real * g, Bool * grad) {
   }
 }
 
-void CPROD (pInt, Int *, Int *, Bool *, Real * x, Real *, Real * p, Real * q) {
+void CPROD (pInt, const Int *, const Int *, const Bool *, const Real * x, const Real *, Real * p, Real * q) {
   Real x1 = x[0], x4 = x[3];
   q[0] = x4*x4*exp(x1*x4) * p[0];
   q[1] = 0;
@@ -50,7 +50,7 @@ void CPROD (pInt, Int *, Int *, Bool *, Real * x, Real *, Real * p, Real * q) {
   q[5] = 0;
 }
 
-void CFN (pInt, Int *, Int *, Real * x, Real * f, Real * c) {
+void CFN (pInt, const Int *, const Int *, const Real * x, Real * f, Real * c) {
   Real x1 = x[0], x2 = x[1], x3 = x[2], x4 = x[3], x5 = x[4], x6 = x[5];
   *f = x1 + 2*x2 + 4*x5 + exp(x1*x4);
   c[0] = x1 + 2*x2 + 5*x5 - 6;
@@ -61,8 +61,8 @@ void CFN (pInt, Int *, Int *, Real * x, Real * f, Real * c) {
   c[5] = x3 + x6 - 2;
 }
 
-void CCFSG (pInt, Int *, Int *, Real * x, Real * c, Int * nnzJ, Int *, Real * J,
-    Int * indvar, Int * indfun, Bool * Grad) {
+void CCFSG (pInt, const Int *, const Int *, const Real * x, Real * c, Int * nnzJ, const Int *, Real * J,
+    Int * indvar, Int * indfun, const Bool * Grad) {
   Real x1 = x[0], x2 = x[1], x3 = x[2], x4 = x[3], x5 = x[4], x6 = x[5];
   c[0] = x1 + 2*x2 + 5*x5 - 6;
   c[1] = x1 + x2 + x3 - 3;

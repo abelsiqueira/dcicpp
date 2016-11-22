@@ -24,7 +24,7 @@ using namespace DCI;
  *
  */
 
-void COFG (pInt, Int *, Real * x, Real * f, Real * g, Bool * grad) {
+void COFG (pInt, const Int *, const Real * x, Real * f, Real * g, Bool * grad) {
   Real x1 = x[0], x2 = x[1];
   *f = 0.01 * x1 * x1 + x2 * x2;
   if (*grad == dciTrue) {
@@ -33,21 +33,21 @@ void COFG (pInt, Int *, Real * x, Real * f, Real * g, Bool * grad) {
   }
 }
 
-void CPROD (pInt, Int *, Int *, Bool *, Real *, Real * y, Real * p, Real * q) {
+void CPROD (pInt, const Int *, const Int *, const Bool *, const Real *, const Real * y, Real * p, Real * q) {
   Real y1 = y[0], y2 = y[1];
   q[0] = (0.02 + 2*y2) * p[0] + y1 * p[1];
   q[1] = y1 * p[0] + (2 + 2*y2) * p[1];
 }
 
-void CFN (pInt, Int *, Int *, Real * x, Real * f, Real * c) {
+void CFN (pInt, const Int *, const Int *, const Real * x, Real * f, Real * c) {
   Real x1 = x[0], x2 = x[1];
   *f = 0.01 * x1 * x1 + x2 * x2;
   c[0] = x1 * x2 - 25;
   c[1] = x1 * x1 + x2 * x2 - 25;
 }
 
-void CCFSG (pInt, Int *, Int *, Real * x, Real * c, Int * nnzJ, Int *, Real * J,
-    Int * indvar, Int * indfun, Bool * Grad) {
+void CCFSG (pInt, const Int *, const Int *, const Real * x, Real * c, Int * nnzJ, const Int *, Real * J,
+    Int * indvar, Int * indfun, const Bool * Grad) {
   Real x1 = x[0], x2 = x[1];
   c[0] = x1 * x2 - 25;
   c[1] = x1 * x1 + x2 * x2 - 25;

@@ -1,4 +1,4 @@
-display_level 1
+display_level 0
 alphaI 2.5
 alphaR 0.75
 alphaS 6.25e-2
