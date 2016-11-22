@@ -74,6 +74,14 @@ int MAINENTRY () {
       dci.solve ();
       std::cout << "Showing" << std::endl;
       dci.show ();
+
+      if (dci.get_display_level() > 2) {
+        for (int i = 0; i < nope->nfix; i++) {
+          int j = nope->fixed_index[i];
+          printf("fixed x%d = %f\n", j+1, nope->x[j]);
+        }
+      }
+
       std::cout << "Done" << std::endl;
       // dci.printLatex ();
     } catch (const char * ex) {
@@ -90,6 +98,7 @@ int MAINENTRY () {
       CUTEST_creport(&status, calls, time);
     std::cout << "Setup time: " << time[0] << std::endl
       << "Execution time: " << time[1] << std::endl;
+
   } else {
     // No variables after preprocessing
     Int status = 0;

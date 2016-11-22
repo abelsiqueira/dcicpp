@@ -248,8 +248,12 @@ namespace DCI {
             << "Iterations with 0  normal iterations = " << iter_w_0_nit << std::endl
             << "Iterations with 1  normal iteration  = " << iter_w_1_nit << std::endl
             << "Iterations with 2+ normal iterations = " << iter - iter_w_1_nit - iter_w_0_nit << std::endl
-            << "Restorations = " << tRest << std::endl
-            << "Average number of restorations per normal iteration = " << tRest/total_normal_iteration << std::endl;
+            << "Restorations = " << tRest << std::endl;
+        out << "Average number of restorations per normal iteration = ";
+        if (total_normal_iteration > 0)
+          out << tRest/total_normal_iteration << std::endl;
+        else
+          out << "NA" << std::endl;
       }
 
       if (display_level > 2) {
@@ -283,7 +287,11 @@ namespace DCI {
       if (display_level > 1) {
         if (nvar <= nvarshowmax) {
           out << "x: " << std::endl;
-          x->print_more ();
+          for (int i = 0; i < nvar; i++)
+            printf("x%d = %f\n", i+1, xx[i]);
+          out << "slacks: " << std::endl;
+          for (int i = nvar; i < nvar+nconI; i++)
+            printf("s%d = %f\n", i+1-nvar, xx[i]);
         } else
           out << "Number of Variables is too big to show: Increase nvarshowmax" << std::endl;
         if ( (ncon > 0) && (ncon <= nconshowmax) ) {

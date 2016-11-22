@@ -48,6 +48,8 @@ namespace DCI {
       void set_ccifg (pccifg p) { ccifg = p; };
       void set_cnames (pcnames p) { cnames = p; };
 
+      int get_display_level () { return display_level; };
+
     protected:
       void GDBSTOP ();
       // These are the pointer to the functions

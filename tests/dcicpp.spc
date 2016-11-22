@@ -1,3 +1,4 @@
+display_level 1
 alphaI 2.5
 alphaR 0.75
 alphaS 6.25e-2
@@ -14,7 +15,6 @@ Delta0 1e6
 DeltaMax 1e6
 DeltaMin 1e-12
 DeltaTiny 1e-10
-display_level 1
 eps1 1e-6
 eps2 1e-14
 eps3 1e-8
@@ -45,7 +45,7 @@ minstep 1e-3
 nconshowmax 10
 nfailv 5
 normal_fail_reboot 1
-nvarshowmax 10
+nvarshowmax 50
 objfun_count 10
 partial_penalization 1
 penal_trust 0

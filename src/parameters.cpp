@@ -170,9 +170,6 @@ namespace DCI {
 
     std::string param, value;
 
-    if (debug_level > 0)
-      std::cout << "Parameters loaded:" << std::endl;
-
     while (getline(paramFile, param, ' ')) {
       getline(paramFile, value, '\n');
       std::stringstream aux;
@@ -185,7 +182,7 @@ namespace DCI {
           std::endl;
         continue;
       }
-      if (debug_level > 0) {
+      if ((debug_level > 0) || (display_level > 2)) {
         std::cout << param << " = " << value << std::endl;
       }
 
