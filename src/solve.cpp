@@ -17,9 +17,6 @@ namespace DCI {
 #ifdef LOCALTEST
     Real ngpzk = 1.0;
     Real ngpzck = 1.0;
-    Real eck = dciInf;
-    Real eckp = dciInf;
-    Real eckpp = dciInf;
     Real ek = dciInf;
     Real ekp = dciInf;
     Real ekpp = dciInf;
@@ -116,11 +113,6 @@ namespace DCI {
 
 #ifdef LOCALTEST
       ngpzck = gp->norm();
-      if (solx != 0) {
-        eck = eckp;
-        eckp = eckpp;
-        eckpp = norm(*xc - *solx);
-      }
 #endif
 
       tRest += nRest;
@@ -191,8 +183,9 @@ namespace DCI {
     GDBSTOP();
 #endif
 #ifdef LOCALTEST
-    if ( (solx != 0) && (iter > 3) ) {
-      std::cout << "eckpp/eck = " << eckpp/eck << std::endl;
+    if ( iter > 3 ) {
+      std::cout << "ekpp/ek = " << ekpp/ek << std::endl;
+      std::cout << "ekpp/ekp = " << ekpp/ekp << std::endl;
     }
 #endif
 
@@ -241,16 +234,13 @@ namespace DCI {
       gap = calcGap ();
 
 #ifdef LOCALTEST
-      Vector ytmp (*y);
-      call_ofg(dciTrue);
-      updateMultipliers ();
-      ngpzk = gp->norm();
-      *y = ytmp;
-      if (solx != 0) {
-        ek = ekp;
-        ekp = ekpp;
-        ekpp = norm(*x - *solx) + norm(*s - *sols);
-      }
+      ek = ekp;
+      ekp = ekpp;
+      //ekpp = norm(*x - *solx) + norm(*s - *sols);
+      ekpp = 0.0;
+      for (int i = 0; i < nvar; i++)
+        ekpp += pow(xx[i] - 1.0, 2);
+      ekpp = sqrt(ekpp);
 #endif
 
 #ifdef PLOT_MATLAB
@@ -298,9 +288,6 @@ namespace DCI {
 #endif
 #ifdef LOCALTEST
       std::cout << "|gp(zk)|/|gp(zck)| = " << ngpzk/ngpzck << std::endl;
-      if ( (solx != 0) && (iter > 3) ) {
-        std::cout << "ekpp/ek = " << ekpp/ek << std::endl;
-      }
 #endif
 
     } //End

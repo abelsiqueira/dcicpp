@@ -43,8 +43,19 @@ namespace DCI {
 
     for (Int i = 0; i < nvar+nconI; i++) {
       Real xi = xcx[i], bli = l_bndx[i], bui = u_bndx[i];
-      lower[i] = Max( (bli - xi) * (1 - epsmu)/scaling_matrix[i], -DeltaH/scaling_matrix[i] );
-      upper[i] = Min( (bui - xi) * (1 - epsmu)/scaling_matrix[i], DeltaH/scaling_matrix[i] );
+      if ( (bli > -dciInf) && (bui < dciInf) ) {
+        lower[i] = Max( (xi - bli) * (epsmu - 1) / scaling_matrix[i], -DeltaH );
+        upper[i] = Min( (bui - xi) * (1 - epsmu) / scaling_matrix[i], DeltaH );
+      } else if (bli > -dciInf) {
+        lower[i] = Max( epsmu - 1, -DeltaH );
+        upper[i] = DeltaH;
+      } else if (bui < dciInf) {
+        lower[i] = -DeltaH;
+        upper[i] = Min( 1 - epsmu, DeltaH );
+      } else {
+        lower[i] = -DeltaH;
+        upper[i] = DeltaH;
+      }
     }
 
     while ( (theta > eps2) && (theta > eps1*theta0) && (nSteih <= maxitSteih) &&
@@ -56,10 +67,6 @@ namespace DCI {
       dtHp = d.dot (Hp);
       gtp = g->dot (p);
       ptp = p.dot (p);
-      ptp = 0.0;
-      for (Int i = 0; i < nvar + nconI; i++) {
-        ptp += pow(px[i]*scaling_matrix[i], 2);
-      }
 
       if (gamma <= eps3*ptp) {
         // Negative Curvature

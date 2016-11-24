@@ -20,5 +20,5 @@ clean:
 purge: clean
 	$(RM) $(DCILIBNAME)
 
-%.o: ../src/%.cpp
+%.o: ../src/%.cpp ../include/*.h
 	$(CXX) -c -o $@ $< $(CXXFLAGS) $(I)

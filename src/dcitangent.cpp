@@ -84,12 +84,7 @@ namespace DCI {
         tmp_c = *c;
       call_fn ();
 #ifndef NDEBUG
-      try {
-        checkInfactibility ();
-      } catch (const char * ex) {
-        DeltaH *= 0.1;
-        continue;
-      }
+      checkInfactibility ();
 #endif
 
       if (ncon > 0)
